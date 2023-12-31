@@ -9,6 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Search from './pages/Search';
 
 
+
 export default function App() {
   return (
     <BrowserRouter>
