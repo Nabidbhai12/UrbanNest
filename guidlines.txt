@@ -1,0 +1,15 @@
+1.Install react in client
+2.Install tailwind css also from internet
+3.npm install react-router-dom to create router
+then add this to app.jsx to create routes
+add the routers inside browserrouter for details see app.jsx
+
+creating header component
+npm i react-icon
+create api folder
+install express js
+create package.json
+install nodemon
+add script to json
+create and connect to mongodb in index.js
+
