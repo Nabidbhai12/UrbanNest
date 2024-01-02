@@ -2,7 +2,7 @@ import React from 'react';
 import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth';
 import {app} from '../firebase.js';
 import { useDispatch } from 'react-redux';
-import { signInstarted, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 
 export default function OAuth() {
@@ -11,7 +11,7 @@ export default function OAuth() {
 
     const handleGoogleClick = async () => {
         try {
-            dispatch(signInstarted()); // Dispatch action when the process starts
+            dispatch(signInStart()); // Dispatch action when the process starts
             
             const provider = new GoogleAuthProvider();
             const auth = getAuth(app);
