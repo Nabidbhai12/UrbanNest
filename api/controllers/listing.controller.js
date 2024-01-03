@@ -1,4 +1,4 @@
-
+import Listing from '../models/listing.model.js';
 export const getListingsByType = async (req, res) => {
   try {
     // Assuming 'userId' is obtained from request params, query or authentication middleware (like JWT)
