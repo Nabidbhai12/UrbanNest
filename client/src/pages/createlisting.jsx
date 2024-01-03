@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateListing = () => {
+ const CreateListing = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
