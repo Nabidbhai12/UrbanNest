@@ -18,3 +18,12 @@ export const getListingsByType = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+export const addListing = async (req, res) => {
+  try {
+    const newListing = new Listing(req.body);
+    await newListing.save();
+    res.status(201).json(newListing);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
