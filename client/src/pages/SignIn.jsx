@@ -41,6 +41,7 @@ export default function SignIn() {
         dispatch(signInFailure(data.message));
      return;
       }
+      console.log(data);
 
       dispatch(signInSuccess(data));
       navigate('/'); // Redirect to profile or dashboard upon successful login
