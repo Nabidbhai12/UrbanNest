@@ -1,7 +1,8 @@
 import express from 'express';
-import { getSearchResults } from '../controllers/search.controller.js';
+import { searchProperties} from '../controllers/search.controller.js';
+import { authenticateToken } from '../controllers/user.controller.js';
 const router = express.Router();
-router.get('/property',getSearchResults);
+router.get('/property',authenticateToken,searchProperties);
 
 
 export default router;
