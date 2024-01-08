@@ -380,11 +380,6 @@ export default function Profile() {
       {/* Bought Property List Section */}
       <ListingsSection title="Bought Property List" listings={boughtProperties} />
     </div>
-<<<<<<< HEAD
-    )
-
-    //I AM SPEED
-=======
   );
 }
 
@@ -410,4 +405,3 @@ const ListingsSection = ({ title, listings }) => {
 };
 
  
->>>>>>> origin/main
