@@ -1,51 +1,26 @@
 import mongoose from 'mongoose';
 
-const listingSchema = new mongoose.Schema({
+const propertyListingSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    trim: true,
+    trim: true
   },
   description: {
     type: String,
-    required: true,
+    required: true
   },
-  images: [{
-    url: {
-      type: String,
-      required: true
-    },
-    caption: {
-      type: String
+  images: [
+    {
+      url: String, // URL to the image
+      caption: String
     }
-  }],
-  price: {
-    amount: {
-      type: Number,
-      required: true
-    },
-    currency: {
-      type: String,
-      required: true,
-      enum: ['USD', 'EUR', 'BDT', 'GBP'], // Enum for supported currencies
-    }
-  },
-  propertyType: {
-    type: String,
-    required: true,
-    enum: ['apartment', 'house', 'condo', 'land', 'commercial']
-  },
-  status: {
-    type: String,
-    required: true,
-    enum: ['available', 'sold', 'rented', 'pending', 'archived']
-  },
+  ],
   location: {
     address: String,
     city: String,
     state: String,
-    country: String,
-    zip: String,
+    zipCode: String,
     coordinates: { // GeoJSON format for geospatial queries
       type: {
         type: String,
@@ -58,59 +33,53 @@ const listingSchema = new mongoose.Schema({
       }
     }
   },
-  features: [{
-    type: String
-  }],
-  amenities: [{
-    type: String
-  }],
-  area: {
-    value: Number,
-    unit: {
+  price: {
+    amount: {
+      type: Number,
+      required: true
+    },
+    currency: {
       type: String,
-      enum: ['sqft', 'sqm']
+      required: true
     }
   },
+  size: {
+    type: Number, // Size in square feet
+    required: true
+  },
   rooms: {
+    total: Number,
     bedrooms: Number,
     bathrooms: Number,
     kitchens: Number,
-    livingRooms: Number,
+    livingRooms: Number
   },
-  contact: {
-    name: String,
-    phone: String,
-    email: String
-  },
-  postedBy: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true
   },
-  postedAt: {
+  propertyStatus: {
+    type: String,
+    enum: ['For Sale', 'For Rent'],
+    required: true
+  },
+  createdAt: {
     type: Date,
     default: Date.now
   },
   updatedAt: {
     type: Date,
     default: Date.now
-  },
-  listType:{
-    type: String,
-    required: true,
-    enum: ['wishlist', 'bought','sold']
-  },
-  propertyStaus:{
-    type: String,
-    required: true,
-    enum: ['buy', 'sell','rent']
-  },
-  
-
+  }
 });
 
 // Create a geospatial index on the location.coordinates field
-listingSchema.index({ 'location.coordinates': '2dsphere' });
+propertyListingSchema.index({ 'location.coordinates': '2dsphere' });
 
-const Listing = mongoose.model('Listing', listingSchema);
+
+// Create a geospatial index on the location.coordinates field
+
+const Listing = mongoose.model('Listing', propertyListingSchema);
 
 export default Listing;
