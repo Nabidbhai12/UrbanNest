@@ -1,98 +1,55 @@
 import Listing from '../models/listing.model.js';
+import RentList from '../models/rentlisting.model.js'; // Adjust the path as necessary
 
-export const getSearchResults= async (req, res) => {
-    try {
-        const query = buildSearchQuery(req.query);
-        const properties = await Listing.find(query);
-        res.json(properties);
-      } catch (err) {
-        res.status(500).json({ message: err.message });
+export const searchProperties = async (req, res, next) => {
+  const { minPrice, maxPrice, minSize, maxSize, bedrooms, bathrooms, location, type } = req.body;
+  console.log(minPrice);
+
+  try {
+      let query;
+      let criteria = {};
+
+      // Price Range
+     // Price Range
+      if (minPrice || maxPrice) {
+        criteria['price.amount'] = {}; // Using dot notation for nested fields
+        if (minPrice) criteria['price.amount']['$gte'] = parseInt(minPrice);
+        if (maxPrice) criteria['price.amount']['$lte'] = parseInt(maxPrice);
       }
+
+
+      // Area Range
+      if (minSize || maxSize) {
+          criteria.size = {};
+          if (minSize) criteria.size['$gte'] = parseInt(minSize);
+          if (maxSize) criteria.size['$lte'] = parseInt(maxSize);
+      }
+
+      // Bedrooms and Bathrooms
+      if (bedrooms) criteria['rooms.bedrooms'] = parseInt(bedrooms);
+      if (bathrooms) criteria['rooms.bathrooms'] = parseInt(bathrooms);
+
+      // Location
+      if (location) criteria['location.address'] = new RegExp(location, 'i'); // Case-insensitive search
+      //print criteria
+      console.log(criteria);
+
+      // Determine the model based on the type of property
+      if (type === 'rent') {
+          query = RentList.find(criteria);
+      } else {
+        console.log("In regular listing");
+          // Defaults to searching for sale properties
+          query =Listing.find(criteria);
+      }
+
+      const properties = await query.exec();
+
+      res.status(200).json(properties);
+  } catch (error) {
+      next(error);
+  }
 };
-const buildSearchQuery = (params) => {
-    let query = {};
-  
-    // Text search for title and description
-    if (params.title) {
-      query.title = { $regex: params.title, $options: 'i' };
-    }
-    if (params.description) {
-      query.description = { $regex: params.description, $options: 'i' };
-    }
-  
-    // Price range
-    if (params.minPrice || params.maxPrice) {
-      query['price.amount'] = {};
-      if (params.minPrice) {
-        query['price.amount'].$gte = Number(params.minPrice);
-      }
-      if (params.maxPrice) {
-        query['price.amount'].$lte = Number(params.maxPrice);
-      }
-    }
-  
-    // Property type and status
-    if (params.propertyType) {
-      query.propertyType = params.propertyType;
-    }
-    if (params.status) {
-      query.status = params.status;
-    }
-  
-    // Location filters
-    if (params.location) {
-      Object.keys(params.location).forEach(key => {
-        if (params.location[key]) {
-          query[`location.${key}`] = params.location[key];
-        }
-      });
-    }
-  
-    // Feature and amenities filters
-    if (params.features) {
-      query.features = { $all: params.features };
-    }
-    if (params.amenities) {
-      query.amenities = { $all: params.amenities };
-    }
-  
-    // Area range
-    if (params.minArea || params.maxArea) {
-      query['area.value'] = {};
-      if (params.minArea) {
-        query['area.value'].$gte = Number(params.minArea);
-      }
-      if (params.maxArea) {
-        query['area.value'].$lte = Number(params.maxArea);
-      }
-    }
-  
-    // Room filters
-    if (params.rooms) {
-      Object.keys(params.rooms).forEach(key => {
-        if (params.rooms[key]) {
-          query[`rooms.${key}`] = params.rooms[key];
-        }
-      });
-    }
-  
-    // Contact filters
-    if (params.contact) {
-      Object.keys(params.contact).forEach(key => {
-        if (params.contact[key]) {
-          query[`contact.${key}`] = params.contact[key];
-        }
-      });
-    }
-  
-    // Other filters like listType, propertyStatus, etc.
-    if (params.listType) {
-      query.listType = params.listType;
-    }
-    if (params.propertyStatus) {
-      query.propertyStatus = params.propertyStatus;
-    }
-  
-    return query;
-  };
+
+
   

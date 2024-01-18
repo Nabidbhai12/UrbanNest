@@ -5,28 +5,42 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
+    trim: true
   },
-  password:{
+  email: {
     type: String,
     required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        },
-        avatar:
-        { 
-            type: String,
-            default: "https://res.cloudinary.com/dq7l8216n/image/upload/v1628074949/avatars/avatar-1_fsuqyj.png"
-           
-        },  
+    unique: true,
+    trim: true,
+    lowercase: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  profilePicture: {
+    type: String, // URL to the image
+    default: ''
+  },
+  contactNumber: {
+    type: String,
+    default: ''
+  },
+  bio: {
+    type: String,
+    default: ''
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+},
+{ timestamps: true });
 
-        
-    
-    },
-    { timestamps: true }
-    );
 //create a model
 const User = mongoose.model("User", userSchema);
 export default User;
