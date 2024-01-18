@@ -10,22 +10,6 @@ import { Img } from "../components/image"
 import { Text } from "../components/text"
 import { List } from "../components/list"
 import { Slider } from "../components/slider"
-
-/*export default function Home() {
-  return (
-    <div>
-        Home page, also fuck development
-      
-    </div>
-  )
-}*/
-
-
-//import React from "react";
-
-//import { useNavigate } from "react-router-dom";
-
-//import { Button, CheckBox, Img, Input, List, Slider, Text } from "../components";
 import LandingPageCard from "../components/LandingPageCard";
 import LandingPageFooter from "../components/LandingPageFooter";
 import LandingPageHeader from "../components/LandingPageHeader";

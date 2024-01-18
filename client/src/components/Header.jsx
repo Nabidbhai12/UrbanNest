@@ -2,6 +2,10 @@ import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { Button } from "./button";
+import { Img } from "./image";
+import { List } from "./list";
+import { Text } from "./text";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
