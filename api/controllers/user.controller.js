@@ -88,6 +88,13 @@ export const authenticateToken = (req, res, next) => {
         next(error);
     }
 };
+//deleteprofile
+//a function to send all the details(name,email,picture..all user details except password) to frontend
+//updatepassword()
+
+
+
+
 export const getUserWishlist = async (req, res, next) => {
     try {
         const userId = req.user.id;

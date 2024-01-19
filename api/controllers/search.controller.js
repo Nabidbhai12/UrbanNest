@@ -38,7 +38,6 @@ if (minPrice || maxPrice) {
       if (type === 'rent') {
           query = RentList.find(criteria);
       } else {
-        console.log("kutta");
           // Defaults to searching for sale properties
           query =Listing.find(criteria);
       }
@@ -50,6 +49,20 @@ if (minPrice || maxPrice) {
       next(error);
   }
 };
+export const getListingById = async (req, res, next) => {
+    const { listingId } = req.params; // Assuming the ID is passed as a URL parameter
+
+    try {
+        const listing = await Listing.findById(listingId);
+        if (!listing) {
+            return res.status(404).json({ message: 'Listing not found' });
+        }
+        res.json(listing);
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 
   
