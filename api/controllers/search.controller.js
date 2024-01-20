@@ -11,11 +11,11 @@ export const searchProperties = async (req, res, next) => {
 
       // Price Range
      // Price Range
-if (minPrice || maxPrice) {
-  criteria['price.amount'] = {}; // Using dot notation for nested fields
-  if (minPrice) criteria['price.amount']['$gte'] = parseInt(minPrice);
-  if (maxPrice) criteria['price.amount']['$lte'] = parseInt(maxPrice);
-}
+      if (minPrice || maxPrice) {
+        criteria['price.amount'] = {}; // Using dot notation for nested fields
+        if (minPrice) criteria['price.amount']['$gte'] = parseInt(minPrice);
+        if (maxPrice) criteria['price.amount']['$lte'] = parseInt(maxPrice);
+      }
 
 
       // Area Range
@@ -38,6 +38,7 @@ if (minPrice || maxPrice) {
       if (type === 'rent') {
           query = RentList.find(criteria);
       } else {
+        console.log("In regular listing");
           // Defaults to searching for sale properties
           query =Listing.find(criteria);
       }
