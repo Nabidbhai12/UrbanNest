@@ -139,6 +139,7 @@ const LandingPageHeader = (props) => {
               onClick={() => navigate("/profile")}
             >
               Log in
+              
             </Button>
           </div>
         </div>
