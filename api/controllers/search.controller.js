@@ -1,9 +1,9 @@
 import Listing from '../models/listing.model.js';
-import RentList from '../models/rentlisting.model.js'; // Adjust the path as necessary
+ // Adjust the path as necessary
 
 export const searchProperties = async (req, res, next) => {
-  const { minPrice, maxPrice, minSize, maxSize, bedrooms, bathrooms, location, type } = req.body;
-  console.log(minPrice);
+    const { minPrice, maxPrice, minSize, maxSize, bedrooms, bathrooms, kitchens, livingRooms, location, city, state, zipCode, type, coordinates, radius } = req.body;
+      console.log(minPrice);
 
   try {
       let query;
@@ -28,20 +28,41 @@ export const searchProperties = async (req, res, next) => {
       // Bedrooms and Bathrooms
       if (bedrooms) criteria['rooms.bedrooms'] = parseInt(bedrooms);
       if (bathrooms) criteria['rooms.bathrooms'] = parseInt(bathrooms);
+      if(kitchens) criteria['rooms.kitchens']=parseInt(kitchens);
+        if(livingRooms) criteria['rooms.livingRooms']=parseInt(livingRooms);
+
 
       // Location
-      if (location) criteria['location.address'] = new RegExp(location, 'i'); // Case-insensitive search
+      if (location || city || state || zipCode) {
+        criteria.location = {};
+        if (location) criteria.location['address'] = new RegExp(location, 'i');
+        if (city) criteria.location['city'] = new RegExp(city, 'i');
+        if (state) criteria.location['state'] = new RegExp(state, 'i');
+        if (zipCode) criteria.location['zipCode'] = zipCode;
+      }
+
+      // Geospatial Query for Coordinates
+      if (coordinates && radius) {
+        const [longitude, latitude] = coordinates;
+        criteria['location.coordinates'] = {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [longitude, latitude]
+            },
+            $maxDistance: radius
+          }
+        };
+      }
       //print criteria
       console.log(criteria);
 
+      if (type) {
+        criteria.propertyStatus = type === "buy" ? 'For Sale' : 'For Rent';
+    }
+
       // Determine the model based on the type of property
-      if (type === 'rent') {
-          query = RentList.find(criteria);
-      } else {
-        console.log("In regular listing");
-          // Defaults to searching for sale properties
-          query =Listing.find(criteria);
-      }
+       query = Listing.find(criteria);
 
       const properties = await query.exec();
 
@@ -50,6 +71,20 @@ export const searchProperties = async (req, res, next) => {
       next(error);
   }
 };
+export const getListingById = async (req, res, next) => {
+    const { listingId } = req.params; // Assuming the ID is passed as a URL parameter
+
+    try {
+        const listing = await Listing.findById(listingId);
+        if (!listing) {
+            return res.status(404).json({ message: 'Listing not found' });
+        }
+        res.json(listing);
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 
   
