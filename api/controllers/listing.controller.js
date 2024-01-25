@@ -19,9 +19,11 @@ export const getListingsByType = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 export const addListing = async (req, res) => {
   try {
     const newListing = new Listing(req.body);
+    //add it to the selling list of that user.
     await newListing.save();
     res.status(201).json(newListing);
   } catch (error) {

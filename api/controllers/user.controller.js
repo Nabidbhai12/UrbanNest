@@ -15,7 +15,21 @@ export const authenticateToken = (req, res, next) => {
       next();
     });
   };
-  
+  export const getUserDetails = async (req, res) => {
+    const userId = req.user.id; // Extract user ID from token
+
+    try {
+        const user = await User.findById(userId).select('-password'); // Exclude the password field
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json({ message: 'User details fetched successfully', user });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user details', error: error.message });
+    }
+};
+
   // Function to update user profile and password
   export const updateProfile = async (req, res) => {
     const userId = req.user.id; // Extract user ID from token
@@ -45,9 +59,11 @@ export const authenticateToken = (req, res, next) => {
     }
   };
   export const addPropertyForSale = async (req, res, next) => {
-    const { title, description, images, location, price, size, rooms, propertyStatus } = req.body;
-
+    console.log("hello");
     try {
+        const { title, description, location, price, size, rooms, propertyStatus } = req.body;
+        const imageUrls = req.files.map(file => file.path); // Cloudinary URLs
+
         // Extract the user ID from the token
         const token = req.headers.authorization.split(' ')[1];
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -57,12 +73,12 @@ export const authenticateToken = (req, res, next) => {
         const newProperty = new Listing({
             title,
             description,
-            images,
+            images: imageUrls.map(url => ({ url, caption: 'Property Image' })),
             location,
             price,
             size,
             rooms,
-            owner: userId, // Set the owner of the property
+            owner: userId,
             propertyStatus
         });
 
@@ -70,24 +86,21 @@ export const authenticateToken = (req, res, next) => {
         const savedProperty = await newProperty.save();
 
         // Update user's list with the new property
-        const userListing = await UserList.findOne({ user: userId });
-        if (userListing) {
-            userListing.sellingList.push(savedProperty._id);
-            await userListing.save();
-        } else {
-            // If the user doesn't have a list yet, create one
-            const newUserList = new UserList({
-                user: userId,
-                sellingList: [savedProperty._id] // Add the new property to the sold list
-            });
-            await newUserList.save();
-        }
+        // ... rest of your code ...
 
         res.status(201).json({ message: 'Property added for sale successfully', property: savedProperty });
     } catch (error) {
         next(error);
     }
 };
+
+//deleteprofile
+//a function to send all the details(name,email,picture..all user details except password) to frontend
+//updatepassword()
+
+
+
+
 export const getUserWishlist = async (req, res, next) => {
     try {
         const userId = req.user.id;
