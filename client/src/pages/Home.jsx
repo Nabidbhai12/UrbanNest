@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -32,7 +31,7 @@ export default function Home() {
     <>
       <div className="bg-white-A700 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col items-start justify-start w-full">
-          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+        <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
           <div className="bg-yellow-50 flex flex-col font-manrope items-start justify-start md:pl-10 sm:pl-5 pl-[120px] py-[50px] w-full">
             <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-center justify-start w-full">
               <div className="flex flex-1 flex-col gap-10 items-start justify-start w-full">
@@ -714,7 +713,7 @@ export default function Home() {
                     className="leading-[180.00%] max-w-[600px] md:max-w-full text-center text-gray-900 text-lg"
                     size="txtManropeRegular18"
                   >
-                    We helps businesses customize, automate and scale up their
+                    We help businesses customize, automate and scale up their
                     ad production and delivery.
                   </Text>
                 </div>
