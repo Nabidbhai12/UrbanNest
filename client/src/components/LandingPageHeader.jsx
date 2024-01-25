@@ -7,10 +7,10 @@ import { useSelector } from "react-redux";
 
 //import { Button, Img, List, Text } from "./components";
 
-import { Button } from "./button"
-import { Img } from "./image"
-import { List } from "./list"
-import { Text } from "./text"
+import { Button } from "./button";
+import { Img } from "./image";
+import { List } from "./list";
+import { Text } from "./text";
 
 const LandingPageHeader = (props) => {
   const navigate = useNavigate();
@@ -135,11 +135,20 @@ const LandingPageHeader = (props) => {
               </div>
             </Button>
             <Button
-              className="common-pointer bg-gray-900 cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
+              className="common-pointer cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
               onClick={() => navigate("/profile")}
             >
-              Log in
-              
+              {currentUser ? (
+                <img
+                  src={currentUser.avatar}
+                  alt="profile"
+                  className="w-10 h-10 rounded-full"
+                />
+              ) : (
+                <div className="common-pointer bg-gray-900 cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full">
+                  Log In
+                </div>
+              )}
             </Button>
           </div>
         </div>
