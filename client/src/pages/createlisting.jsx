@@ -1,6 +1,47 @@
-import React, { useState } from 'react';
 
- const CreateListing = () => {
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // Here you would typically send the formData to the server
+  //   // For example:
+  //   try {
+  //     const response = await fetch('/api/listing/addlisting', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         // Include authentication headers if needed
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
+
+  //     // Handle the response data
+  //     const data = await response.json();
+  //     console.log(data);
+  //     // Redirect or inform the user of success
+  //   } catch (error) {
+  //     console.error('Error during form submission:', error);
+  //     // Handle errors, e.g., show user feedback
+  //   }
+  // };
+
+  // ...rest of the component
+
+
+// ...rest of the component code
+
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import LocationPicker from './map';
+
+
+
+
+const CreateListing = () => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -36,16 +77,10 @@ import React, { useState } from 'react';
       phone: '',
       email: ''
     },
-    // postedBy is set on the server-side based on authenticated user
   });
-
-// ...imports and the CreateListing component definition
-
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-
-    // For nested objects like price and rooms, we need to handle them separately
     if (name.includes('.')) {
       const [key, subkey] = name.split('.');
       setFormData((prevFormData) => ({
@@ -65,88 +100,175 @@ import React, { useState } from 'react';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Here you would typically send the formData to the server
-    // For example:
-    try {
-      const response = await fetch('/api/listing/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // Include authentication headers if needed
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+    // Submit form logic here
+  };
+  const handleLocationChange = (latlng) => {
+    setFormData({
+      ...formData,
+      location: {
+        ...formData.location,
+        coordinates: { type: 'Point', coordinates: [latlng.lng, latlng.lat] }
       }
-
-      // Handle the response data
-      const data = await response.json();
-      console.log(data);
-      // Redirect or inform the user of success
-    } catch (error) {
-      console.error('Error during form submission:', error);
-      // Handle errors, e.g., show user feedback
-    }
+    });
   };
 
-  // ...rest of the component
-
-
-// ...rest of the component code
 
   return (
     <div className="min-h-screen bg-blue-50 flex justify-center items-center font-sans">
       <div className="w-full max-w-4xl mx-auto bg-white rounded-lg p-8 shadow-lg">
         <h1 className="text-3xl font-bold text-center text-blue-600 mb-8">Create a New Listing</h1>
-        
-        {/* Form starts here */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* ... Other input fields ... */}
+          {/* Title Input */}
+          <div className="space-y-2">
+            <label htmlFor="title" className="text-lg font-medium text-gray-700">Title</label>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+            />
+          </div>
+
+          {/* Description Input */}
+          <div className="space-y-2">
+            <label htmlFor="description" className="text-lg font-medium text-gray-700">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+              rows="4"
+            ></textarea>
+          </div>
 
           {/* Price Input */}
+          {/* Price Input */}
           <div className="space-y-2">
-            <label htmlFor="price" className="text-lg font-medium text-gray-700">Price</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="range"
-                id="price"
-                name="price"
-                min="0"
-                max="1000000"
-                value={formData.price.amount}
-                onChange={handleChange}
-                className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer dark:bg-blue-700"
-              />
-              <span className="text-blue-600 font-medium">{`${formData.price.currency} ${formData.price.amount}`}</span>
-            </div>
-          </div>
+  <label htmlFor="price.amount" className="text-lg font-medium text-gray-700">Price</label>
+  <input
+    type="range"
+    id="price.amount"
+    name="price.amount"
+    value={formData.price.amount}
+    min="400000"
+    max="40000000"
+    step="1000"
+    onChange={handleChange}
+    className="w-full"
+  />
+  <span className="ml-2 text-sm text-gray-500">
+    {formData.price.amount}
+  </span>
+</div>
+
+
+
+          {/* ...existing price input code... */}
 
           {/* Rooms Input */}
-          <div className="grid grid-cols-2 gap-6">
-            {/* Bedrooms Slider */}
-            <div className="space-y-2">
-              <label htmlFor="bedrooms" className="text-lg font-medium text-gray-700">Bedrooms</label>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="range"
-                  id="bedrooms"
-                  name="bedrooms"
-                  min="0"
-                  max="10"
-                  value={formData.rooms.bedrooms}
-                  onChange={handleChange}
-                  className="w-full h-2 bg-blue-200 rounded-lg appearance-none cursor-pointer"
-                />
-                <span className="text-blue-600 font-medium">{formData.rooms.bedrooms}</span>
-              </div>
-            </div>
+          {/* Rooms Input */}
+<div className="grid grid-cols-2 gap-6">
+  {/* Bedrooms Input */}
+  <div className="space-y-2">
+    <label htmlFor="rooms.bedrooms" className="text-lg font-medium text-gray-700">Bedrooms</label>
+    <input
+      type="number"
+      id="rooms.bedrooms"
+      name="rooms.bedrooms"
+      value={formData.rooms.bedrooms}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+    />
+  </div>
+  </div>
 
-            {/* Bathrooms Slider */}
-            {/* Repeat for bathrooms, kitchens, and livingRooms */}
+  <div className="grid grid-cols-2 gap-6">
+  
+  <div className="space-y-2">
+    <label htmlFor="rooms.bathrooms" className="text-lg font-medium text-gray-700">Bathrooms</label>
+    <input
+      type="number"
+      id="rooms.bathrooms"
+      name="rooms.bathrooms"
+      value={formData.rooms.bathrooms}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+    />
+  </div>
+  </div>
+
+
+  <div className="grid grid-cols-2 gap-6">
+  {/* Bedrooms Input */}
+  <div className="space-y-2">
+    <label htmlFor="rooms.kitchens" className="text-lg font-medium text-gray-700">Kitchens</label>
+    <input
+      type="number"
+      id="rooms.kitchens"
+      name="rooms.kitchens"
+      value={formData.rooms.kitchens}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+    />
+  </div>
+  </div>
+
+  <div className="grid grid-cols-2 gap-6">
+  {/* Bedrooms Input */}
+  <div className="space-y-2">
+    <label htmlFor="rooms.livingRooms" className="text-lg font-medium text-gray-700">livingrooms</label>
+    <input
+      type="number"
+      id="rooms.livingRooms"
+      name="rooms.livingRooms"
+      value={formData.rooms.livingRooms}
+      onChange={handleChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+    />
+  </div>
+  </div>
+  
+
+          {/* ...existing rooms input code... */}
+
+          {/* Property Type Input */}
+          <div className="space-y-2">
+            <label htmlFor="propertyType" className="text-lg font-medium text-gray-700">Property Type</label>
+            <select
+              id="propertyType"
+              name="propertyType"
+              value={formData.propertyType}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-600"
+            >
+              <option value="">Select Type</option>
+              <option value="house">House</option>
+              <option value="apartment">Apartment</option>
+              <option value="condo">Condo</option>
+              {/* Add more options as needed */}
+            </select>
           </div>
+
+          {/* Status Input */}
+        <div className="space-y-2">
+        <label className="text-lg font-medium text-gray-700">Location</label>
+        <LocationPicker onLocationChange={handleLocationChange} />
+      </div>
+
+          {/* Location Inputs */}
+          {/* Add inputs for address, city, state, country, zip, and coordinates */}
+
+          {/* Features and Amenities Inputs */}
+          {/* Add inputs for features and amenities as needed */}
+
+          {/* Area Input */}
+          {/* Add input for area value and unit */}
+
+          {/* Contact Information Inputs */}
+          {/* Add inputs for contact name, phone, and email */}
 
           {/* Submit Button */}
           <div className="flex justify-center mt-6">
@@ -160,3 +282,4 @@ import React, { useState } from 'react';
   );
 };
 
+export default CreateListing;
