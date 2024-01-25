@@ -25,22 +25,22 @@ const propertyListingSchema = new mongoose.Schema({
       type: {
         type: String,
         enum: ['Point'],
-        required: true
+        required: false
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        required: true
+        required: false
       }
     }
   },
   price: {
     amount: {
       type: Number,
-      required: true
+      required: false
     },
     currency: {
       type: String,
-      required: true
+      required: false
     }
   },
   size: {
