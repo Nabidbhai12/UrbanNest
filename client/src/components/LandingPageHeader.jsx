@@ -1,6 +1,7 @@
 import React from "react";
-
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 //import LogInModal from "modals/LogIn";
 
@@ -15,6 +16,8 @@ const LandingPageHeader = (props) => {
   const navigate = useNavigate();
 
   const [isOpenLogInModal, setLogInModal] = React.useState(false);
+
+  const { currentUser } = useSelector((state) => state.user);
 
   function handleOpenLogInModal() {
     setLogInModal(true);
