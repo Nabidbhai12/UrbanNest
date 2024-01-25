@@ -1,29 +1,36 @@
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import SignIn from "./pages/SignIn";
-import SignUp from "./pages/SignUp";
-import Profile from "./pages/Profile";
-import Header from "./components/Header";
-import PrivateRoute from "./components/PrivateRoute";
-import Search from "./pages/Search";
-import CreateListing from "./pages/createlisting";
+
+//Pages
+const Home = React.lazy(() => import("./pages/Home"));
+const About = React.lazy(() => import("./pages/About"));
+const SignIn = React.lazy(() => import("./pages/SignIn"));
+const SignUp = React.lazy(() => import("./pages/SignUp"));
+const Profile = React.lazy(() => import("./pages/Profile"));
+const Test = React.lazy(() => import("./pages/test"));
+const Search = React.lazy(() => import("./pages/Search"));
+
+//Components
+const Header = React.lazy(() => import("./components/Header"));
+const LandingPageHeader = React.lazy(() => import("./components/LandingPageHeader"));
+const PrivateRoute = React.lazy(() => import("./components/PrivateRoute"));
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/sign-up" element={<SignUp />} />
-        <Route path="/search" element={<Search />} />
-        <Route path="/createlisting" element={<CreateListing />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <React.Suspense fallback={<>Loading...</>}>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/sign-in" element={<SignIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/search" element={<Search />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </React.Suspense>
   );
 } // Merge test
