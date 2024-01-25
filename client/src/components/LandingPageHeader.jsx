@@ -25,7 +25,7 @@ const LandingPageHeader = (props) => {
 
   return (
     <>
-      <header className= {props.className} >
+      <header className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full">
         <div className="flex md:flex-col flex-row md:gap-10 items-center justify-between w-full">
           <div className="header-row my-px">
             <div
