@@ -136,7 +136,7 @@ const LandingPageHeader = (props) => {
             </Button>
             <Button
               className="common-pointer bg-gray-900 cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
-              onClick={handleOpenLogInModal}
+              onClick={() => navigate("/profile")}
             >
               Log in
             </Button>
