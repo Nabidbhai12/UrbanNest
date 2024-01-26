@@ -1,17 +1,12 @@
 import Blog from "../models/blog.model.js";
 import User from '../models/user.model.js';
+import Comment from '../models/comment.model.js';
 import mongoose from "mongoose";
 
 //Write createBlog function here. It will first check if the user is logged in or not. 
 //If the user is logged in, it will create a new blog and save it to the database. 
 //If the user is not logged in, it will send a 401 status code with a message "You are not logged in".
 export const createBlog = async (req, res) => {
-    // if (!req.user) {
-    //     // User is not logged in
-    //     return res.status(401).json({ message: "You are not logged in" });
-    // }
-    // const userId = req.user.id;
-    // console.log("User id in createBlog: " + userId);
     try {
         //get user name from user id from database
         const userId = req.user.id;
@@ -289,3 +284,184 @@ export const deleteBlog = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+
+//COMMENT CONTROLLERS
+
+//create comment
+export const createComment = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        //get name
+        const name = user.username;
+
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid);
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        const { content } = req.body;
+        console.log("Create comment request received.");
+        const newComment = new Comment({
+            author : user._id,
+            authorName : name,
+            blog : blog,
+            content : content
+        });
+        console.log("New comment content: " + newComment.content);
+        await newComment.save();
+        blog.commentList.push(newComment._id);
+        console.log("New comment pushed to blog.");
+        await blog.save();
+        res.status(201).json(newComment);
+    }
+    catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
+//show my comments
+export const showMyComments = async (req, res) => {
+    try{
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+        const comments = await Comment.find({ "author" : user._id });
+        res.status(200).json(comments);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}    
+
+
+//update comment
+export const updateComment = async (req, res) => {
+    try {
+        const commentid = req.params.id;
+        const comment = await Comment.findById(commentid);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+
+        const { content } = req.body;
+        comment.content = content;
+
+        await comment.save();
+        res.status(200).json(comment);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//delete comment
+export const deleteComment = async (req, res) => {
+    try{
+        const id = req.params.id;
+        const comment = await Comment.findById(id);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        await Comment.findByIdAndDelete(id);
+        res.status(200).json({ message: "Comment deleted successfully" });
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//upvote comment
+export const upvoteComment = async (req, res) => {
+    try{
+        const commentId = req.params.id;
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        comment.numOfUpvotes += 1;
+        await comment.save();
+        res.status(200).json(comment);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//downvote comment
+export const downvoteComment = async (req, res) => {
+    try{
+        const commentId = req.params.id;
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        comment.numOfDownvotes += 1;
+        await comment.save();
+        res.status(200).json(comment);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//decrease upvote comment
+export const decreaseUpvoteComment = async (req, res) => {
+    try{
+        const commentId = req.params.id;
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        comment.numOfUpvotes -= 1;
+        await comment.save();
+        res.status(200).json(comment);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//decrease downvote comment
+export const decreaseDownvoteComment = async (req, res) => {
+    try{
+        const commentId = req.params.id;
+        const comment = await Comment.findById(commentId);
+        if (!comment) {
+            return res.status(404).json({ message: "Comment not found" });
+        }
+        comment.numOfDownvotes -= 1;
+        await comment.save();
+        res.status(200).json(comment);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//show all comments of a blog
+export const showAllComments = async (req, res) => {
+    try {
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid).populate('commentList');
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        res.status(200).json(blog.commentList);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//show all comments by upvotes descending
+export const showAllCommentsByUpvotes = async (req, res) => {
+    try{
+        const comments = await Comment.find().sort({ numOfUpvotes: -1 });
+        res.status(200).json(comments);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+//show all comments by downvotes descending
+export const showAllCommentsByDownvotes = async (req, res) => {
+    try{
+        const comments = await Comment.find().sort({ numOfDownvotes: -1 });
+        res.status(200).json(comments);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
