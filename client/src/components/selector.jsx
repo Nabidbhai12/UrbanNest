@@ -73,6 +73,7 @@ const Selector = ({ onCitySelect }) => {
           ))}
       </ul>
     </div>
+    
   );
 };
 
