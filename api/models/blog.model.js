@@ -39,11 +39,10 @@ const blogSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    // tags: {
-    //     type: Array,
-    //     enum: ['goodBuyer', 'goodSeller', 'goodLandlord', 'goodTenant', 'goodListing', 'badListing', 'badBuyer', 'badSeller', 'scammer', 'fakeListing', 'bad_landlord', 'bad_tenant', 'local', 'foreigner'],
-    //     default: []
-    // },
+    tags: {
+        type: [String],
+        default: []
+    },
     image: {
         type: String, //url to image
         default: ''

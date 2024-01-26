@@ -20,13 +20,24 @@ export const createBlog = async (req, res) => {
         const name = user.username;
 
 
-        const { title, content, image } = req.body;
+        const { title, content, tags, image } = req.body;
+        //traverse through tags and check if each tag is valid or not
+        //if not valid, send a 400 status code with a message "Invalid tag"
+
+        /* if (tags) {
+            for (let i = 0; i < tags.length; i++) {
+                if (tags[i].length > 20) {
+                    return res.status(400).json({ message: "Invalid tag" });
+                }
+            }
+        } */
+
         const newBlog = new Blog({
             author : user,
             authorName : name,
             title,
             content,
-            //...(tags && { tags }),
+            ...(tags && { tags }),
             ...(image && { image }),
         });
         await newBlog.save();
@@ -151,9 +162,77 @@ export const decreaseDownvoteBlog = async (req, res) => {
 };
 
 //Show all blogs
-export const showAllBlogs = async (req, res) => {
+export const showAllBlogsByTitle = async (req, res) => {
     try {
-        const blogs = await Blog.find();
+        const blogs = await Blog.find().sort({ title: 1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show all blogs by title descending
+export const showAllBlogsByTitleDesc = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort({ title: -1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show all blogs by date ascending
+export const showAllBlogsByDate = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort({ createdAt: 1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show all blogs by date descending
+export const showAllBlogsByDateDesc = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort({ createdAt: -1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show all blogs by upvotes descending
+export const showAllBlogsByUpvotes = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort({ numOfUpvotes: -1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show all blogs by downvotes descending
+export const showAllBlogsByDownvotes = async (req, res) => {
+    try {
+        const blogs = await Blog.find().sort({ numOfDownvotes: -1 });
+        //const blogs = await Blog.find();
+        res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+
+//Show blogs by tag
+export const showBlogsByTag = async (req, res) => {
+    try {
+        const tag = req.params.tag;
+        const blogs = await Blog.find({ "tags": tag });
+        //const blogs = await Blog.find();
         res.status(200).json(blogs);
     } catch (error) {
         res.status(404).json({ message: error.message });
