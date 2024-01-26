@@ -19,6 +19,7 @@ export default function App() {
   return (
     <React.Suspense fallback={<>Loading...</>}>
       <BrowserRouter>
+      <LandingPageHeader />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

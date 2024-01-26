@@ -1,31 +1,25 @@
 import React from "react";
-
+import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 //import LogInModal from "modals/LogIn";
 
 //import { Button, Img, List, Text } from "./components";
 
-import { Button } from "./button"
-import { Img } from "./image"
-import { List } from "./list"
-import { Text } from "./text"
+import { Button } from "./button";
+import { Img } from "./image";
+import { List } from "./list";
+import { Text } from "./text";
 
 const LandingPageHeader = (props) => {
   const navigate = useNavigate();
 
-  const [isOpenLogInModal, setLogInModal] = React.useState(false);
-
-  function handleOpenLogInModal() {
-    setLogInModal(true);
-  }
-  function handleCloseLogInModal() {
-    setLogInModal(false);
-  }
+  const { currentUser } = useSelector((state) => state.user);
 
   return (
     <>
-      <header className= {props.className} >
+      <header className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full">
         <div className="flex md:flex-col flex-row md:gap-10 items-center justify-between w-full">
           <div className="header-row my-px">
             <div
@@ -118,7 +112,7 @@ const LandingPageHeader = (props) => {
           <div className="flex flex-row gap-10 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
             <Button
               className="common-pointer bg-transparent cursor-pointer flex items-center justify-center min-w-[94px]"
-              onClick={() => navigate("/listing")}
+              onClick={() => navigate("/search")}
               leftIcon={
                 <Img
                   className="h-6 mb-px mr-2"
@@ -132,20 +126,24 @@ const LandingPageHeader = (props) => {
               </div>
             </Button>
             <Button
-              className="common-pointer bg-gray-900 cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
-              onClick={handleOpenLogInModal}
+              className="common-pointer cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full"
+              onClick={() => navigate("/profile")}
             >
-              Log in
+              {currentUser ? (
+                <img
+                  src={currentUser.avatar}
+                  alt="profile"
+                  className="w-10 h-10 rounded-full"
+                />
+              ) : (
+                <div className="common-pointer bg-gray-900 cursor-pointer font-manrope font-semibold py-2.5 rounded-[10px] text-base text-center text-white-A700 w-full">
+                  Log In
+                </div>
+              )}
             </Button>
           </div>
         </div>
       </header>
-      {isOpenLogInModal ? (
-        <LogInModal
-          isOpen={isOpenLogInModal}
-          onRequestClose={handleCloseLogInModal}
-        />
-      ) : null}
     </>
   );
 };
