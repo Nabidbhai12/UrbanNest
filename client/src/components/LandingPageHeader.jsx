@@ -15,16 +15,7 @@ import { Text } from "./text";
 const LandingPageHeader = (props) => {
   const navigate = useNavigate();
 
-  const [isOpenLogInModal, setLogInModal] = React.useState(false);
-
   const { currentUser } = useSelector((state) => state.user);
-
-  function handleOpenLogInModal() {
-    setLogInModal(true);
-  }
-  function handleCloseLogInModal() {
-    setLogInModal(false);
-  }
 
   return (
     <>
@@ -153,12 +144,6 @@ const LandingPageHeader = (props) => {
           </div>
         </div>
       </header>
-      {isOpenLogInModal ? (
-        <LogInModal
-          isOpen={isOpenLogInModal}
-          onRequestClose={handleCloseLogInModal}
-        />
-      ) : null}
     </>
   );
 };
