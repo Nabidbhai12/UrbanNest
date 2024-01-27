@@ -34,6 +34,7 @@ export default function SignIn() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', 
       });
 
       const data = await res.json();
@@ -41,6 +42,7 @@ export default function SignIn() {
         dispatch(signInFailure(data.message));
      return;
       }
+      //vlocalStoragee token to 
       console.log(data);
 
       dispatch(signInSuccess(data));

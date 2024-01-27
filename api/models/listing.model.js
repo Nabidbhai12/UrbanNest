@@ -64,6 +64,21 @@ const propertyListingSchema = new mongoose.Schema({
     enum: ['For Sale', 'For Rent'],
     required: true
   },
+  apartmentType: {
+    type: String,
+    enum: ['house', 'penthouse', 'duplex', 'studio'],
+    required: true
+  },
+  propertyType: {
+    type: String,
+    enum: ['commercial', 'residential'],
+    required: true
+  },
+  condition: {
+    type: String,
+    enum: ['new', 'used', 'under-construction'],
+    required: true
+  },
   createdAt: {
     type: Date,
     default: Date.now
