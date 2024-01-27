@@ -239,6 +239,7 @@ export default function test() {
         </span>
       );
     } else {
+
       return (
         <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
           Select Apartment Type
@@ -247,11 +248,51 @@ export default function test() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
-    // Add your search handling logic here, such as an API call
+  
+    // Retrieve the token from local storage or cookies
+  
+    try {
+      const response = await fetch('/api/search/property', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', 
+        body: JSON.stringify({
+          saleType: filters.saleType,
+          propertyType: filters.propertyType,
+          condition: filters.condition,
+          city: filters.city,
+          zip: filters.zip,
+          address: filters.address,
+          areaRange_min: filters.areaRange_min[0],
+          areaRange_max: filters.areaRange_max[1],
+          priceRange_min: filters.priceRange_min[0],
+          priceRange_max: filters.priceRange_max[1],
+          beds: filters.beds,
+          baths: filters.baths,
+          apartmentType: filters.apartmentType,
+          // Add other fields as needed
+        }),
+       
+
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Search results:", data);
+      // Handle the search results as needed
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
   };
+  
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">

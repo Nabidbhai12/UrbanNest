@@ -2,7 +2,9 @@ import Listing from '../models/listing.model.js';
  // Adjust the path as necessary
 
 export const searchProperties = async (req, res, next) => {
-    const { minPrice, maxPrice, minSize, maxSize, bedrooms, bathrooms, kitchens, livingRooms, location, city, state, zipCode, type, coordinates, radius } = req.body;
+  console.log("form search");
+
+    const { minPrice, maxPrice, minSize, maxSize, bedrooms, bathrooms, kitchens, livingRooms, location, city, address,state, zipCode, type, propertyType,condition,apartmentType } = req.body;
       console.log(minPrice);
 
   try {
@@ -33,32 +35,23 @@ export const searchProperties = async (req, res, next) => {
 
 
       // Location
-      if (location || city || state || zipCode) {
-        criteria.location = {};
-        if (location) criteria.location['address'] = new RegExp(location, 'i');
-        if (city) criteria.location['city'] = new RegExp(city, 'i');
-        if (state) criteria.location['state'] = new RegExp(state, 'i');
-        if (zipCode) criteria.location['zipCode'] = zipCode;
-      }
+     // Location
+     if (city || address || zipCode) {
+      criteria.location = {};
+      if (city) criteria.location['city'] = new RegExp(city, 'i');
+      if (address) criteria.location['address'] = new RegExp(address, 'i');
+      if (zipCode) criteria.location['zipCode'] = zipCode;
+  }
 
-      // Geospatial Query for Coordinates
-      if (coordinates && radius) {
-        const [longitude, latitude] = coordinates;
-        criteria['location.coordinates'] = {
-          $near: {
-            $geometry: {
-              type: "Point",
-              coordinates: [longitude, latitude]
-            },
-            $maxDistance: radius
-          }
-        };
-      }
+  // Property Type, Condition, and Apartment Type
+  if (propertyType) criteria.propertyType = propertyType;
+  if (condition) criteria.condition = condition;
+  if (apartmentType) criteria.apartmentType = apartmentType;
       //print criteria
       console.log(criteria);
 
       if (type) {
-        criteria.propertyStatus = type === "buy" ? 'For Sale' : 'For Rent';
+        criteria.propertyStatus = type === "sell" ? 'For Sale' : 'For Rent';
     }
 
       // Determine the model based on the type of property
