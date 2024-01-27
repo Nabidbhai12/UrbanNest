@@ -9,7 +9,11 @@ const SignUp = React.lazy(() => import("./pages/SignUp"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Test = React.lazy(() => import("./pages/test"));
 const Search = React.lazy(() => import("./pages/Search"));
+
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
+
+const SearchResults=React.lazy(() => import("./pages/SearchResults"));
+
 
 //Components
 const Header = React.lazy(() => import("./components/Header"));
@@ -24,6 +28,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/search-results" element={<SearchResults />} />
           <Route path="/test" element={<Test />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
