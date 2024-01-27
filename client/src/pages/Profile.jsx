@@ -36,11 +36,19 @@ export default function Profile() {
   // request.resource.size < 2 * 1024 * 1024 &&
   // request.resource.contentType.matches('image/.*')
 
-  useEffect(() => {
+  /* useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
-  }, [file]);
+  }, [file]); */
+
+  useEffect(() => {
+    // This will trigger a re-render when formData.avatar changes
+    if (formData.avatar) {
+      handleFileUpload(file);
+    }
+  }, [formData.avatar]);
+  
 
   const handleFileUpload = (file) => {
     const storage = getStorage(app);
@@ -59,9 +67,13 @@ export default function Profile() {
         setFileUploadError(true);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
+        /* getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
           setFormData({ ...formData, avatar: downloadURL })
-        );
+        ); */
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData((prevFormData) => ({ ...prevFormData, avatar: downloadURL }));
+          setFilePerc(100); // Indicate that upload is complete
+        });
       }
     );
   };
@@ -72,8 +84,21 @@ export default function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (filePerc < 100) {
+      alert("Please wait until the file is fully uploaded.");
+      return;
+    }
     try {
       dispatch(updateUserStart());
+
+      const data1 = new FormData();
+      // Append file data if a file was uploaded
+      if (file) {
+        data.append('image', file);
+      }
+      // Append other form data
+      Object.keys(formData).forEach(key => data.append(key, formData[key]));
+
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
         method: 'POST',
         headers: {
@@ -182,7 +207,7 @@ export default function Profile() {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={formData.avatar || currentUser.avatar}
+          src={filePerc === 100 ? formData.avatar : currentUser.avatar}
           alt='profile'
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
         />

@@ -6,8 +6,10 @@ import { getUserWishlist,getUserBoughtlist,getUserSellinglist,getUserSoldlist } 
 import { storage } from '../config/cloudinaryConfig.js';
 import multer from "multer";
 const upload = multer({ storage });
+//for single image
+const upload1 = multer({ storage: storage }).single('image');
 const router = express.Router();
-router.post('/updateProfile', authenticateToken, updateProfile);
+router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.post('/addPropertyForSale',authenticateToken,upload.array('images'), addPropertyForSale);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);

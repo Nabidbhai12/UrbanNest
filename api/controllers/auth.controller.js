@@ -3,28 +3,35 @@ import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-  const { username, email, password, profilePicture, contactNumber, role, bio } = req.body;
-
+  const { username, email, password, contactNumber, role, bio } = req.body;
+console.log("signup hello ");
   try {
       // Check if the user already exists
       const existingUser = await User.findOne({ email });
       if (existingUser) {
           return res.status(400).json({ message: 'User already exists' });
       }
-      
+
       // Hash the password
       const hashedPassword = await bcryptjs.hash(password, 10);
+
+      // Handle profile picture upload
+      let profilePictureUrl = '';
+      if (req.file) {
+          profilePictureUrl = req.file.path;  // Path from Cloudinary
+      }
 
       // Create a new user with optional fields
       const newUser = new User({
           username,
           email,
           password: hashedPassword,
-          ...(profilePicture && { profilePicture }),
+          ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
           ...(contactNumber && { contactNumber }),
           ...(role && { role }),
           ...(bio && { bio })
       });
+      console.log(newUser);
 
       // Save the user to the database
       await newUser.save();
