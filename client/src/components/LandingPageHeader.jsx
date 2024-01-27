@@ -109,13 +109,6 @@ const LandingPageHeader = (props) => {
               Blog
             </Text>
 
-            <Text
-              className="common-pointer cursor-pointer text-base text-gray-900 w-auto"
-              size="txtManropeSemiBold16"
-              onClick={() => navigate("/test")}
-            >
-              Test Page
-            </Text>
           </div>
           <div className="flex flex-row gap-10 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
             <Button
