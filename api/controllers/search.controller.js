@@ -87,7 +87,8 @@ import Listing from '../models/listing.model.js';
 
     console.log(criteria);
     const properties = await query.exec();
-
+//console print properties
+console.log(properties);
     res.status(200).json(properties);
   } catch (error) {
     next(error);
