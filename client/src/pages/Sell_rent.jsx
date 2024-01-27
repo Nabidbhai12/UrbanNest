@@ -6,12 +6,12 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
-import { useNavigate } from 'react-router-dom';
-
-  
-
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function test() {
+  const { currentUser } = useSelector((state) => state.user);
+
   const [filters, setFilters] = useState({
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
@@ -26,7 +26,7 @@ export default function test() {
     beds: 1,
     baths: 1,
     apartmentType: "house", // 'house', 'penthouse', 'duplex', 'studio'
-    email: "",
+    email: currentUser.email,
     contactInfo: "",
   });
 
@@ -50,13 +50,16 @@ export default function test() {
 
   const BackButton = () => {
     const navigate = useNavigate();
-  
+
     const goBack = () => {
       navigate(-1);
     };
-  
+
     return (
-      <button onClick={goBack} className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black">
+      <button
+        onClick={goBack}
+        className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black"
+      >
         Cancel
       </button>
     );
@@ -241,7 +244,6 @@ export default function test() {
         </span>
       );
     } else {
-
       return (
         <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
           Select Apartment Type
@@ -253,16 +255,16 @@ export default function test() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
-  
+
     // Retrieve the token from local storage or cookies
-  
+
     try {
-      const response = await fetch('/api/search/property', {
-        method: 'POST',
+      const response = await fetch("/api/search/property", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', 
+        credentials: "include",
         body: JSON.stringify({
           saleType: filters.saleType,
           propertyType: filters.propertyType,
@@ -279,14 +281,12 @@ export default function test() {
           apartmentType: filters.apartmentType,
           // Add other fields as needed
         }),
-       
-
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log("Search results:", data);
       // Handle the search results as needed
@@ -294,7 +294,6 @@ export default function test() {
       console.error("Error during API call:", error);
     }
   };
-  
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -327,7 +326,7 @@ export default function test() {
                           : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                       } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
                     >
-                      Buy
+                      Sell
                     </span>
                   </label>
                 </div>
@@ -760,6 +759,41 @@ export default function test() {
                   </div>
                 </div>
               </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Email
+                </span>
+                <input
+                  type="text"
+                  name="email"
+                  value={filters.email}
+                  onChange={handleInputChange}
+                  placeholder={currentUser.email}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-[40px] py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Contact Information
+                </span>
+                <input
+                  type="text"
+                  name="contactInfo"
+                  value={filters.contactInfo}
+                  onChange={handleInputChange}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Pictures
+                </span>
+                
+              </div>
+
             </div>
             <div className="flex flex-row gap-[30px] w-full items-center justify-center pt-[30px]">
               <button
