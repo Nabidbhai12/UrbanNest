@@ -1,14 +1,14 @@
-import React from 'react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useDispatch,useSelector } from 'react-redux'
-import { Button } from "../components/button"
-import { Input } from "../components/input"
-import { CheckBox } from "../components/checkBox"
-import { Img } from "../components/image"
-import { Text } from "../components/text"
-import { List } from "../components/list"
-import { Slider } from "../components/slider"
+import React from "react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Button } from "../components/button";
+import { Input } from "../components/input";
+import { CheckBox } from "../components/checkBox";
+import { Img } from "../components/image";
+import { Text } from "../components/text";
+import { List } from "../components/list";
+import { Slider } from "../components/slider";
 import LandingPageCard from "../components/LandingPageCard";
 import LandingPageFooter from "../components/LandingPageFooter";
 import LandingPageHeader from "../components/LandingPageHeader";
@@ -108,9 +108,16 @@ export default function Home() {
                           }
                         ></Input>
                       </div>
-                      <Button className="bg-gray-900 cursor-pointer font-bold py-[17px] rounded-[10px] text-center text-lg text-white-A700 w-full">
-                        Search
-                      </Button>
+                      <div className="flex flex-row w-full gap-[20px]">
+                        <Button className="bg-gray-900 cursor-pointer font-bold py-[17px] rounded-[10px] text-center text-lg text-white-A700 w-full">
+                          Search
+                        </Button>
+                        <Button
+                        onClick = {() => navigate("/search")} 
+                        className="bg-gray-900 cursor-pointer font-bold py-[17px] rounded-[10px] text-center text-lg text-white-A700 w-full">
+                          Advanced Search
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -712,8 +719,8 @@ export default function Home() {
                     className="leading-[180.00%] max-w-[600px] md:max-w-full text-center text-gray-900 text-lg"
                     size="txtManropeRegular18"
                   >
-                    We help businesses customize, automate and scale up their
-                    ad production and delivery.
+                    We help businesses customize, automate and scale up their ad
+                    production and delivery.
                   </Text>
                 </div>
                 <div className="flex sm:flex-col flex-row gap-2 items-start justify-start w-full">
@@ -736,6 +743,6 @@ export default function Home() {
       </div>
     </>
   );
-};
+}
 
 //export default Home;

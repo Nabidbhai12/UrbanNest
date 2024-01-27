@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import SearchResults from "./SearchResults";
 
+  
+
 
 export default function test() {
   const [filters, setFilters] = useState({
@@ -515,11 +517,6 @@ export default function test() {
                     required
                   />
                 </label>
-                <Img
-                  className="h-[30px] w-[30px]"
-                  src="images/img_eye.svg"
-                  alt="twitter"
-                />
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
