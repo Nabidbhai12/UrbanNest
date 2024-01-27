@@ -53,135 +53,70 @@ export default function Home() {
                     ad production and delivery.
                   </Text>
                 </div>
-                <div className="bg-yellow-50 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
+                <div className="bg-white-A700 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
                   <div className="flex flex-col gap-[38px] items-center justify-start w-full">
                     <div className="flex sm:flex-col flex-row gap-4 items-center justify-center w-full">
-                      <div class="py-[22px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg"
-                            src="images/img_buy_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/search")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl tracking-tight text-black dark:text-white font-extrabold font-manrope">
-                              Buy A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal text-black dark:text-gray-400 font-manrope">
-                            Find your place with an immersive photo experience
-                            and the most listings, including things you won't
-                            find anywhere else
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            Browse Homes
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
+                      <Button className="bg-gray-900 cursor-pointer flex-1 font-bold py-3 rounded-[10px] text-center text-lg text-white-A700 w-full">
+                        Buy
+                      </Button>
+                      <Button className="bg-gray-300 cursor-pointer flex-1 font-bold py-3 rounded-[10px] text-center text-gray-900 text-lg w-full">
+                        Sell
+                      </Button>
+                      <Button className="bg-gray-300 cursor-pointer flex-1 font-bold py-3 rounded-[10px] text-center text-gray-900 text-lg w-full">
+                        Rent
+                      </Button>
+                    </div>
+                    <div className="flex flex-col gap-6 items-start justify-start w-full">
+                      <div className="flex flex-col gap-5 items-start justify-start w-full">
+                        <Input
+                          name="textfieldlarge"
+                          placeholder="City/Street"
+                          className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
+                          wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pb-3.5 pt-5 px-4 rounded-[10px] w-full"
+                          suffix={
+                            <Img
+                              className="mt-auto mb-[5px] h-5 ml-[35px]"
+                              src="images/img_location.svg"
+                              alt="location"
+                            />
+                          }
+                        ></Input>
+                        <Input
+                          name="textfieldlarge_One"
+                          placeholder="Property Type"
+                          className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
+                          wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pb-3.5 pt-5 px-4 rounded-[10px] w-full"
+                          suffix={
+                            <Img
+                              className="mt-auto mb-[5px] h-5 ml-[35px]"
+                              src="images/img_sort.svg"
+                              alt="sort"
+                            />
+                          }
+                        ></Input>
+                        <Input
+                          name="textfieldlarge_Two"
+                          placeholder="Price Range"
+                          className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
+                          wrapClassName="bg-white-A700 border border-bluegray-100 border-solid flex pb-3.5 pt-5 px-4 rounded-[10px] w-full"
+                          suffix={
+                            <Img
+                              className="mt-auto mb-[5px] h-5 ml-[35px]"
+                              src="images/img_sort.svg"
+                              alt="sort"
+                            />
+                          }
+                        ></Input>
                       </div>
-
-                      <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg"
-                            src="images/img_rent_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/search")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl font-extrabold font-manrope tracking-tight text-black dark:text-white">
-                              Rent A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal text-black dark:text-gray-400 font-manrope">
-                            We're creating a seamless online experience - from
-                            shopping on the largest rental network, to applying,
-                            to paying rent
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            Find Rentals
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-
-                      <div class="py-[30px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg h-full"
-                            src="images/img_sell_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/sell_rent")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl font-extrabold font-manrope tracking-tight text-gray-900 dark:text-white-A700">
-                              Sell A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal font-manrope text-black dark:text-gray-400">
-                            No matter what path you take to sell your home, we
-                            can help you navigate a successful sale.
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            See your options
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
+                      <div className="flex flex-row w-full gap-[20px]">
+                        <Button className="bg-gray-900 cursor-pointer font-bold py-[17px] rounded-[10px] text-center text-lg text-white-A700 w-full">
+                          Search
+                        </Button>
+                        <Button
+                        onClick = {() => navigate("/search")} 
+                        className="bg-gray-900 cursor-pointer font-bold py-[17px] rounded-[10px] text-center text-lg text-white-A700 w-full">
+                          Advanced Search
+                        </Button>
                       </div>
                     </div>
                   </div>

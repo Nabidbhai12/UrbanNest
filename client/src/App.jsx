@@ -9,6 +9,7 @@ const SignUp = React.lazy(() => import("./pages/SignUp"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Test = React.lazy(() => import("./pages/test"));
 const Search = React.lazy(() => import("./pages/Search"));
+const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
 
 //Components
 const Header = React.lazy(() => import("./components/Header"));
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/search" element={<Search />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
+            <Route path="/sell_rent" element={<Sell_rent/>} />
           </Route>
         </Routes>
       </BrowserRouter>
