@@ -108,6 +108,7 @@ const LandingPageHeader = (props) => {
             >
               Blog
             </Text>
+
           </div>
           <div className="flex flex-row gap-10 h-[42px] md:h-auto sm:hidden items-center justify-start w-[228px]">
             <Button
