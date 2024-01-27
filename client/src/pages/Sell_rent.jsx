@@ -6,12 +6,12 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
-import { useNavigate } from 'react-router-dom';
-
-  
-
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function test() {
+  const { currentUser } = useSelector((state) => state.user);
+
   const [filters, setFilters] = useState({
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
@@ -26,16 +26,23 @@ export default function test() {
     beds: 1,
     baths: 1,
     apartmentType: "house", // 'house', 'penthouse', 'duplex', 'studio'
-    email: "",
+    email: currentUser.email,
+    images: [],
     contactInfo: "",
+    parking: false,
+    pets: false,
+    gym: false,
+    mosque: false,
   });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    console.log(name + " " + value + " " + type + " " + checked);
     setFilters({
       ...filters,
       [name]: type === "checkbox" ? checked : value,
     });
+    console.log("Parking: " + filters.parking);
   };
 
   const handleRangeChange = (e) => {
@@ -50,13 +57,16 @@ export default function test() {
 
   const BackButton = () => {
     const navigate = useNavigate();
-  
+
     const goBack = () => {
       navigate(-1);
     };
-  
+
     return (
-      <button onClick={goBack} className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black">
+      <button
+        onClick={goBack}
+        className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black"
+      >
         Cancel
       </button>
     );
@@ -241,7 +251,6 @@ export default function test() {
         </span>
       );
     } else {
-
       return (
         <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
           Select Apartment Type
@@ -250,19 +259,99 @@ export default function test() {
     }
   };
 
+  const ImageUploader = () => {
+    const [selectedImages, setSelectedImages] = useState([]);
+
+    const onSelectFile = (event) => {
+      const selectedFiles = event.target.files;
+      const selectedFilesArray = Array.from(selectedFiles);
+
+      const imagesArray = selectedFilesArray.map((file) => {
+        return URL.createObjectURL(file);
+      });
+
+      setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+
+      // FOR BUG IN CHROME
+      event.target.value = "";
+    };
+
+    function deleteHandler(image) {
+      setSelectedImages(selectedImages.filter((e) => e !== image));
+      URL.revokeObjectURL(image);
+    }
+
+    return (
+      <div className="py-8 px-8">
+        <label
+          className={`m-auto font-extrabold font-manrope flex flex-col items-center bg-white-A700 text-black justify-center border-dotted border-1 border-black rounded-2xl w-40 h-40 cursor-pointer text-lg ${
+            selectedImages.length >= 5 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          + Add Images
+          <br />
+          <span className="font-light text-sm pt-2">up to 5 images</span>
+          <input
+            type="file"
+            name="images"
+            className="hidden"
+            onChange={onSelectFile}
+            multiple
+            accept="image/png , image/jpeg, image/webp"
+            disabled={selectedImages.length >= 5}
+          />
+        </label>
+        <br />
+
+        <input type="file" className="hidden" multiple />
+
+        {selectedImages.length > 0 &&
+          (selectedImages.length >= 6 ? (
+            <p className="text-center"></p>
+          ) : (
+            <button
+              className="cursor-pointer font-manrope font-extrabold block mx-auto border-none rounded-full w-40 h-12 bg-white-A700 text-black hover:bg-black hover:text-white-A700 hover:transition duration-200"
+              onClick={() => {
+                console.log("Images: " + selectedImages);
+              }}
+            >
+              UPLOAD {selectedImages.length} IMAGE
+              {selectedImages.length === 1 ? "" : "S"}
+            </button>
+          ))}
+
+        <div className="flex flex-row gap-[15px] flex-wrap justify-center items-center">
+          {selectedImages &&
+            selectedImages.map((image, index) => (
+              <div key={image} className="m-4 mx-2 relative shadow-md">
+                <img src={image} alt="upload" className="w-auto h-48" />
+                <button
+                  onClick={() => deleteHandler(image)}
+                  className="absolute bottom-0 right-0 p-2 opacity-0 hover:opacity-100 bg-deep_orange-400 text-white hover:bg-red-600 transition duration-200 font-extrabold font-manrope rounded-[20px]"
+                >
+                  Delete Image
+                </button>
+                <p className="p-2">{index + 1}</p>
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
-  
+
     // Retrieve the token from local storage or cookies
-  
+
     try {
-      const response = await fetch('/api/search/property', {
-        method: 'POST',
+      const response = await fetch("/api/search/property", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', 
+        credentials: "include",
         body: JSON.stringify({
           saleType: filters.saleType,
           propertyType: filters.propertyType,
@@ -279,14 +368,12 @@ export default function test() {
           apartmentType: filters.apartmentType,
           // Add other fields as needed
         }),
-       
-
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log("Search results:", data);
       // Handle the search results as needed
@@ -294,7 +381,6 @@ export default function test() {
       console.error("Error during API call:", error);
     }
   };
-  
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -307,7 +393,11 @@ export default function test() {
               alt="Description"
             />
           </div>
-          <form onSubmit={handleSubmit} className="space-y-4 pt-[50px]">
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 pt-[50px]"
+            encType="multipart/form-data"
+          >
             <div className="flex flex-col space-y-[45px] font-markoone pl-[100px]">
               <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
                 <div>
@@ -327,7 +417,7 @@ export default function test() {
                           : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                       } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
                     >
-                      Buy
+                      Sell
                     </span>
                   </label>
                 </div>
@@ -749,12 +839,144 @@ export default function test() {
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "rent"
+                          filters.apartmentType === "Studio"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
                       >
                         Studio
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Email
+                </span>
+                <input
+                  type="text"
+                  name="email"
+                  value={filters.email}
+                  onChange={handleInputChange}
+                  placeholder={currentUser.email}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-[40px] py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Contact Information
+                </span>
+                <input
+                  type="text"
+                  name="contactInfo"
+                  value={filters.contactInfo}
+                  onChange={handleInputChange}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-[1px] gap-[40px] pt-[10px] font-markoone w-full">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Upload Pictures
+                </span>
+                <div className="flex flex-col bg-red-100 w-full h-auto rounded-[30px]">
+                  <ImageUploader />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] gap-[20px] pt-[50px] font-markoone">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Select Perks
+                </span>
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="parking"
+                        value={!filters.parking}
+                        checked={filters.parking === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.parking === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Parking
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="pets"
+                        value={!filters.pets}
+                        checked={filters.parking === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.pets === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Pets
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="gym"
+                        value={filters.gym}
+                        checked={filters.gym === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.gym === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Gym
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="mosque"
+                        value={filters.mosque}
+                        checked={filters.mosque === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.mosque === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Mosque
                       </span>
                     </label>
                   </div>

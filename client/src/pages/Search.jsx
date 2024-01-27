@@ -753,7 +753,7 @@ export default function test() {
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "rent"
+                          filters.apartmentType === "Studio"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
