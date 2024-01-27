@@ -2,10 +2,12 @@ import React from "react";
 
 import { Img } from "./image";
 import { Text } from "./text";
+import { useNavigate } from "react-router-dom";
 
 //import { Img, Text } from "components";
 
 const LandingPageFooter = (props) => {
+  const navigate = useNavigate();
   return (
     <>
       <footer className={props.className}>
@@ -209,8 +211,9 @@ const LandingPageFooter = (props) => {
                 </Text>
                 <div className="flex flex-col gap-3.5 items-start justify-start w-full">
                   <Text
-                    className="text-base text-gray-900 w-full"
+                    className="common-pointer cursor-pointer text-base text-center text-gray-900 w-auto"
                     size="txtManropeSemiBold16"
+                    onClick={() => navigate("/profile")}
                   >
                     Log in
                   </Text>
