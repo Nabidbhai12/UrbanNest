@@ -9,8 +9,14 @@ const SignUp = React.lazy(() => import("./pages/SignUp"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Test = React.lazy(() => import("./pages/test"));
 const Search = React.lazy(() => import("./pages/Search"));
+
 const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
+
+
+//const BlogPage = React.lazy(() => import("./pages/BlogPage"));
+
 const SearchResults=React.lazy(() => import("./pages/SearchResults"));
+
 
 //Components
 const Header = React.lazy(() => import("./components/Header"));

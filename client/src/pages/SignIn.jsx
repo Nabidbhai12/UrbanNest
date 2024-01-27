@@ -10,6 +10,7 @@ import OAuth from '../components/OAuth';
 export default function SignIn() {
   const [formData, setFormData] = useState({});
  const {loading,error}=useSelector(state=>state.user)
+ const [warning, setWarning] = useState('');
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,6 +19,8 @@ export default function SignIn() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Reset warning when user starts correcting
+    if (warning) setWarning('');
   };
 
   const handleSubmit = async (e) => {
@@ -39,8 +42,10 @@ export default function SignIn() {
 
       const data = await res.json();
      if(data.success==false){
+        setWarning(data.message);
+        console.log(data.message);
         dispatch(signInFailure(data.message));
-     return;
+        return;
       }
       //vlocalStoragee token to 
       console.log(data);
@@ -53,12 +58,13 @@ export default function SignIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-cyan-50 to-blue-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-8">
-        <h2 className="text-center text-3xl font-extrabold text-gray-800">Sign In</h2>
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          <div className="rounded-md -space-y-px">
+    <div className="min-h-screen flex items-center justify-center bg-yellow-50">
+    <div className="max-w-md w-full bg-yellow-50 rounded-lg shadow-xl p-8">
+      <h2 className="text-center text-3xl font-extrabold text-gray-800">Sign In</h2>
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      {warning && <p className="text-red-500 text-center">{warning}</p>}
+      <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <div className="rounded-md -space-y-px">
             <div>
               <label htmlFor="email" className="sr-only">Email address</label>
               <input
@@ -85,10 +91,12 @@ export default function SignIn() {
                 onChange={handleChange}
               />
             </div>
+            
           </div>
 
-          <div>
-            <button
+          <div className="space-y-4">
+
+          <button
               disabled={loading}
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

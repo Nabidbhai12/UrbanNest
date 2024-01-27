@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const blogSchema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -11,7 +11,12 @@ const blogSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    title: {
+    blog: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Blog',
+        required: true
+    },
+    content: {
         type: String,
         required: true,
         trim: true
@@ -24,29 +29,6 @@ const blogSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    /* numOfComments: {
-        type: Number,
-        default: 0
-    }, */
-    commentList: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Comment'
-        }
-    ],
-    content: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    tags: {
-        type: [String],
-        default: []
-    },
-    image: {
-        type: String, //url to image
-        default: ''
-    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -57,6 +39,6 @@ const blogSchema = new mongoose.Schema({
     }
 });
 
-const Blog = mongoose.model('Blog', blogSchema);
+const Comment = mongoose.model('Comment', commentSchema);
 
-export default Blog;
+export default Comment;
