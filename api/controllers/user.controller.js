@@ -4,7 +4,7 @@ import User from '../models/user.model.js';
 import UserList from '../models/userlist.model.js';
 import Listing from '../models/listing.model.js';
 export const authenticateToken = (req, res, next) => {
-    // console.log("au");
+    console.log("au");
     // console.log(req);
     // const authHeader = req.headers.authorization;
     // const token = authHeader && authHeader.split(' ')[1];
@@ -63,15 +63,17 @@ export const authenticateToken = (req, res, next) => {
     }
   };
   export const addPropertyForSale = async (req, res, next) => {
-    console.log("hello");
+    console.log("addPropertyForSale called");
     try {
-        const { title, description, location, price, size, rooms, propertyStatus } = req.body;
+        const { title, description, location, price, size, rooms, propertyStatus,apartmentType,condition,propertyType } = req.body;
         const imageUrls = req.files.map(file => file.path); // Cloudinary URLs
+        //print imageurl
+        console.log(imageUrls);
 
-        // Extract the user ID from the token
-        const token = req.headers.authorization.split(' ')[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const userId = decoded.id;
+        // // Extract the user ID from the token
+        // const token = req.headers.authorization.split(' ')[1];
+        // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = req.user.id;
 
         // Create a new property listing
         const newProperty = new Listing({
@@ -83,7 +85,10 @@ export const authenticateToken = (req, res, next) => {
             size,
             rooms,
             owner: userId,
-            propertyStatus
+            propertyStatus,
+            apartmentType,
+            condition,
+            propertyType
         });
 
         // Save the property listing

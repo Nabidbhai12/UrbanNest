@@ -7,8 +7,6 @@ import { Input } from "../components/input";
 import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from 'react-router-dom';
-import { useDispatch } from "react-redux";
-import SearchResults from "./SearchResults";
 
   
 
@@ -251,8 +249,7 @@ export default function test() {
       );
     }
   };
-  const [searchResults, setSearchResults] = useState([]); // State to manage search results
-  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
@@ -292,8 +289,7 @@ export default function test() {
   
       const data = await response.json();
       console.log("Search results:", data);
-      setSearchResults(data); // Set the search results in the state
-      navigate('/search-results', { state: { listings: data } }); // Pass searchResults as state      // Handle the search results as needed
+      // Handle the search results as needed
     } catch (error) {
       console.error("Error during API call:", error);
     }
@@ -777,9 +773,6 @@ export default function test() {
           </form>
         </div>
       </div>
-      <Routes>
-        <Route path="/search-results" element={<SearchResults listings={searchResults} />} />
-      </Routes>
     </div>
   );
 }
