@@ -8,7 +8,7 @@ import multer from "multer";
 const upload = multer({ storage });
 const router = express.Router();
 router.post('/updateProfile', authenticateToken, updateProfile);
-router.post('/addPropertyForSale',upload.array('images'), addPropertyForSale);
+router.post('/addPropertyForSale',authenticateToken,upload.array('images'), addPropertyForSale);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
 router.get('/getUserSellinglist',authenticateToken,getUserSellinglist);

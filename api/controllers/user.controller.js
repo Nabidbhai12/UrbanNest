@@ -4,8 +4,11 @@ import User from '../models/user.model.js';
 import UserList from '../models/userlist.model.js';
 import Listing from '../models/listing.model.js';
 export const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(' ')[1];
+    // console.log("au");
+    // console.log(req);
+    // const authHeader = req.headers.authorization;
+    // const token = authHeader && authHeader.split(' ')[1];
+    const token = req.cookies['access_token']; 
   
     if (token == null) return res.sendStatus(401);
   
