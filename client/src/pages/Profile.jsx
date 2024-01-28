@@ -49,11 +49,9 @@ export default function Profile() {
         });
         const data = await res.json();
         console.log(data);
+        console.log(data.success);
   
-        if (!data.success) {
-          console.log(data.message); // Handle error
-          return;
-        }
+       
   
         // Assuming data.user contains user details
         const userDetails = data.user;
@@ -76,33 +74,7 @@ export default function Profile() {
   }, []);
   
 
-  // const handleFileUpload = (file) => {
-  //   const storage = getStorage(app);
-  //   const fileName = new Date().getTime() + file.name;
-  //   const storageRef = ref(storage, fileName);
-  //   const uploadTask = uploadBytesResumable(storageRef, file);
 
-  //   uploadTask.on(
-  //     'state_changed',
-  //     (snapshot) => {
-  //       const progress =
-  //         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  //       setFilePerc(Math.round(progress));
-  //     },
-  //     (error) => {
-  //       setFileUploadError(true);
-  //     },
-  //     () => {
-  //       /* getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
-  //         setFormData({ ...formData, avatar: downloadURL })
-  //       ); */
-  //       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-  //         setFormData((prevFormData) => ({ ...prevFormData, avatar: downloadURL }));
-  //         setFilePerc(100); // Indicate that upload is complete
-  //       });
-  //     }
-  //   );
-  // };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -221,31 +193,31 @@ export default function Profile() {
     }
   };
   return (
-   
-      <div className='p-3 max-w-lg mx-auto'>
-        <div className='flex items-start justify-between'>
-          {/* User Image */}
-          <img
-            src={formData.avatar || 'default-avatar.png'} // Fallback to a default image if necessary
-            alt='Profile'
-            className='rounded-full h-24 w-24 object-cover'
-          />
-          {/* User Details and Actions */}
-          <div className='flex-1 ml-4'>
-            <h1 className='text-3xl font-semibold mb-3'>{formData.username}</h1>
-            <p>{formData.email}</p>
-            {/* User bio and contact number (optional) */}
-            <p>{formData.bio}</p>
-            <p>{formData.contactNumber}</p>
-            {/* Sign Out and Update Profile buttons */}
-            <div className='mt-4'>
-              <button onClick={handleSignOut} className='text-red-700 mr-4'>Sign Out</button>
-              <button onClick={handleShowListings} className='text-green-700'>Update Profile</button>
-            </div>
+    <div className='p-3 max-w-lg mx-auto'>
+      <div className='flex items-start justify-between'>
+        {/* User Image */}
+        <img
+          src={formData.avatar || 'default-avatar.png'} // Fallback to a default image if necessary
+          alt='Profile'
+          className='rounded-full h-24 w-24 object-cover'
+        />
+        {/* User Details and Actions */}
+        <div className='flex-1 ml-4'>
+          <h1 className='text-3xl font-semibold mb-3'>{formData.username}</h1>
+          <p>{formData.email}</p>
+          {/* User bio and contact number (optional) */}
+          <p>{formData.bio}</p>
+          <p>{formData.contactNumber}</p>
+          {/* Additional User Details */}
+      
+          {/* Sign Out and Update Profile buttons */}
+          <div className='mt-4'>
+            <button onClick={handleSignOut} className='text-red-700 mr-4'>Sign Out</button>
+            <button onClick={handleShowListings} className='text-green-700'>Update Profile</button>
           </div>
         </div>
-        {/* ... rest of the component ... */}
       </div>
-    );
-    
-}
+      {/* ... rest of the component ... */}
+    </div>
+  );
+}  
