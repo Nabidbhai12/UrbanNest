@@ -10,8 +10,6 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import SearchResults from "./SearchResults";
 
-  
-
 
 export default function test() {
   const [filters, setFilters] = useState({
