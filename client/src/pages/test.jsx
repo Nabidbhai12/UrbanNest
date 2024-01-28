@@ -1,813 +1,1000 @@
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
-import { Text } from "../components/text";
-import { List } from "../components/list";
-import { Slider } from "../components/slider";
-import LandingPageCard from "../components/LandingPageCard";
-import LandingPageFooter from "../components/LandingPageFooter";
-import LandingPageHeader from "../components/LandingPageHeader";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-export default function Home() {
-  const navigate = useNavigate();
+export default function test() {
+  const { currentUser } = useSelector((state) => state.user);
 
-  const landingPageCardPropList = [
-    {},
-    { image: "../../images/img_image_1.png" },
-    { image: "../../images/img_image_2.png" },
-    { image: "../../images/img_image_3.png" },
-    { image: "../../images/img_image_4.png" },
-    { image: "../../images/img_image_5.png" },
-  ];
-  const sliderRef = React.useRef(null);
-  const [sliderState, setsliderState] = React.useState(0);
+  const [filters, setFilters] = useState({
+    saleType: "sell", // 'sell' or 'rent'
+    propertyType: "residential", // 'commercial' or 'residential'
+    condition: "new", // 'new', 'used', or 'under-construction'
+    city: "",
+    zip: "",
+    address: "",
+    areaRange_min: [0, 10000],
+    areaRange_max: [0, 10000],
+    priceRange_min: [0, 1000000],
+    priceRange_max: [0, 1000000],
+    beds: 1,
+    baths: 1,
+    apartmentType: "house", // 'house', 'penthouse', 'duplex', 'studio'
+    email: currentUser.email,
+    images: [],
+    contactInfo: "",
+    parking: false,
+    pets: false,
+    gym: false,
+    mosque: false,
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    console.log(name + " " + value + " " + type + " " + checked);
+    setFilters({
+      ...filters,
+      [name]: type === "checkbox" ? checked : value,
+    });
+    console.log("Parking: " + filters.parking);
+  };
+
+  const handleRangeChange = (e) => {
+    const { name, value } = e.target;
+    setFilters({
+      ...filters,
+      [name]: value.split(",").map(Number),
+    });
+
+    console.log("Name: " + name + " Value: " + value);
+  };
+
+  const BackButton = () => {
+    const navigate = useNavigate();
+
+    const goBack = () => {
+      navigate(-1);
+    };
+
+    return (
+      <button
+        onClick={goBack}
+        className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black"
+      >
+        Cancel
+      </button>
+    );
+  };
+
+  const renderAreaLabels = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            0
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            3000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            6000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            9000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
+            12000
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            0
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            1000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            2000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            3000
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
+            4000
+          </span>
+        </>
+      );
+    }
+  };
+
+  const renderBedLabels = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            5
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            10
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            15
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            20+
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            1
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            3
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            5
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
+            7+
+          </span>
+        </>
+      );
+    }
+  };
+
+  const renderBathLabels = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            2
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            4
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            6
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            8
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            10+
+          </span>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
+            1
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            2
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
+            3
+          </span>
+          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
+            4+
+          </span>
+        </>
+      );
+    }
+  };
+
+  const changeBedToRooms = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Rooms
+        </span>
+      );
+    } else {
+      return (
+        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Beds
+        </span>
+      );
+    }
+  };
+
+  const changeBathsToWashrooms = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <span className="bg-black text-white-A700 w-[110px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Washrooms
+        </span>
+      );
+    } else {
+      return (
+        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Baths
+        </span>
+      );
+    }
+  };
+
+  const changeBedandBathToRoomsandBaths = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Rooms & Washrooms
+        </span>
+      );
+    } else {
+      return (
+        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Beds & Baths
+        </span>
+      );
+    }
+  };
+
+  const changeApartmentToProperty = () => {
+    if (filters.propertyType === "commercial") {
+      return (
+        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Select Property Type
+        </span>
+      );
+    } else {
+      return (
+        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+          Select Apartment Type
+        </span>
+      );
+    }
+  };
+
+  const ImageUploader = () => {
+    const [selectedImages, setSelectedImages] = useState([]);
+
+    const onSelectFile = (event) => {
+      const selectedFiles = event.target.files;
+      const selectedFilesArray = Array.from(selectedFiles);
+
+      const imagesArray = selectedFilesArray.map((file) => {
+        return URL.createObjectURL(file);
+      });
+
+      setSelectedImages((previousImages) => previousImages.concat(imagesArray));
+
+      // FOR BUG IN CHROME
+      event.target.value = "";
+    };
+
+    function deleteHandler(image) {
+      setSelectedImages(selectedImages.filter((e) => e !== image));
+      URL.revokeObjectURL(image);
+    }
+
+    return (
+      <div className="py-8 px-8">
+        <label
+          className={`m-auto font-extrabold font-manrope flex flex-col items-center bg-white-A700 text-black justify-center border-dotted border-1 border-black rounded-2xl w-40 h-40 cursor-pointer text-lg ${
+            selectedImages.length >= 5 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          + Add Images
+          <br />
+          <span className="font-light text-sm pt-2">up to 5 images</span>
+          <input
+            type="file"
+            name="images"
+            className="hidden"
+            onChange={onSelectFile}
+            multiple
+            accept="image/png , image/jpeg, image/webp"
+            disabled={selectedImages.length >= 5}
+          />
+        </label>
+        <br />
+
+        <input type="file" className="hidden" multiple />
+
+        {selectedImages.length > 0 &&
+          (selectedImages.length >= 6 ? (
+            <p className="text-center"></p>
+          ) : (
+            <button
+              className="cursor-pointer font-manrope font-extrabold block mx-auto border-none rounded-full w-40 h-12 bg-white-A700 text-black hover:bg-black hover:text-white-A700 hover:transition duration-200"
+              onClick={() => {
+                console.log("Images: " + selectedImages);
+              }}
+            >
+              UPLOAD {selectedImages.length} IMAGE
+              {selectedImages.length === 1 ? "" : "S"}
+            </button>
+          ))}
+
+        <div className="flex flex-row gap-[15px] flex-wrap justify-center items-center">
+          {selectedImages &&
+            selectedImages.map((image, index) => (
+              <div key={image} className="m-4 mx-2 relative shadow-md">
+                <img src={image} alt="upload" className="w-auto h-48" />
+                <button
+                  onClick={() => deleteHandler(image)}
+                  className="absolute bottom-0 right-0 p-2 opacity-0 hover:opacity-100 bg-deep_orange-400 text-white hover:bg-red-600 transition duration-200 font-extrabold font-manrope rounded-[20px]"
+                >
+                  Delete Image
+                </button>
+                <p className="p-2">{index + 1}</p>
+              </div>
+            ))}
+        </div>
+      </div>
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Submitted filters:", filters);
+
+    // Retrieve the token from local storage or cookies
+
+    try {
+      const response = await fetch("/api/search/property", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          saleType: filters.saleType,
+          propertyType: filters.propertyType,
+          condition: filters.condition,
+          city: filters.city,
+          zip: filters.zip,
+          address: filters.address,
+          areaRange_min: filters.areaRange_min[0],
+          areaRange_max: filters.areaRange_max[1],
+          priceRange_min: filters.priceRange_min[0],
+          priceRange_max: filters.priceRange_max[1],
+          beds: filters.beds,
+          baths: filters.baths,
+          apartmentType: filters.apartmentType,
+          // Add other fields as needed
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Search results:", data);
+      // Handle the search results as needed
+    } catch (error) {
+      console.error("Error during API call:", error);
+    }
+  };
 
   return (
-    <>
-      <div className="bg-white-A700 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-auto sm:w-full md:w-full">
-        <div className="flex flex-col items-start justify-start w-full">
-          <div className="bg-yellow-50 flex flex-col font-manrope items-start justify-start md:pl-10 sm:pl-5 pl-[120px] py-[50px] w-full">
-            <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-center justify-start w-full">
-              <div className="flex flex-1 flex-col gap-10 items-start justify-start w-full">
-                <div className="flex flex-col gap-4 items-start justify-start w-full">
-                  <Text
-                    className="leading-[140.00%] sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px]"
-                    size="txtManropeExtraBold46"
-                  >
-                    <>
-                      Find a perfect property
-                      <br />
-                      Where you&#39;ll love to live
-                    </>
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[610px] md:max-w-full text-gray-700 text-xl"
-                    size="txtManropeRegular20"
-                  >
-                    We helps businesses customize, automate and scale up their
-                    ad production and delivery.
-                  </Text>
-                </div>
-                <div className="bg-yellow-50 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
-                  <div className="flex flex-col gap-[38px] items-center justify-start w-full">
-                    <div className="flex sm:flex-col flex-row gap-4 items-center justify-center w-full">
-                      <div class="py-[22px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg"
-                            src="images/img_buy_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/search")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl tracking-tight text-black dark:text-white font-extrabold font-manrope">
-                              Buy A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal text-black dark:text-gray-400 font-manrope">
-                            Find your place with an immersive photo experience
-                            and the most listings, including things you won't
-                            find anywhere else
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            Browse Homes
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-
-                      <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg"
-                            src="images/img_rent_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/search")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl font-extrabold font-manrope tracking-tight text-black dark:text-white">
-                              Rent A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal text-black dark:text-gray-400 font-manrope">
-                            We're creating a seamless online experience - from
-                            shopping on the largest rental network, to applying,
-                            to paying rent
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            Find Rentals
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-
-                      <div class="py-[30px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                        <a href="#">
-                          <img
-                            class="rounded-t-lg h-full"
-                            src="images/img_sell_a_home.jpg"
-                            alt=""
-                          />
-                        </a>
-                        <div onClick={() => navigate("/sell_rent")} class="p-5">
-                          <a href="#">
-                            <h5 class="mb-2 text-2xl font-extrabold font-manrope tracking-tight text-gray-900 dark:text-white-A700">
-                              Sell A Home
-                            </h5>
-                          </a>
-                          <p class="mb-3 font-normal font-manrope text-black dark:text-gray-400">
-                            No matter what path you take to sell your home, we
-                            can help you navigate a successful sale.
-                          </p>
-                          <a
-                            href="#"
-                            class="inline-flex items-center px-3 py-2 text-sm font-extrabold font-manrope text-center text-black bg-yellow-50 rounded-lg hover:bg-black hover:text-white-A700 transition duration-300 ease-in-out focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                          >
-                            See your options
-                            <svg
-                              class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 14 10"
-                            >
-                              <path
-                                stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9"
-                              />
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex md:flex-1 flex-col items-center justify-start w-[47%] md:w-full">
-                <Img
-                  className="h-[503px] md:h-auto object-cover w-full"
-                  src="images/img_image.png"
-                  alt="image"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
-          <div className="flex md:flex-col flex-row gap-6 items-center justify-center max-w-[1200px] mx-auto w-full">
-            <div className="bg-red-100 flex flex-1 flex-col h-[424px] md:h-auto items-start justify-center md:px-10 sm:px-5 px-[50px] py-[46px] rounded-[20px] w-full">
-              <div className="flex flex-col gap-[50px] items-start justify-start w-full">
-                <div className="flex flex-col gap-4 items-start justify-start w-full">
-                  <Text
-                    className="leading-[140.00%] max-w-[488px] md:max-w-full text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px]"
-                    size="txtManropeExtraBold36"
-                  >
-                    Simple & easy way to find your dream Appointment
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[488px] md:max-w-full text-gray-900 text-lg"
-                    size="txtManropeRegular18"
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry.{" "}
-                  </Text>
-                </div>
-                <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[138px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
-                  Get Started
-                </Button>
-              </div>
-            </div>
-            <div className="flex flex-1 flex-col items-start justify-start w-full">
-              <div className="sm:gap-5 gap-6 grid sm:grid-cols-1 grid-cols-2 justify-center min-h-[auto] w-full">
-                <div className="bg-deep_orange-50 flex flex-1 flex-col h-[200px] md:h-auto items-start justify-center sm:px-5 px-[30px] py-6 rounded-[20px] w-full">
-                  <div className="flex flex-col gap-5 items-start justify-start w-full">
-                    <Img
-                      className="h-[30px] w-[30px]"
-                      src="images/img_refresh.svg"
-                      alt="refresh"
-                    />
-                    <Text
-                      className="leading-[135.00%] max-w-[222px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
-                      size="txtManropeExtraBold28"
-                    >
-                      <>
-                        Search <br />
-                        your location
-                      </>
-                    </Text>
-                  </div>
-                </div>
-                <div className="bg-deep_orange-50 flex flex-1 flex-col h-[200px] md:h-auto items-start justify-center sm:px-5 px-[30px] py-6 rounded-[20px] w-full">
-                  <div className="flex flex-col gap-5 items-start justify-start w-full">
-                    <Img
-                      className="h-[30px] w-[30px]"
-                      src="images/img_instagram.svg"
-                      alt="instagram"
-                    />
-                    <Text
-                      className="leading-[135.00%] max-w-[222px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
-                      size="txtManropeExtraBold28"
-                    >
-                      <>
-                        Visit <br />
-                        Appointment
-                      </>
-                    </Text>
-                  </div>
-                </div>
-                <div className="bg-deep_orange-50 flex flex-1 flex-col h-[200px] md:h-auto items-start justify-center sm:px-5 px-[30px] py-6 rounded-[20px] w-full">
-                  <div className="flex flex-col gap-5 items-start justify-start w-full">
-                    <Img
-                      className="h-[30px] w-[30px]"
-                      src="images/img_camera.svg"
-                      alt="camera"
-                    />
-                    <Text
-                      className="leading-[135.00%] max-w-[222px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
-                      size="txtManropeExtraBold28"
-                    >
-                      <>
-                        Get your <br />
-                        dream house
-                      </>
-                    </Text>
-                  </div>
-                </div>
-                <div className="bg-deep_orange-50 flex flex-1 flex-col h-[200px] md:h-auto items-start justify-center sm:px-5 px-[30px] py-6 rounded-[20px] w-full">
-                  <div className="flex flex-col gap-5 items-start justify-start w-full">
-                    <Img
-                      className="h-[30px] w-[30px]"
-                      src="images/img_instagram_orange_a700.svg"
-                      alt="instagram"
-                    />
-                    <Text
-                      className="leading-[135.00%] max-w-[222px] md:max-w-full sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px]"
-                      size="txtManropeExtraBold28"
-                    >
-                      <>
-                        Enjoy your <br />
-                        Appointment
-                      </>
-                    </Text>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gray-50 flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] py-[50px] w-full">
-          <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-start justify-start max-w-[1200px] mx-auto w-full">
-            <List
-              className="md:flex-1 sm:flex-col flex-row md:gap-10 gap-[100px] grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 w-[73%] md:w-full"
-              orientation="horizontal"
-            >
-              <div className="flex flex-col gap-[18px] items-start justify-start w-full">
-                <Button className="bg-white-A700 flex h-[60px] items-center justify-center p-3.5 rounded-[50%] shadow-bs w-[60px]">
-                  <Img className="h-8" src="images/img_clock.svg" alt="clock" />
-                </Button>
-                <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                  <Text
-                    className="sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px] w-full"
-                    size="txtManropeExtraBold46"
-                  >
-                    $15.4M
-                  </Text>
-                  <Text
-                    className="leading-[140.00%] text-bluegray-600 text-xl tracking-[-0.40px]"
-                    size="txtManropeSemiBold20"
-                  >
-                    <>
-                      Owned from
-                      <br />
-                      Properties transactions
-                    </>
-                  </Text>
-                </div>
-              </div>
-              <div className="flex flex-col gap-[18px] items-start justify-start w-full">
-                <Button className="bg-white-A700 flex h-[60px] items-center justify-center p-3.5 rounded-[50%] shadow-bs w-[60px]">
-                  <Img
-                    className="h-8"
-                    src="images/img_arrowdown.svg"
-                    alt="arrowdown"
-                  />
-                </Button>
-                <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                  <Text
-                    className="sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px] w-full"
-                    size="txtManropeExtraBold46"
-                  >
-                    25K+
-                  </Text>
-                  <Text
-                    className="leading-[140.00%] max-w-[225px] md:max-w-full text-bluegray-600 text-xl tracking-[-0.40px]"
-                    size="txtManropeSemiBold20"
-                  >
-                    Properties for Buy & sell Successfully
-                  </Text>
-                </div>
-              </div>
-              <div className="flex flex-col gap-[18px] items-start justify-start w-full">
-                <Button className="bg-white-A700 flex h-[60px] items-center justify-center p-3.5 rounded-[50%] shadow-bs w-[60px]">
-                  <Img className="h-8" src="images/img_reply.svg" alt="reply" />
-                </Button>
-                <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                  <Text
-                    className="sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px] w-full"
-                    size="txtManropeExtraBold46"
-                  >
-                    500
-                  </Text>
-                  <Text
-                    className="leading-[140.00%] max-w-[225px] md:max-w-full text-bluegray-600 text-xl tracking-[-0.40px]"
-                    size="txtManropeSemiBold20"
-                  >
-                    <>
-                      Daily completed <br />
-                      transactions
-                    </>
-                  </Text>
-                </div>
-              </div>
-            </List>
-            <div className="flex flex-1 flex-col gap-[18px] items-start justify-start w-full">
-              <Button className="bg-white-A700 flex h-[60px] items-center justify-center p-3.5 rounded-[50%] shadow-bs w-[60px]">
-                <Img
-                  className="h-8"
-                  src="images/img_checkmark.svg"
-                  alt="checkmark"
-                />
-              </Button>
-              <div className="flex flex-col gap-3.5 items-start justify-start w-full">
-                <Text
-                  className="sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px] w-full"
-                  size="txtManropeExtraBold46"
-                >
-                  600+
-                </Text>
-                <Text
-                  className="text-bluegray-600 text-xl tracking-[-0.40px] w-full"
-                  size="txtManropeSemiBold20"
-                >
-                  Reagular Clients
-                </Text>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
-          <div className="flex flex-col md:gap-10 gap-[60px] md:h-auto items-start justify-start max-w-[1200px] mx-auto w-full">
-            <div className="flex flex-col gap-6 items-start justify-start w-full">
-              <div className="flex sm:flex-col flex-row md:gap-10 items-center justify-between w-full">
-                <Text
-                  className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-auto"
-                  size="txtManropeExtraBold36"
-                >
-                  Featured Properties
-                </Text>
-                <Button
-                  className="common-pointer bg-transparent cursor-pointer flex items-center justify-center min-w-[124px]"
-                  onClick={() => navigate("/listing")}
-                  rightIcon={
-                    <Img
-                      className="h-6 mb-[3px] ml-2"
-                      src="images/img_arrowright.svg"
-                      alt="arrow_right"
-                    />
-                  }
-                >
-                  <div className="font-bold text-left text-lg text-orange-A700">
-                    Explore All
-                  </div>
-                </Button>
-              </div>
-              <div className="flex sm:flex-col flex-row gap-2.5 items-start justify-start w-full">
-                <Button className="bg-transparent cursor-pointer font-bold min-w-[159px] text-center text-gray-900 text-lg">
-                  Resident Property
-                </Button>
-                <Button className="bg-transparent cursor-pointer font-bold min-w-[186px] text-center text-gray-400 text-lg">
-                  Commercial Property
-                </Button>
-                <Button className="bg-transparent cursor-pointer font-bold min-w-[164px] text-center text-gray-400 text-lg">
-                  Industrial Property
-                </Button>
-                <Button className="bg-transparent cursor-pointer font-bold min-w-[180px] text-center text-gray-400 text-lg">
-                  Agriculture Property
-                </Button>
-              </div>
-            </div>
-            <div className="flex flex-col items-start justify-start w-full">
-              <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
-                {landingPageCardPropList.map((props, index) => (
-                  <React.Fragment key={`LandingPageCard${index}`}>
-                    <LandingPageCard
-                      className="flex flex-1 flex-col h-full items-start justify-start w-full"
-                      {...props}
-                    />
-                  </React.Fragment>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="bg-gray-51 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
-          <div className="flex flex-col md:gap-10 gap-[150px] items-center justify-center max-w-[1200px] mx-auto w-full">
-            <div className="flex md:flex-col flex-row md:gap-10 gap-[85px] items-center justify-start w-full">
-              <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
-                <div className="flex flex-col gap-5 items-start justify-start w-full">
-                  <Text
-                    className="leading-[140.00%] max-w-[557px] md:max-w-full text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px]"
-                    size="txtManropeExtraBold36"
-                  >
-                    Simple & easy way to find your dream Appointment
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[557px] md:max-w-full text-gray-700 text-lg"
-                    size="txtManropeRegular18Gray700"
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. In a free hour, when our power of
-                    choice is untrammelled and when nothing prevents our being
-                    able to do what we like best, every pleasure is to be
-                    welcomed.
-                  </Text>
-                </div>
-                <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[138px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
-                  Get Started
-                </Button>
-              </div>
-              <div className="flex flex-1 sm:flex-col flex-row gap-5 items-start justify-start w-full">
-                <div className="flex flex-1 flex-col gap-4 items-start justify-start w-full">
-                  <Img
-                    className="h-[327px] md:h-auto object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src="images/img_rectangle18.png"
-                    alt="rectangleEighteen"
-                  />
-                  <Img
-                    className="h-[218px] md:h-auto object-cover rounded-tl-[10px] rounded-tr-[10px] w-full"
-                    src="images/img_rectangle21.png"
-                    alt="rectangleTwentyOne"
-                  />
-                </div>
-                <div className="flex flex-1 flex-col gap-4 items-start justify-start w-full">
-                  <Img
-                    className="h-[218px] md:h-auto object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src="images/img_rectangle19.png"
-                    alt="rectangleNineteen"
-                  />
-                  <Img
-                    className="h-[327px] md:h-auto object-cover rounded-tl-[10px] rounded-tr-[10px] w-full"
-                    src="images/img_rectangle20.png"
-                    alt="rectangleTwenty"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="flex md:flex-col flex-row md:gap-10 gap-[157px] items-center justify-start w-full">
-              <Img
-                className="flex-1 md:flex-none h-[589px] sm:h-auto max-h-[589px] object-cover rounded-[10px] sm:w-[] md:w-[]"
-                src="images/img_rectangle20_589x521.png"
-                alt="rectangleTwenty_One"
-              />
-              <div className="flex flex-1 flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
-                <div className="flex flex-col gap-5 items-start justify-start w-full">
-                  <div className="flex flex-col gap-5 items-start justify-start w-full">
-                    <Text
-                      className="leading-[140.00%] max-w-[521px] md:max-w-full text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px]"
-                      size="txtManropeExtraBold36"
-                    >
-                      Best rated host on popular rental sites
-                    </Text>
-                    <Text
-                      className="leading-[180.00%] max-w-[521px] md:max-w-full text-gray-700 text-lg"
-                      size="txtManropeRegular18Gray700"
-                    >
-                      Lorem Ipsum is simply dummy text of the printing and
-                      typesetting industry. In a free hour, when our power of
-                      choice is untrammelled.
-                    </Text>
-                  </div>
-                  <div className="flex flex-col gap-3 items-start justify-start w-full">
-                    <CheckBox
-                      className="font-semibold sm:pr-5 text-gray-900 text-left text-lg"
-                      inputClassName="mr-[5px]"
-                      name="findexcellentde_One"
-                      id="findexcellentde_One"
-                      label="Find excellent deals"
-                    ></CheckBox>
-                    <CheckBox
-                      className="font-semibold sm:pr-5 text-gray-900 text-left text-lg"
-                      inputClassName="mr-[5px]"
-                      name="friendlyhost"
-                      id="friendlyhost"
-                      label="Friendly host & Fast support"
-                    ></CheckBox>
-                    <CheckBox
-                      className="font-semibold sm:pr-5 text-gray-900 text-left text-lg"
-                      inputClassName="mr-[5px]"
-                      name="securepaymentsy_One"
-                      id="securepaymentsy_One"
-                      label="Secure payment system"
-                    ></CheckBox>
-                  </div>
-                </div>
-                <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[134px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
-                  Learn more
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col font-manrope gap-6 items-start justify-start w-full">
-          <div className="flex flex-col items-center justify-center md:px-10 sm:px-5 px-[215px] w-full">
-            <Slider
-              autoPlay
-              autoPlayInterval={2000}
-              activeIndex={sliderState}
-              responsive={{
-                0: { items: 1 },
-                550: { items: 1 },
-                1050: { items: 1 },
-              }}
-              onSlideChanged={(e) => {
-                setsliderState(e?.item);
-              }}
-              ref={sliderRef}
-              className="max-w-[1010px] mx-auto w-full"
-              items={[...Array(3)].map(() => (
-                <React.Fragment key={Math.random()}>
-                  <div className="flex md:flex-col flex-row md:gap-10 gap-[100px] items-start justify-start mx-2.5">
-                    <Img
-                      className="flex-1 md:flex-none h-[344px] sm:h-auto object-cover rounded-lg w-full"
-                      src="images/img_rectangle5591.png"
-                      alt="rectangle5591"
-                    />
-                    <div className="flex flex-1 flex-col items-start justify-start w-full">
-                      <div className="flex flex-col gap-[30px] items-start justify-start w-full">
-                        <div className="flex sm:flex-col flex-row sm:gap-10 gap-[73px] items-center justify-start w-full">
-                          <div className="flex flex-1 flex-col gap-1 items-start justify-start w-full">
-                            <Text
-                              className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
-                              size="txtManropeExtraBold28"
-                            >
-                              Taylor Wilson
-                            </Text>
-                            <Text
-                              className="text-gray-900 text-lg w-full"
-                              size="txtManropeSemiBold18"
-                            >
-                              Product Manager - Static Mania
-                            </Text>
-                          </div>
-                          <Img
-                            className="h-[51px] max-h-[51px] sm:w-[]"
-                            src="images/img_shape.svg"
-                            alt="shape"
-                          />
-                        </div>
-                        <Text
-                          className="leading-[165.00%] max-w-[455px] md:max-w-full text-2xl md:text-[22px] text-gray-700 sm:text-xl"
-                          size="txtManropeSemiBold24"
-                        >
-                          Eget eu massa et consectetur. Mauris donec. Leo a, id
-                          sed duis proin sodales. Turpis viverra diam porttitor
-                          mattis morbi ac amet. Euismod commodo. We get you
-                          customer relationships that last.{" "}
-                        </Text>
-                      </div>
-                    </div>
-                  </div>
-                </React.Fragment>
-              ))}
+    <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
+      <div className="flex flex-col items-center justify-start w-full py-[50px]">
+        <div className="bg-gradient-to-br from-white-A700 to-yellow-50 flex flex-col font-manrope items-center justify-start md:pl-10 sm:pl-5 px-[120px] py-[50px] w-3/4 h-3/4 overflow-hidden rounded-lg shadow-lg">
+          <div className="bg-white-A700 flex flex-col items-center justify-start overflow-hidden pb-[100px] rounded-lg shadow-lg w-[1050px] h-[350px]">
+            <Img
+              className="scale-100 w-full h-auto rounded-lg shadow-md"
+              src="images/img_search_page_image.jpg"
+              alt="Description"
             />
           </div>
-          <div className="flex flex-row gap-[30px] items-start justify-between pl-[770px] pr-[215px] md:px-10 sm:px-5 w-full">
-            <div className="flex flex-row gap-2 items-center justify-start w-auto">
-              <Img
-                className="h-6 w-6"
-                src="images/img_arrowleft.svg"
-                alt="arrowleft"
-              />
-              <Text
-                className="text-gray-604 text-lg w-auto"
-                size="txtManropeBold18"
-              >
-                Previews
-              </Text>
-            </div>
-            <div className="flex flex-row gap-2 items-center justify-start w-auto">
-              <Text
-                className="text-lg text-orange-A700 w-auto"
-                size="txtManropeBold18OrangeA700"
-              >
-                Next
-              </Text>
-              <Img
-                className="h-6 w-6"
-                src="images/img_arrowright.svg"
-                alt="arrowright"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="bg-gray-900 flex flex-col font-manrope items-center justify-center p-[120px] md:px-10 sm:px-5 w-full">
-          <div className="flex flex-col md:gap-10 gap-[120px] items-center justify-start max-w-[1200px] mx-auto w-full">
-            <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
-              <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
-                <Text
-                  className="flex-1 text-4xl sm:text-[32px] md:text-[34px] text-white-A700 tracking-[-0.72px] w-auto"
-                  size="txtManropeExtraBold36WhiteA700"
-                >
-                  News & Consult
-                </Text>
-                <Button
-                  className="common-pointer bg-transparent cursor-pointer flex items-center justify-center min-w-[124px]"
-                  onClick={() => navigate("/listing")}
-                  rightIcon={
-                    <Img
-                      className="h-6 mb-[3px] ml-2"
-                      src="images/img_arrowright.svg"
-                      alt="arrow_right"
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-4 pt-[50px]"
+            encType="multipart/form-data"
+          >
+            <div className="flex flex-col space-y-[45px] font-markoone pl-[100px]">
+              <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="saleType"
+                      value="sell"
+                      checked={filters.saleType === "sell"}
+                      onChange={handleInputChange}
                     />
-                  }
-                >
-                  <div className="font-bold text-left text-lg text-orange-A700">
-                    Explore All
-                  </div>
-                </Button>
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.saleType === "sell"
+                          ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Sell
+                    </span>
+                  </label>
+                </div>
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="saleType"
+                      value="rent"
+                      checked={filters.saleType === "rent"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.saleType === "rent"
+                          ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Rent
+                    </span>
+                  </label>
+                </div>
               </div>
-              <List
-                className="sm:flex-col flex-row gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-start w-full"
-                orientation="horizontal"
+
+              <div className="flex sm:flex-col flex-row gap-24 items-start justify-start w-full">
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="propertyType"
+                      value="commercial"
+                      checked={filters.propertyType === "commercial"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.propertyType === "commercial"
+                          ? "bg-black text-white-A700 px-[130px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[130px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Commercial
+                    </span>
+                  </label>
+                </div>
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      name="propertyType"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      value="residential"
+                      checked={filters.propertyType === "residential"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.propertyType === "residential"
+                          ? "bg-black text-white-A700 px-[130px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[130px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Residential
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex sm:flex-col flex-row gap-16 items-start justify-start w-full">
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="condition"
+                      value="new"
+                      checked={filters.condition === "new"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.condition === "new"
+                          ? "bg-black text-white-A700 px-[120px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[120px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      New
+                    </span>
+                  </label>
+                </div>
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="condition"
+                      value="used"
+                      checked={filters.condition === "used"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.condition === "used"
+                          ? "bg-black text-white-A700 px-[120px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[120px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Used
+                    </span>
+                  </label>
+                </div>
+                <div>
+                  <label className="flex items-center space-x-3">
+                    <input
+                      type="radio"
+                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                      name="condition"
+                      value="under_construction"
+                      checked={filters.condition === "under_construction"}
+                      onChange={handleInputChange}
+                    />
+                    <span
+                      className={`rounded-full px-4 py-2 text-lg ${
+                        filters.condition === "under_construction"
+                          ? "bg-black text-white-A700 px-[57px] rounded-[10px]"
+                          : "bg-gray-200 text-black px-[57px] rounded-[10px]"
+                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                    >
+                      Under Construction
+                    </span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex flex-row">
+                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                  <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                    Select City
+                  </span>
+                  <select
+                    name="city"
+                    value={filters.city}
+                    onChange={handleInputChange}
+                    className="block w-full mt-1 font-extrabold font-manrope rounded-[50px]"
+                  >
+                    <option value="Dhaka">Dhaka</option>
+                    <option value="Rajshahi">Rajshahi</option>
+                    <option value="Chittagong">Chittagong</option>
+                    <option value="Khulna">Khulna</option>
+                    <option value="Sylhet">Sylhet</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
+                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                    Zip
+                  </span>
+                  <input
+                    type="text"
+                    name="zip"
+                    value={filters.zip}
+                    onChange={handleInputChange}
+                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="flex items-center space-x-3 pt-[50px] font-markoone">
+                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                    Address
+                  </span>
+                  <input
+                    type="text"
+                    name="address"
+                    value={filters.address}
+                    onChange={handleInputChange}
+                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                    placeholder="Enter Address, Location or Neighbourhood"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Area (sqft)
+                </span>
+
+                <div className="relative flex flex-col">
+                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Min
+                    </span>
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="areaRange_min"
+                        value={filters.areaRange_min.join(",")}
+                        min={filters.propertyType === "commercial" ? 2000 : 500}
+                        max={
+                          filters.propertyType === "commercial" ? 12000 : 4500
+                        }
+                        step={filters.propertyType === "commercial" ? 500 : 50}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderAreaLabels()}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Max
+                    </span>
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="areaRange_max"
+                        value={filters.areaRange_max.join(",")}
+                        min={filters.propertyType === "commercial" ? 2000 : 500}
+                        max={
+                          filters.propertyType === "commercial" ? 12000 : 4000
+                        }
+                        step={filters.propertyType === "commercial" ? 500 : 50}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderAreaLabels()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Price
+                </span>
+
+                <div className="relative flex flex-col">
+                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Min
+                    </span>
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="priceRange_min"
+                        value={filters.priceRange_min.join(",")}
+                        min={filters.propertyType === "commercial" ? 2000 : 500}
+                        max={
+                          filters.propertyType === "commercial" ? 12000 : 4000
+                        }
+                        step={filters.propertyType === "commercial" ? 500 : 50}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderAreaLabels()}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Max
+                    </span>
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="priceRange_max"
+                        value={filters.priceRange_max.join(",")}
+                        min={filters.propertyType === "commercial" ? 2000 : 500}
+                        max={
+                          filters.propertyType === "commercial" ? 12000 : 4000
+                        }
+                        step={filters.propertyType === "commercial" ? 500 : 50}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderAreaLabels()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
+                {changeBedandBathToRoomsandBaths()}
+
+                <div className="relative flex flex-col">
+                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    {changeBedToRooms()}
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="beds"
+                        value={filters.beds}
+                        min={filters.propertyType === "commercial" ? 5 : 1}
+                        max={filters.propertyType === "commercial" ? 20 : 7}
+                        step={filters.propertyType === "commercial" ? 1 : 1}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderBedLabels()}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col">
+                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
+                    {changeBathsToWashrooms()}
+                    <div className="flex-grow relative mb-6 pt-[20px]">
+                      <input
+                        type="range"
+                        id="steps-range"
+                        name="baths"
+                        value={filters.baths}
+                        min={filters.propertyType === "commercial" ? 2 : 1}
+                        max={filters.propertyType === "commercial" ? 10 : 4}
+                        step={filters.propertyType === "commercial" ? 1 : 1}
+                        onChange={handleRangeChange}
+                        className="block w-full mt-1 accent-black cursor-pointer"
+                      />
+                      {renderBathLabels()}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] gap-[20px] pt-[50px] font-markoone">
+                {changeApartmentToProperty()}
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="apartmentType"
+                        value="House"
+                        checked={filters.apartmentType === "House"}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.apartmentType === "House"
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        House
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="apartmentType"
+                        value="Penthouse"
+                        checked={filters.apartmentType === "Penthouse"}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.apartmentType === "Penthouse"
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Penthouse
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="apartmentType"
+                        value="Duplex"
+                        checked={filters.apartmentType === "Duplex"}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.apartmentType === "Duplex"
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Duplex
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="radio"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="apartmentType"
+                        value="Studio"
+                        checked={filters.apartmentType === "Studio"}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.apartmentType === "Studio"
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Studio
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Email
+                </span>
+                <input
+                  type="text"
+                  name="email"
+                  value={filters.email}
+                  onChange={handleInputChange}
+                  placeholder={currentUser.email}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
+                <span className="bg-black text-white-A700 px-[40px] py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Contact Information
+                </span>
+                <input
+                  type="text"
+                  name="contactInfo"
+                  value={filters.contactInfo}
+                  onChange={handleInputChange}
+                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-col space-y-[1px] gap-[40px] pt-[10px] font-markoone w-full">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Upload Pictures
+                </span>
+                <div className="flex flex-col bg-red-100 w-full h-auto rounded-[30px]">
+                  <ImageUploader />
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-[1px] gap-[20px] pt-[50px] font-markoone">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Select Perks
+                </span>
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="parking"
+                        value={!filters.parking}
+                        checked={filters.parking === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.parking === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Parking
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="pets"
+                        value={!filters.pets}
+                        checked={filters.parking === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.pets === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Pets
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="gym"
+                        value={filters.gym}
+                        checked={filters.gym === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.gym === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Gym
+                      </span>
+                    </label>
+                  </div>
+                  <div>
+                    <label className="flex items-center space-x-3">
+                      <input
+                        type="checkbox"
+                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
+                        name="mosque"
+                        value={filters.mosque}
+                        checked={filters.mosque === true}
+                        onChange={handleInputChange}
+                      />
+                      <span
+                        className={`rounded-full px-4 py-2 text-lg ${
+                          filters.mosque === true
+                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
+                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
+                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
+                      >
+                        Mosque
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-row gap-[30px] w-full items-center justify-center pt-[30px]">
+              <button
+                type="submit"
+                className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-black hover:text-white-A700"
               >
-                <div className="flex flex-1 flex-col gap-6 h-[487px] md:h-auto items-start justify-start w-full">
-                  <Img
-                    className="md:h-auto h-full object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src="images/img_image_350x384.png"
-                    alt="image"
-                  />
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    <Text
-                      className="leading-[135.00%] md:max-w-full max-w-sm text-2xl md:text-[22px] text-white-A700 sm:text-xl tracking-[-0.48px]"
-                      size="txtManropeBold24"
-                    >
-                      9 Easy-to-Ambitious DIY Projects to Improve Your Home
-                    </Text>
-                    <div className="flex flex-row gap-2 items-center justify-start w-full sm:w-full">
-                      <Text
-                        className="text-deep_orange-400 text-lg w-auto"
-                        size="txtManropeBold18Deeporange400"
-                      >
-                        Read the Article
-                      </Text>
-                      <Img
-                        className="h-6 w-6"
-                        src="images/img_arrowright_deep_orange_400.svg"
-                        alt="arrowright"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-6 h-[487px] md:h-auto items-start justify-start w-full">
-                  <Img
-                    className="md:h-auto h-full object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src="images/img_image_6.png"
-                    alt="image"
-                  />
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    <Text
-                      className="leading-[135.00%] md:max-w-full max-w-sm text-2xl md:text-[22px] text-white-A700 sm:text-xl tracking-[-0.48px]"
-                      size="txtManropeBold24"
-                    >
-                      Serie Shophouse Launch In July, Opportunity For Investors
-                    </Text>
-                    <div className="flex flex-row gap-2 items-center justify-start w-full sm:w-full">
-                      <Text
-                        className="text-deep_orange-400 text-lg w-auto"
-                        size="txtManropeBold18Deeporange400"
-                      >
-                        Read the Article
-                      </Text>
-                      <Img
-                        className="h-6 w-6"
-                        src="images/img_arrowright_deep_orange_400.svg"
-                        alt="arrowright"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex flex-1 flex-col gap-6 h-[487px] md:h-auto items-start justify-start w-full">
-                  <Img
-                    className="md:h-auto h-full object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
-                    src="images/img_image_7.png"
-                    alt="image"
-                  />
-                  <div className="flex flex-col gap-6 items-start justify-start w-full">
-                    <Text
-                      className="leading-[135.00%] md:max-w-full max-w-sm text-2xl md:text-[22px] text-white-A700 sm:text-xl tracking-[-0.48px]"
-                      size="txtManropeBold24"
-                    >
-                      Looking for a New Place? Use This Time to Create Your
-                      Wishlist
-                    </Text>
-                    <div className="flex flex-row gap-2 items-center justify-start w-full sm:w-full">
-                      <Text
-                        className="text-deep_orange-400 text-lg w-auto"
-                        size="txtManropeBold18Deeporange400"
-                      >
-                        Read the Article
-                      </Text>
-                      <Img
-                        className="h-6 w-6"
-                        src="images/img_arrowright_deep_orange_400.svg"
-                        alt="arrowright"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </List>
+                Apply
+              </button>
+              <BackButton />
             </div>
-            <div className="bg-gray-401 flex flex-col items-center justify-center md:px-10 sm:px-5 px-[100px] py-10 rounded-[10px] w-full">
-              <div className="flex flex-col gap-[30px] items-center justify-start md:px-10 sm:px-5 px-[200px] w-full">
-                <div className="flex flex-col gap-2.5 items-center justify-start w-full">
-                  <Text
-                    className="sm:text-2xl md:text-[26px] text-[28px] text-center text-gray-900 tracking-[-0.56px] w-full"
-                    size="txtManropeExtraBold28"
-                  >
-                    For Recent Update, News.
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[600px] md:max-w-full text-center text-gray-900 text-lg"
-                    size="txtManropeRegular18"
-                  >
-                    We help businesses customize, automate and scale up their ad
-                    production and delivery.
-                  </Text>
-                </div>
-                <div className="flex sm:flex-col flex-row gap-2 items-start justify-start w-full">
-                  <Input
-                    name="input"
-                    placeholder="Enter your Email"
-                    className="font-semibold p-0 placeholder:text-gray-700 text-gray-700 text-left text-sm w-full"
-                    wrapClassName="bg-gray-52 flex-1 sm:flex-1 pb-3 pl-4 pr-3 pt-[15px] rounded-[10px] w-[78%] sm:w-full"
-                    type="email"
-                  ></Input>
-                  <Button className="bg-gray-900 cursor-pointer font-semibold min-w-[126px] py-[13px] rounded-[10px] text-base text-center text-white-A700">
-                    Subscribe
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
+          </form>
         </div>
-        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
-    </>
+    </div>
   );
 }
-
-//export default Home;
