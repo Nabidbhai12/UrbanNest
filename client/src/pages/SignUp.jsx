@@ -25,6 +25,8 @@ export default function SignUp() {
 
   const handleFileChange = (event) => {
     setProfilePicture(event.target.files[0]);
+
+    console.log("Test: " + event.target.files[0]);
     console.log("Profile picture: " + profilePicture);
     if (warning) setWarning('');
   };
