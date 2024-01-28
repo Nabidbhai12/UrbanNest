@@ -8,6 +8,7 @@ import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 export default function test() {
   const { currentUser } = useSelector((state) => state.user);
@@ -34,6 +35,17 @@ export default function test() {
     gym: false,
     mosque: false,
   });
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [sentImages, setSentImages] = useState([]);
+
+  const handleMultipleFileChange = (event) => {
+    setSelectedImages(event.target.files[0]);
+
+    console.log("Test: " + event.target.files[0]);
+    console.log("Profile picture: " + profilePicture);
+    console.log(selectedImages.length);
+    if (warning) setWarning('');
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -260,11 +272,35 @@ export default function test() {
   };
 
   const ImageUploader = () => {
-    const [selectedImages, setSelectedImages] = useState([]);
-
     const onSelectFile = (event) => {
       const selectedFiles = event.target.files;
+
+      const sentImages = event.target.files;
+      let formData = new FormData();
+      for (let i = 0; i < sentImages.length; i++) {
+        formData.append("images", sentImages[i]);
+      }
+
+
+      //filters.images.append(selectedFiles);
+
+      console.log(
+        "Selected files: " + selectedFiles[0] + "Size: " + selectedFiles.length
+      );
+
+      //console.log("Images filters size: " + filters.images.length);
       const selectedFilesArray = Array.from(selectedFiles);
+      const sentImagesArray = Array.from(sentImages);
+
+      setSentImages(prevImages => [...prevImages, ... sentImagesArray]);
+
+      console.log("Selected files array: " + selectedFilesArray);
+
+      //setSelectedImages(prevImages => [...prevImages, ...selectedFilesArray]);
+
+      console.log("SentImages size: " + sentImages.length);
+
+      //console.log("Images length" + filters.images.length);
 
       const imagesArray = selectedFilesArray.map((file) => {
         return URL.createObjectURL(file);
@@ -338,49 +374,56 @@ export default function test() {
       </div>
     );
   };
+  const navigate = useNavigate(); // Create an instance of useNavigate
+  const handleSubmit_sell_rent = async (e) => {
 
-  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitted filters:", filters);
-
-    // Retrieve the token from local storage or cookies
-
-    try {
-      const response = await fetch("/api/search/property", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          saleType: filters.saleType,
-          propertyType: filters.propertyType,
-          condition: filters.condition,
-          city: filters.city,
-          zip: filters.zip,
-          address: filters.address,
-          areaRange_min: filters.areaRange_min[0],
-          areaRange_max: filters.areaRange_max[1],
-          priceRange_min: filters.priceRange_min[0],
-          priceRange_max: filters.priceRange_max[1],
-          beds: filters.beds,
-          baths: filters.baths,
-          apartmentType: filters.apartmentType,
-          // Add other fields as needed
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    const formData = new FormData();
+  
+    // Append filters data to formData
+    for (const key in filters) {
+      if (key !== "images") {
+        if (Array.isArray(filters[key])) {
+          filters[key].forEach((value, index) =>
+            formData.append(`${key}[${index}]`, value)
+          );
+        } else {
+          formData.append(key, filters[key]);
+        }
       }
-
-      const data = await response.json();
-      console.log("Search results:", data);
-      // Handle the search results as needed
+    }
+  
+    // Append images to formData
+    if (filters.images && filters.images.length > 0) {
+      filters.images.forEach((file, index) => {
+        formData.append(`images[${index}]`, file);
+      });
+    }
+  
+    try {
+      const response = await fetch('/api/users/addPropertyForSale', {
+        method: 'POST',
+        body: formData, // send the FormData
+        // Note: When using FormData with fetch, do NOT set Content-Type header
+        // The browser will set it automatically including the boundary parameter
+      });
+  
+      const data = await response.json(); // Parse JSON data from the response
+      if (!response.ok) {
+        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+      }
+  
+      alert("Your property has been added successfully!");
+      navigate("/"); // Ensure navigate is correctly defined
+      console.log("Response:", data);
     } catch (error) {
-      console.error("Error during API call:", error);
+      console.error("Error uploading property data and images:", error);
     }
   };
+  
+  
+  
+ 
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -394,8 +437,9 @@ export default function test() {
             />
           </div>
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit_sell_rent}
             className="space-y-4 pt-[50px]"
+            method="POST"
             encType="multipart/form-data"
           >
             <div className="flex flex-col space-y-[45px] font-markoone pl-[100px]">

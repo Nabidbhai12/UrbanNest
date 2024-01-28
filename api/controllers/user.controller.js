@@ -65,6 +65,7 @@ export const authenticateToken = (req, res, next) => {
   export const addPropertyForSale = async (req, res, next) => {
     console.log("addPropertyForSale called");
     try {
+        console.log(req.body);
         const { title, description, location, price, size, rooms, propertyStatus,apartmentType,condition,propertyType } = req.body;
         const imageUrls = req.files.map(file => file.path); // Cloudinary URLs
         //print imageurl
