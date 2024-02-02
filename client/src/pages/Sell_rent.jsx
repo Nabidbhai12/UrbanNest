@@ -22,20 +22,19 @@ export default function test() {
     city: "",
     zip: "",
     address: "",
-    areaRange_min: [0, 10000],
-    areaRange_max: [0, 10000],
-    priceRange_min: [0, 1000000],
-    priceRange_max: [0, 1000000],
+    areaRange: 0,
+    priceRange: 1000000,
     beds: 1,
     baths: 1,
     apartmentType: "house", // 'house', 'penthouse', 'duplex', 'studio'
     email: currentUser.email,
-    images: [],
     contactInfo: "",
     parking: false,
     pets: false,
     gym: false,
     mosque: false,
+    title: "",
+    description: ""
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [sentImages, setSentImages] = useState([]);
@@ -397,13 +396,11 @@ export default function test() {
       }
     }
   
-    // Append images to formData
-    if (filters.images && filters.images.length > 0) {
-      filters.images.forEach((file, index) => {
-        formData.append(`images[${index}]`, file);
-      });
-    }
-  
+    sentImages.forEach((file, index) => {
+      formData.append(`images[${index}]`, file);
+    });
+    
+    console.log("Form data: " + formData.entries);
     try {
       const response = await fetch('/api/users/addPropertyForSale', {
         method: 'POST',
@@ -660,15 +657,12 @@ export default function test() {
 
                 <div className="relative flex flex-col">
                   <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Min
-                    </span>
                     <div className="flex-grow relative mb-6 pt-[20px]">
                       <input
                         type="range"
                         id="steps-range"
-                        name="areaRange_min"
-                        value={filters.areaRange_min.join(",")}
+                        name="areaRange"
+                        value={filters.areaRange}
                         min={filters.propertyType === "commercial" ? 2000 : 500}
                         max={
                           filters.propertyType === "commercial" ? 12000 : 4500
@@ -682,29 +676,6 @@ export default function test() {
                   </div>
                 </div>
 
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Max
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="areaRange_max"
-                        value={filters.areaRange_max.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4000
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -714,15 +685,12 @@ export default function test() {
 
                 <div className="relative flex flex-col">
                   <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Min
-                    </span>
                     <div className="flex-grow relative mb-6 pt-[20px]">
                       <input
                         type="range"
                         id="steps-range"
-                        name="priceRange_min"
-                        value={filters.priceRange_min.join(",")}
+                        name="priceRange"
+                        value={filters.priceRange}
                         min={filters.propertyType === "commercial" ? 2000 : 500}
                         max={
                           filters.propertyType === "commercial" ? 12000 : 4000
@@ -736,29 +704,6 @@ export default function test() {
                   </div>
                 </div>
 
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Max
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="priceRange_max"
-                        value={filters.priceRange_max.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4000
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -815,13 +760,13 @@ export default function test() {
                         type="radio"
                         className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
                         name="apartmentType"
-                        value="House"
-                        checked={filters.apartmentType === "House"}
+                        value="house"
+                        checked={filters.apartmentType === "house"}
                         onChange={handleInputChange}
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "House"
+                          filters.apartmentType === "house"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
@@ -836,13 +781,13 @@ export default function test() {
                         type="radio"
                         className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
                         name="apartmentType"
-                        value="Penthouse"
-                        checked={filters.apartmentType === "Penthouse"}
+                        value="penthouse"
+                        checked={filters.apartmentType === "penthouse"}
                         onChange={handleInputChange}
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Penthouse"
+                          filters.apartmentType === "penthouse"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
@@ -860,13 +805,13 @@ export default function test() {
                         type="radio"
                         className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
                         name="apartmentType"
-                        value="Duplex"
-                        checked={filters.apartmentType === "Duplex"}
+                        value="duplex"
+                        checked={filters.apartmentType === "duplex"}
                         onChange={handleInputChange}
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Duplex"
+                          filters.apartmentType === "duplex"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
@@ -881,13 +826,13 @@ export default function test() {
                         type="radio"
                         className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
                         name="apartmentType"
-                        value="Studio"
-                        checked={filters.apartmentType === "Studio"}
+                        value="studio"
+                        checked={filters.apartmentType === "studio"}
                         onChange={handleInputChange}
                       />
                       <span
                         className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Studio"
+                          filters.apartmentType === "studio"
                             ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
                             : "bg-gray-200 text-black px-[150px] rounded-[10px]"
                         } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
@@ -923,6 +868,35 @@ export default function test() {
                   value={filters.contactInfo}
                   onChange={handleInputChange}
                   className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-full">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Title
+                </span>
+                <input
+                  type="text"
+                  name="title"
+                  value={filters.title}
+                  onChange={handleInputChange}
+                  placeholder={"Enter your title here"}
+                  className="block mt-1 rounded-[50px] font-extrabold font-manrope w-full"
+                />
+              </div>
+
+              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-full">
+                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                  Description
+                </span>
+                <textarea
+                  type="text"
+                  name="description"
+                  value={filters.description}
+                  onChange={handleInputChange}
+                  placeholder={"Enter your description here"}
+                  rows={10}
+                  className="block mt-1 rounded-[50px] font-extrabold font-manrope w-full h-[300px] text-center"
                 />
               </div>
 

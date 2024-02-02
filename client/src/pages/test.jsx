@@ -1,1000 +1,392 @@
+// import React, { useState } from 'react';
+
+// const SearchBar = () => {
+//   const [inputValue, setInputValue] = useState('');
+//   const [filters, setFilters] = useState([]);
+
+//   const handleInputChange = (e) => {
+//     setInputValue(e.target.value);
+//   };
+
+//   const handleAddFilter = () => {
+//     if (inputValue.trim() && !filters.includes(inputValue.trim())) {
+//       setFilters([...filters, inputValue.trim()]);
+//       setInputValue('');
+//     }
+//   };
+
+//   const handleRemoveFilter = (filter) => {
+//     setFilters(filters.filter((f) => f !== filter));
+//   };
+
+//   return (
+//     <div className="flex flex-col p-4">
+//       <div className="flex items-center border-2 rounded">
+//         <input
+//           type="text"
+//           placeholder="Enter your address"
+//           value={inputValue}
+//           onChange={handleInputChange}
+//           className="p-2 outline-none flex-grow"
+//         />
+//         <button onClick={handleAddFilter} className="p-2">
+//           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//             {/* Icon from Heroicons */}
+//           </svg>
+//         </button>
+//       </div>
+//       <div className="flex flex-wrap mt-2">
+//         {filters.map((filter, index) => (
+//           <div key={index} className="flex items-center m-1 bg-gray-200 rounded">
+//             <span className="p-2">{filter}</span>
+//             <button onClick={() => handleRemoveFilter(filter)} className="p-2">
+//               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+//                 {/* X icon from Heroicons */}
+//               </svg>
+//             </button>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SearchBar;
+
 import React from "react";
 import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
-import { Input } from "../components/input";
-import { CheckBox } from "../components/checkBox";
+import { GoogleMap } from "../components/GoogleMap";
 import { Img } from "../components/image";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Input } from "../components/input";
+import { List } from "../components/list";
+import { SelectBox } from "../components/SelectBox.jsx";
+import { Text } from "../components/text";
+import Select from "react-select";
 
-export default function test() {
-  const { currentUser } = useSelector((state) => state.user);
+import LandingPageCard from "../components/LandingPageCard";
+import LandingPageFooter from "../components/LandingPageFooter";
 
-  const [filters, setFilters] = useState({
-    saleType: "sell", // 'sell' or 'rent'
-    propertyType: "residential", // 'commercial' or 'residential'
-    condition: "new", // 'new', 'used', or 'under-construction'
-    city: "",
-    zip: "",
-    address: "",
-    areaRange_min: [0, 10000],
-    areaRange_max: [0, 10000],
-    priceRange_min: [0, 1000000],
-    priceRange_max: [0, 1000000],
-    beds: 1,
-    baths: 1,
-    apartmentType: "house", // 'house', 'penthouse', 'duplex', 'studio'
-    email: currentUser.email,
-    images: [],
-    contactInfo: "",
-    parking: false,
-    pets: false,
-    gym: false,
-    mosque: false,
-  });
+const dropdownlargeOptionsList = [
+  { label: "Option1", value: "option1" },
+  { label: "Option2", value: "option2" },
+  { label: "Option3", value: "option3" },
+];
+const priceOptionsList = [
+  { label: "Option1", value: "option1" },
+  { label: "Option2", value: "option2" },
+  { label: "Option3", value: "option3" },
+];
+const dropdownlargeOneOptionsList = [
+  { label: "Option1", value: "option1" },
+  { label: "Option2", value: "option2" },
+  { label: "Option3", value: "option3" },
+];
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    console.log(name + " " + value + " " + type + " " + checked);
-    setFilters({
-      ...filters,
-      [name]: type === "checkbox" ? checked : value,
-    });
-    console.log("Parking: " + filters.parking);
-  };
+const ListingMapViewPage = () => {
+  const landingPageCardPropList = [
+    {},
+    { image: "images/img_image_1.png" },
+    { image: "images/img_image_1.png" },
+    { image: "images/img_image_3.png" },
+    { image: "images/img_image_4.png" },
+    { image: "images/img_image_4.png" },
+    { image: "images/img_image_5.png" },
+    { image: "images/img_image_2.png" },
+    { image: "images/img_image_2.png" },
+  ];
 
-  const handleRangeChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({
-      ...filters,
-      [name]: value.split(",").map(Number),
-    });
-
-    console.log("Name: " + name + " Value: " + value);
-  };
-
-  const BackButton = () => {
-    const navigate = useNavigate();
-
-    const goBack = () => {
-      navigate(-1);
-    };
-
-    return (
-      <button
-        onClick={goBack}
-        className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black"
-      >
-        Cancel
-      </button>
-    );
-  };
-
-  const renderAreaLabels = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            0
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            3000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            6000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            9000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
-            12000
-          </span>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            0
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            1000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            2000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            3000
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
-            4000
-          </span>
-        </>
-      );
-    }
-  };
-
-  const renderBedLabels = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            5
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            10
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            15
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            20+
-          </span>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            1
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            3
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            5
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
-            7+
-          </span>
-        </>
-      );
-    }
-  };
-
-  const renderBathLabels = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            2
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            4
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            6
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-3/4 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            8
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            10+
-          </span>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-0 -bottom-6 transition-opacity duration-300">
-            1
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-1/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            2
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute start-2/3 -translate-x-1/2 rtl:translate-x-1/2 -bottom-6 transition-opacity duration-300">
-            3
-          </span>
-          <span className="text-sm text-black dark:text-gray-400 absolute end-0 -bottom-6 transition-opacity duration-300">
-            4+
-          </span>
-        </>
-      );
-    }
-  };
-
-  const changeBedToRooms = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Rooms
-        </span>
-      );
-    } else {
-      return (
-        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Beds
-        </span>
-      );
-    }
-  };
-
-  const changeBathsToWashrooms = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <span className="bg-black text-white-A700 w-[110px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Washrooms
-        </span>
-      );
-    } else {
-      return (
-        <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Baths
-        </span>
-      );
-    }
-  };
-
-  const changeBedandBathToRoomsandBaths = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Rooms & Washrooms
-        </span>
-      );
-    } else {
-      return (
-        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Beds & Baths
-        </span>
-      );
-    }
-  };
-
-  const changeApartmentToProperty = () => {
-    if (filters.propertyType === "commercial") {
-      return (
-        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Select Property Type
-        </span>
-      );
-    } else {
-      return (
-        <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-          Select Apartment Type
-        </span>
-      );
-    }
-  };
-
-  const ImageUploader = () => {
-    const [selectedImages, setSelectedImages] = useState([]);
-
-    const onSelectFile = (event) => {
-      const selectedFiles = event.target.files;
-      const selectedFilesArray = Array.from(selectedFiles);
-
-      const imagesArray = selectedFilesArray.map((file) => {
-        return URL.createObjectURL(file);
-      });
-
-      setSelectedImages((previousImages) => previousImages.concat(imagesArray));
-
-      // FOR BUG IN CHROME
-      event.target.value = "";
-    };
-
-    function deleteHandler(image) {
-      setSelectedImages(selectedImages.filter((e) => e !== image));
-      URL.revokeObjectURL(image);
-    }
-
-    return (
-      <div className="py-8 px-8">
-        <label
-          className={`m-auto font-extrabold font-manrope flex flex-col items-center bg-white-A700 text-black justify-center border-dotted border-1 border-black rounded-2xl w-40 h-40 cursor-pointer text-lg ${
-            selectedImages.length >= 5 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-        >
-          + Add Images
-          <br />
-          <span className="font-light text-sm pt-2">up to 5 images</span>
-          <input
-            type="file"
-            name="images"
-            className="hidden"
-            onChange={onSelectFile}
-            multiple
-            accept="image/png , image/jpeg, image/webp"
-            disabled={selectedImages.length >= 5}
-          />
-        </label>
-        <br />
-
-        <input type="file" className="hidden" multiple />
-
-        {selectedImages.length > 0 &&
-          (selectedImages.length >= 6 ? (
-            <p className="text-center"></p>
-          ) : (
-            <button
-              className="cursor-pointer font-manrope font-extrabold block mx-auto border-none rounded-full w-40 h-12 bg-white-A700 text-black hover:bg-black hover:text-white-A700 hover:transition duration-200"
-              onClick={() => {
-                console.log("Images: " + selectedImages);
-              }}
-            >
-              UPLOAD {selectedImages.length} IMAGE
-              {selectedImages.length === 1 ? "" : "S"}
-            </button>
-          ))}
-
-        <div className="flex flex-row gap-[15px] flex-wrap justify-center items-center">
-          {selectedImages &&
-            selectedImages.map((image, index) => (
-              <div key={image} className="m-4 mx-2 relative shadow-md">
-                <img src={image} alt="upload" className="w-auto h-48" />
-                <button
-                  onClick={() => deleteHandler(image)}
-                  className="absolute bottom-0 right-0 p-2 opacity-0 hover:opacity-100 bg-deep_orange-400 text-white hover:bg-red-600 transition duration-200 font-extrabold font-manrope rounded-[20px]"
-                >
-                  Delete Image
-                </button>
-                <p className="p-2">{index + 1}</p>
-              </div>
-            ))}
-        </div>
-      </div>
-    );
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Submitted filters:", filters);
-
-    // Retrieve the token from local storage or cookies
-
-    try {
-      const response = await fetch("/api/search/property", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          saleType: filters.saleType,
-          propertyType: filters.propertyType,
-          condition: filters.condition,
-          city: filters.city,
-          zip: filters.zip,
-          address: filters.address,
-          areaRange_min: filters.areaRange_min[0],
-          areaRange_max: filters.areaRange_max[1],
-          priceRange_min: filters.priceRange_min[0],
-          priceRange_max: filters.priceRange_max[1],
-          beds: filters.beds,
-          baths: filters.baths,
-          apartmentType: filters.apartmentType,
-          // Add other fields as needed
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Search results:", data);
-      // Handle the search results as needed
-    } catch (error) {
-      console.error("Error during API call:", error);
-    }
-  };
+  const options = [
+    { value: "chocolate", label: "Chocolate" },
+    { value: "strawberry", label: "Strawberry" },
+    { value: "vanilla", label: "Vanilla" },
+  ];
 
   return (
-    <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
-      <div className="flex flex-col items-center justify-start w-full py-[50px]">
-        <div className="bg-gradient-to-br from-white-A700 to-yellow-50 flex flex-col font-manrope items-center justify-start md:pl-10 sm:pl-5 px-[120px] py-[50px] w-3/4 h-3/4 overflow-hidden rounded-lg shadow-lg">
-          <div className="bg-white-A700 flex flex-col items-center justify-start overflow-hidden pb-[100px] rounded-lg shadow-lg w-[1050px] h-[350px]">
-            <Img
-              className="scale-100 w-full h-auto rounded-lg shadow-md"
-              src="images/img_search_page_image.jpg"
-              alt="Description"
-            />
-          </div>
-          <form
-            onSubmit={handleSubmit}
-            className="space-y-4 pt-[50px]"
-            encType="multipart/form-data"
-          >
-            <div className="flex flex-col space-y-[45px] font-markoone pl-[100px]">
-              <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="saleType"
-                      value="sell"
-                      checked={filters.saleType === "sell"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.saleType === "sell"
-                          ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Sell
-                    </span>
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="saleType"
-                      value="rent"
-                      checked={filters.saleType === "rent"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.saleType === "rent"
-                          ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Rent
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex sm:flex-col flex-row gap-24 items-start justify-start w-full">
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="propertyType"
-                      value="commercial"
-                      checked={filters.propertyType === "commercial"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.propertyType === "commercial"
-                          ? "bg-black text-white-A700 px-[130px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[130px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Commercial
-                    </span>
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      name="propertyType"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      value="residential"
-                      checked={filters.propertyType === "residential"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.propertyType === "residential"
-                          ? "bg-black text-white-A700 px-[130px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[130px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Residential
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex sm:flex-col flex-row gap-16 items-start justify-start w-full">
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="condition"
-                      value="new"
-                      checked={filters.condition === "new"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.condition === "new"
-                          ? "bg-black text-white-A700 px-[120px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[120px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      New
-                    </span>
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="condition"
-                      value="used"
-                      checked={filters.condition === "used"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.condition === "used"
-                          ? "bg-black text-white-A700 px-[120px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[120px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Used
-                    </span>
-                  </label>
-                </div>
-                <div>
-                  <label className="flex items-center space-x-3">
-                    <input
-                      type="radio"
-                      className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                      name="condition"
-                      value="under_construction"
-                      checked={filters.condition === "under_construction"}
-                      onChange={handleInputChange}
-                    />
-                    <span
-                      className={`rounded-full px-4 py-2 text-lg ${
-                        filters.condition === "under_construction"
-                          ? "bg-black text-white-A700 px-[57px] rounded-[10px]"
-                          : "bg-gray-200 text-black px-[57px] rounded-[10px]"
-                      } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                    >
-                      Under Construction
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-row">
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Select City
-                  </span>
-                  <select
-                    name="city"
-                    value={filters.city}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 font-extrabold font-manrope rounded-[50px]"
-                  >
-                    <option value="Dhaka">Dhaka</option>
-                    <option value="Rajshahi">Rajshahi</option>
-                    <option value="Chittagong">Chittagong</option>
-                    <option value="Khulna">Khulna</option>
-                    <option value="Sylhet">Sylhet</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Zip
-                  </span>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={filters.zip}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="flex items-center space-x-3 pt-[50px] font-markoone">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Address
-                  </span>
-                  <input
-                    type="text"
-                    name="address"
-                    value={filters.address}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                    placeholder="Enter Address, Location or Neighbourhood"
-                    required
-                  />
-                </label>
-              </div>
-
-              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
-                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Area (sqft)
-                </span>
-
-                <div className="relative flex flex-col">
-                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Min
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="areaRange_min"
-                        value={filters.areaRange_min.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4500
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Max
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="areaRange_max"
-                        value={filters.areaRange_max.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4000
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
-                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Price
-                </span>
-
-                <div className="relative flex flex-col">
-                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Min
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="priceRange_min"
-                        value={filters.priceRange_min.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4000
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    <span className="bg-black text-white-A700 w-[90px] h-[30px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                      Max
-                    </span>
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="priceRange_max"
-                        value={filters.priceRange_max.join(",")}
-                        min={filters.propertyType === "commercial" ? 2000 : 500}
-                        max={
-                          filters.propertyType === "commercial" ? 12000 : 4000
-                        }
-                        step={filters.propertyType === "commercial" ? 500 : 50}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderAreaLabels()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
-                {changeBedandBathToRoomsandBaths()}
-
-                <div className="relative flex flex-col">
-                  <div className="relative mb-6 flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    {changeBedToRooms()}
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="beds"
-                        value={filters.beds}
-                        min={filters.propertyType === "commercial" ? 5 : 1}
-                        max={filters.propertyType === "commercial" ? 20 : 7}
-                        step={filters.propertyType === "commercial" ? 1 : 1}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderBedLabels()}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <div className="flex flex-row gap-[30px] pr-[20px] items-center justify-center w-full">
-                    {changeBathsToWashrooms()}
-                    <div className="flex-grow relative mb-6 pt-[20px]">
-                      <input
-                        type="range"
-                        id="steps-range"
-                        name="baths"
-                        value={filters.baths}
-                        min={filters.propertyType === "commercial" ? 2 : 1}
-                        max={filters.propertyType === "commercial" ? 10 : 4}
-                        step={filters.propertyType === "commercial" ? 1 : 1}
-                        onChange={handleRangeChange}
-                        className="block w-full mt-1 accent-black cursor-pointer"
-                      />
-                      {renderBathLabels()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-[1px] gap-[20px] pt-[50px] font-markoone">
-                {changeApartmentToProperty()}
-
-                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="apartmentType"
-                        value="House"
-                        checked={filters.apartmentType === "House"}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "House"
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        House
-                      </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="apartmentType"
-                        value="Penthouse"
-                        checked={filters.apartmentType === "Penthouse"}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Penthouse"
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Penthouse
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="apartmentType"
-                        value="Duplex"
-                        checked={filters.apartmentType === "Duplex"}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Duplex"
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Duplex
-                      </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="radio"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="apartmentType"
-                        value="Studio"
-                        checked={filters.apartmentType === "Studio"}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.apartmentType === "Studio"
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Studio
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
-                <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Email
-                </span>
-                <input
-                  type="text"
-                  name="email"
-                  value={filters.email}
-                  onChange={handleInputChange}
-                  placeholder={currentUser.email}
-                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                />
-              </div>
-
-              <div className="flex flex-row space-y-[1px] gap-[40px] pt-[10px] font-markoone w-1/2">
-                <span className="bg-black text-white-A700 px-[40px] py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Contact Information
-                </span>
-                <input
-                  type="text"
-                  name="contactInfo"
-                  value={filters.contactInfo}
-                  onChange={handleInputChange}
-                  className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                />
-              </div>
-
-              <div className="flex flex-col space-y-[1px] gap-[40px] pt-[10px] font-markoone w-full">
-                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Upload Pictures
-                </span>
-                <div className="flex flex-col bg-red-100 w-full h-auto rounded-[30px]">
-                  <ImageUploader />
-                </div>
-              </div>
-
-              <div className="flex flex-col space-y-[1px] gap-[20px] pt-[50px] font-markoone">
-                <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                  Select Perks
-                </span>
-
-                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="parking"
-                        value={!filters.parking}
-                        checked={filters.parking === true}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.parking === true
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Parking
-                      </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="pets"
-                        value={!filters.pets}
-                        checked={filters.parking === true}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.pets === true
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Pets
-                      </span>
-                    </label>
-                  </div>
-                </div>
-
-                <div className="flex sm:flex-col flex-row gap-[135px] items-start justify-start w-full">
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="gym"
-                        value={filters.gym}
-                        checked={filters.gym === true}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.gym === true
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Gym
-                      </span>
-                    </label>
-                  </div>
-                  <div>
-                    <label className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        className="h-2 w-2 checked:bg-black p-3 my-4 checked:hover:bg-black checked:active:bg-black checked:focus:bg-black focus:bg-black focus-within:outline-none focus:ring-1 focus:ring-black"
-                        name="mosque"
-                        value={filters.mosque}
-                        checked={filters.mosque === true}
-                        onChange={handleInputChange}
-                      />
-                      <span
-                        className={`rounded-full px-4 py-2 text-lg ${
-                          filters.mosque === true
-                            ? "bg-black text-white-A700 px-[150px] rounded-[10px]"
-                            : "bg-gray-200 text-black px-[150px] rounded-[10px]"
-                        } hover:bg-black hover:text-white-A700 shadow-xl cursor-pointer transition duration-300 ease-in-out font-extrabold font-manrope`}
-                      >
-                        Mosque
-                      </span>
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-row gap-[30px] w-full items-center justify-center pt-[30px]">
-              <button
-                type="submit"
-                className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-black hover:text-white-A700"
+    <>
+      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+        <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-center w-full">
+          <div className="flex flex-col font-manrope items-center justify-start md:px-10 sm:px-5 px-[120px] w-full">
+            <div className="flex flex-col gap-6 items-center justify-center max-w-[1200px] mx-auto w-full">
+              <Text
+                className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
+                size="txtManropeExtraBold36"
               >
-                Apply
-              </button>
-              <BackButton />
+                Find Property
+              </Text>
+              <div className="flex flex-col gap-3 items-start justify-start w-full">
+                <div className="flex md:flex-col flex-row gap-5 items-start justify-start w-full">
+                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col h-[60px] md:h-auto items-start justify-start px-4 py-3.5 rounded-[10px] w-full">
+                    <Input
+                      name="frame1000001565"
+                      placeholder="Enter your address"
+                      className="font-semibold p-0 placeholder:text-gray-700 text-gray-700 text-left text-lg w-auto"
+                    ></Input>
+                  </div>
+                  <div className="flex sm:flex-1 flex-col items-start justify-start w-auto sm:w-full">
+                    <select
+                      name="city"
+                      className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col h-[60px] md:h-auto items-start justify-start px-4 py-3.5 rounded-[10px] w-full"
+                    >
+                      <option value="Buy">Buy</option>
+                      <option value="Sell">Sell</option>
+                      <option value="Rent">Rent</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-row gap-5 items-start justify-start w-[260px]">
+                    <Button
+                      className="bg-white-A700 border border-bluegray-100 border-solid cursor-pointer flex items-center justify-center pl-[15px] pr-[22px] py-[17px] rounded-[10px] w-full"
+                      rightIcon={
+                        <Img
+                          className="h-6 mb-px ml-3"
+                          src="images/img_plus_gray_700.svg"
+                          alt="plus"
+                        />
+                      }
+                    >
+                      <div className="font-bold sm:pr-5 text-gray-700 text-left text-lg">
+                        More
+                      </div>
+                    </Button>
+                  </div>
+                  <Button
+                    className="bg-gray-900 cursor-pointer flex items-center justify-center min-w-[124px] px-4 py-[17px] rounded-[10px]"
+                    rightIcon={
+                      <Img
+                        className="h-5 mt-px mb-[3px] ml-2.5"
+                        src="images/img_search_white_a700.svg"
+                        alt="search"
+                      />
+                    }
+                  >
+                    <div className="font-bold text-left text-lg text-white-A700">
+                      Search
+                    </div>
+                  </Button>
+                </div>
+                <div className="flex flex-row flex-wrap gap-2.5 items-start justify-start max-w-[1200px] w-full">
+                  <Button
+                    className="border border-bluegray-101 border-solid cursor-pointer flex items-center justify-center px-[13px] py-2 rounded-[10px] w-[145px]"
+                    rightIcon={
+                      <Img
+                        className="h-4 mt-0.5 mb-px ml-2"
+                        src="images/img_close.svg"
+                        alt="close"
+                      />
+                    }
+                  >
+                    <div className="font-semibold text-gray-700 text-left text-sm">
+                      Bathrooms 2+
+                    </div>
+                  </Button>
+                  <Button
+                    className="border border-bluegray-101 border-solid cursor-pointer flex items-center justify-center min-w-[243px] px-[13px] py-2 rounded-[10px]"
+                    rightIcon={
+                      <Img
+                        className="h-4 mt-px mb-[3px] ml-2"
+                        src="images/img_close.svg"
+                        alt="close"
+                      />
+                    }
+                  >
+                    <div className="font-semibold text-gray-700 text-left text-sm">
+                      Square Feet 750 - 2000 sq. ft
+                    </div>
+                  </Button>
+                  <Button
+                    className="border border-bluegray-101 border-solid cursor-pointer flex items-center justify-center min-w-[151px] px-[13px] py-2 rounded-[10px]"
+                    rightIcon={
+                      <Img
+                        className="h-4 mt-0.5 mb-px ml-2"
+                        src="images/img_close.svg"
+                        alt="close"
+                      />
+                    }
+                  >
+                    <div className="font-semibold text-gray-700 text-left text-sm">
+                      Year Built 5 - 15
+                    </div>
+                  </Button>
+                  <Button
+                    className="border border-bluegray-101 border-solid cursor-pointer flex items-center justify-center min-w-[168px] px-[13px] py-2 rounded-[10px]"
+                    rightIcon={
+                      <Img
+                        className="h-4 mt-px mb-[3px] ml-2"
+                        src="images/img_close.svg"
+                        alt="close"
+                      />
+                    }
+                  >
+                    <div className="font-semibold text-gray-900 text-left text-sm">
+                      For Sale By Agent
+                    </div>
+                  </Button>
+                  <Button
+                    className="border border-bluegray-101 border-solid cursor-pointer flex items-center justify-center min-w-[174px] px-[13px] py-2 rounded-[10px]"
+                    rightIcon={
+                      <Img
+                        className="h-4 mt-0.5 mb-px ml-2"
+                        src="images/img_close.svg"
+                        alt="close"
+                      />
+                    }
+                  >
+                    <div className="font-semibold text-gray-900 text-left text-sm">
+                      New Construction
+                    </div>
+                  </Button>
+                </div>
+              </div>
             </div>
-          </form>
+          </div>
+          <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+            <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
+              <div className="h-[428px] relative w-full">
+                <div
+                  className="absolute bg-cover bg-no-repeat flex flex-col h-max inset-[0] items-end justify-center m-auto p-[67px] md:px-10 sm:px-5 w-[91%]"
+                  style={{ backgroundImage: "url('images/img_group1.svg')" }}
+                >
+                  <div className="bg-white-A700 border border-gray-600 border-solid flex flex-col items-start justify-start mb-[15px] mt-6 px-4 py-6 rounded-lg w-[308px]">
+                    <div className="flex flex-col gap-[21.66px] items-start justify-start w-[276px]">
+                      <div className="flex flex-row gap-[9.63px] items-center justify-start w-full">
+                        <Img
+                          className="h-[19px] w-[19px]"
+                          src="images/img_eye.svg"
+                          alt="eye"
+                        />
+                        <Text
+                          className="flex-1 text-[12.83px] text-gray-900 w-auto"
+                          size="txtManropeSemiBold1283"
+                        >
+                          2861 62nd Ave, Oakland, CA 94605
+                        </Text>
+                      </div>
+                      <List
+                        className="flex flex-col gap-[16.84px] items-start w-full"
+                        orientation="vertical"
+                      >
+                        <div className="flex flex-1 flex-row gap-[32.08px] items-center justify-between my-0 w-full">
+                          <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
+                            <Img
+                              className="h-4 w-4"
+                              src="images/img_bookmark.svg"
+                              alt="bookmark"
+                            />
+                            <Text
+                              className="flex-1 text-[12.83px] text-gray-700 w-auto"
+                              size="txtManropeSemiBold1283Gray700"
+                            >
+                              3 Bed Room
+                            </Text>
+                          </div>
+                          <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
+                            <Img
+                              className="h-4 w-4"
+                              src="images/img_ticket.svg"
+                              alt="ticket"
+                            />
+                            <Text
+                              className="text-[12.83px] text-gray-700 w-auto"
+                              size="txtManropeSemiBold1283Gray700"
+                            >
+                              1 Bath
+                            </Text>
+                          </div>
+                        </div>
+                        <div className="flex flex-1 flex-row gap-[32.08px] items-center justify-between my-0 w-full">
+                          <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
+                            <Img
+                              className="h-4 w-4"
+                              src="images/img_icon.svg"
+                              alt="icon"
+                            />
+                            <Text
+                              className="flex-1 text-[12.83px] text-gray-700 w-auto"
+                              size="txtManropeSemiBold1283Gray700"
+                            >
+                              1,032 sqft
+                            </Text>
+                          </div>
+                          <div className="flex flex-1 flex-row gap-[9.63px] items-center justify-start w-full">
+                            <Img
+                              className="h-4 w-4"
+                              src="images/img_iocnmenu_16x16.svg"
+                              alt="iocnmenu"
+                            />
+                            <Text
+                              className="text-[12.83px] text-gray-700 w-auto"
+                              size="txtManropeSemiBold1283Gray700"
+                            >
+                              Family
+                            </Text>
+                          </div>
+                        </div>
+                      </List>
+                      <div className="flex flex-col items-center justify-start w-full">
+                        <Text
+                          className="text-[19.25px] text-gray-900 tracking-[-0.39px] w-auto"
+                          size="txtManropeBold1925"
+                        >
+                          $649,900
+                        </Text>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col items-start justify-start w-full">
+                <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
+                  {landingPageCardPropList.map((props, index) => (
+                    <React.Fragment key={`LandingPageCard${index}`}>
+                      <LandingPageCard
+                        className="flex flex-1 flex-col h-[512px] md:h-auto items-start justify-start w-full"
+                        {...props}
+                      />
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
+                <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
+                  <Button className="border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    1
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    2
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    3
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    4
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    5
+                  </Button>
+                </div>
+                <Button
+                  className="border border-bluegray-102 border-solid cursor-pointer flex items-center justify-center min-w-[134px] px-[17px] py-[13px] rounded-[10px]"
+                  rightIcon={
+                    <Img
+                      className="h-4 mt-px mb-[5px] ml-1"
+                      src="images/img_arrowright_gray_900.svg"
+                      alt="arrow_right"
+                    />
+                  }
+                >
+                  <div className="font-semibold text-base text-gray-900 text-left">
+                    Next Page
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
+        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
-    </div>
+    </>
   );
-}
+};
+
+export default ListingMapViewPage;
