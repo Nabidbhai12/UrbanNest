@@ -8,7 +8,9 @@ import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import axios from "axios";
+import { OpenStreetMapProvider } from "leaflet-geosearch";
 
 export default function test() {
   const { currentUser } = useSelector((state) => state.user);
@@ -36,6 +38,8 @@ export default function test() {
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [sentImages, setSentImages] = useState([]);
+ 
+
 
   const handleMultipleFileChange = (event) => {
     setSelectedImages(event.target.files[0]);
