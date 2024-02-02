@@ -10,11 +10,31 @@ const upload = multer({ storage });
 const upload1 = multer({ storage: storage }).single('image');
 const router = express.Router();
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
-router.post('/addPropertyForSale',authenticateToken,upload.array('images'), addPropertyForSale);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
 router.get('/getUserSellinglist',authenticateToken,getUserSellinglist);
 router.get('/getUserSoldlist',authenticateToken,getUserSoldlist);
 router.get('/getUserDetails',authenticateToken,getUserDetails);
+router.post(
+    '/addPropertyForSale',
+    authenticateToken,
+    upload.array('images'),
+    (error, req, res, next) => {
+      if (error instanceof multer.MulterError) {
+        // A Multer error occurred when uploading.
+        console.log("unexpected field");
+        console.log(req.body);
+        console.log(req.files);
+        return res.status(500).json({ error: error.message });
+      } else if (error) {
+        // An unknown error occurred when uploading.
+        return res.status(500).json({ error: 'An unknown error occurred when uploading.' });
+      }
+  
+      // Everything went fine.
+      next();
+    },
+    addPropertyForSale
+  );
 
 export default router;
