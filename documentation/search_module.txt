@@ -1,0 +1,96 @@
+
+
+** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **  API Documentation for searchProperties Function ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** ** **
+
+Purpose:
+
+    This API function facilitates property searches based on diverse criteria.
+    It accepts search parameters, executes database queries, and returns matching properties.
+
+Endpoint:
+
+    /api/search/property
+
+HTTP Method:
+
+    POST
+
+Request Body:
+
+    Expects a JSON object comprising the following properties (all optional):
+
+Property Name	    Description 	Type
+saleType	Property status ('sell' or 'rent')	String
+propertyType	Type of property (e.g., 'house', 'apartment', 'condo')	String
+condition	Property condition (e.g., 'new', 'renovated')	String
+city	City where the property is located	String
+zip	Zip code of the property	String
+address	Address of the property	String
+areaRange_min	Minimum desired property area	Number
+areaRange_max	Maximum desired property area	Number
+priceRange_min	Minimum desired property price	Number
+priceRange_max	Maximum desired property price	Number
+beds	Minimum number of bedrooms	Number
+baths	Minimum number of bathrooms	Number
+apartmentType	Type of apartment (if applicable)	String
+
+Response:
+
+    Returns a JSON array encompassing unique properties matching the search criteria, with each property represented as an object containing its details.
+    If an error arises, returns a JSON object containing an error message.
+
+Example Request:
+JSON
+
+{
+  "saleType": "rent",
+  "propertyType": "apartment",
+  "city": "San Francisco",
+  "priceRange_min": 1500,
+  "priceRange_max": 2500,
+  "beds": 2,
+  "baths": 1
+}
+
+Use code with caution. Learn more
+
+Example Response:
+JSON
+
+[
+  {
+    "_id": "1234567890",
+    "propertyType": "apartment",
+    "address": "123 Main St",
+    "city": "San Francisco",
+    "zipCode": "94105",
+    "size": 1000,
+    "price": {
+      "amount": 2000,
+      "currency": "USD"
+    },
+    "rooms": {
+      "bedrooms": 2,
+      "bathrooms": 1
+    },
+    // ... other property details
+  },
+  // ... more properties
+]
+
+Use code with caution. Learn more
+
+Error Handling:
+
+    Returns a JSON object with an error property in case of errors.
+
+Additional Notes:
+
+    The function handles price ranges, area ranges, and location searches (city, zip, address).
+    It filters duplicates based on property IDs.
+
+Front-End Integration:
+
+    Construct a POST request to the /api/properties/search endpoint with the desired search parameters in the request body.
+    Parse the JSON response to extract and display the matching properties.
+    Implement error handling to gracefully manage potential errors.

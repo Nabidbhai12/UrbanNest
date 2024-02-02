@@ -4,97 +4,109 @@ import Listing from '../models/listing.model.js';
   console.log("from search");
 
   try {
-    let criteria = [];
+      const {
+          saleType,
+          propertyType,
+          condition,
+          city,
+          zip,
+          address,
+          areaRange_min,
+          areaRange_max,
+          priceRange_min,
+          priceRange_max,
+          beds,
+          baths,
+          apartmentType,
+      } = req.body;
 
-    // Extract search parameters with consistent naming and validation
-    const {
-      saleType,
-      propertyType,
-      condition,
-      city,
-      zip,
-      address,
-      areaRange_min,
-      areaRange_max,
-      priceRange_min,
-      priceRange_max,
-      beds,
-      baths,
-      apartmentType,
-    } = req.body;
+      // Print all the read values
+      console.log(areaRange_min, areaRange_max, priceRange_min, priceRange_max);
 
-    // Print all the read values
-    console.log(areaRange_min, areaRange_max, priceRange_min, priceRange_max);
+      // Initialize an array to hold the individual queries
+      let queries = [];
 
-    // Price Range
-    if (priceRange_min || priceRange_max) {
-      let priceCriteria = {};
-      if (priceRange_min) {
-        priceCriteria['price.amount'] = { '$gte': parseInt(priceRange_min) };
+      // Price Range
+      if (priceRange_min || priceRange_max) {
+          const priceQuery = {};
+          if (priceRange_min) {
+              priceQuery['price.amount'] = { '$gte': parseInt(priceRange_min) };
+          }
+          if (priceRange_max) {
+              priceQuery['price.amount'] = priceQuery['price.amount'] || {};
+              priceQuery['price.amount']['$lte'] = parseInt(priceRange_max);
+          }
+          queries.push(Listing.find(priceQuery));
       }
-      if (priceRange_max) {
-        priceCriteria['price.amount'] = priceCriteria['price.amount'] || {};
-        priceCriteria['price.amount']['$lte'] = parseInt(priceRange_max);
+
+      // Area Range
+      if (areaRange_min || areaRange_max) {
+          const areaQuery = {};
+          if (areaRange_min) {
+              areaQuery['size'] = { '$gte': parseInt(areaRange_min) };
+          }
+          if (areaRange_max) {
+              areaQuery['size'] = areaQuery['size'] || {};
+              areaQuery['size']['$lte'] = parseInt(areaRange_max);
+          }
+          queries.push(Listing.find(areaQuery));
       }
-      criteria.push(priceCriteria);
-    }
 
-    // Area Range
-    if (areaRange_min || areaRange_max) {
-      let sizeCriteria = {};
-      if (areaRange_min) {
-        sizeCriteria.size = { '$gte': parseInt(areaRange_min) };
+      // Bedrooms and Bathrooms
+      if (beds) {
+          const bedsQuery = { 'rooms.bedrooms': { '$gte': parseInt(beds) } };
+          queries.push(Listing.find(bedsQuery));
       }
-      if (areaRange_max) {
-        sizeCriteria.size = sizeCriteria.size || {};
-        sizeCriteria.size['$lte'] = parseInt(areaRange_max);
+      if (baths) {
+          const bathsQuery = { 'rooms.bathrooms': { '$gte': parseInt(baths) } };
+          queries.push(Listing.find(bathsQuery));
       }
-      criteria.push(sizeCriteria);
-    }
 
-    // Bedrooms and Bathrooms
-    if (beds) criteria.push({ 'rooms.bedrooms': { '$gte': parseInt(beds) } });
-    if (baths) criteria.push({ 'rooms.bathrooms': { '$gte': parseInt(baths) } });
+      // Location (City, Address, Zip)
+      if (city || address || zip) {
+          const locationQuery = {};
+          if (city) locationQuery['location.city'] = new RegExp(city, 'i');
+          if (address) locationQuery['location.address'] = new RegExp(address, 'i');
+          if (zip) locationQuery['location.zipCode'] = zip;
+          queries.push(Listing.find(locationQuery));
+      }
 
-    // Location
-    if (city || address || zip) {
-      let locationCriteria = {};
-      if (city) locationCriteria['location.city'] = new RegExp(city, 'i');
-      if (address) locationCriteria['location.address'] = new RegExp(address, 'i');
-      if (zip) locationCriteria['location.zipCode'] = zip;
-      criteria.push(locationCriteria);
-    }
+      // Property Type, Condition, and Apartment Type
+      if (propertyType) {
+          const propertyTypeQuery = { propertyType: propertyType };
+          queries.push(Listing.find(propertyTypeQuery));
+      }
+      if (condition) {
+          const conditionQuery = { condition: condition };
+          queries.push(Listing.find(conditionQuery));
+      }
+      if (apartmentType) {
+          const apartmentTypeQuery = { apartmentType: apartmentType };
+          queries.push(Listing.find(apartmentTypeQuery));
+      }
 
-    // Property Type, Condition, and Apartment Type
-    if (propertyType) criteria.push({ propertyType: propertyType });
-    if (condition) criteria.push({ condition: condition });
-    if (apartmentType) criteria.push({ apartmentType: apartmentType });
+      // Property Status
+      if (saleType) {
+          const saleTypeQuery = { propertyStatus: saleType === "sell" ? 'For Sale' : 'For Rent' };
+          queries.push(Listing.find(saleTypeQuery));
+      }
 
-    // Property Status
-    if (saleType) {
-      criteria.push({ propertyStatus: saleType === "sell" ? 'For Sale' : 'For Rent' });
-    }
+      // Aggregate results from all queries
+      const queryResults = await Promise.all(queries);
 
-    // Construct the query using $or if there are multiple criteria
-    let query;
-    if (criteria.length > 1) {
-      query = Listing.find({ $or: criteria });
-    } else if (criteria.length === 1) {
-      query = Listing.find(criteria[0]);
-    } else {
-      query = Listing.find({});
-    }
+      // Combine results and filter out duplicates
+      let combinedProperties = [].concat(...queryResults);
+      let uniqueProperties = Array.from(new Set(combinedProperties.map(p => p._id))).map(id => {
+          return combinedProperties.find(p => p._id.toString() === id.toString());
+      });
 
-    console.log(criteria);
-    const properties = await query.exec();
-//console print properties
-console.log(properties);
-    res.status(200).json(properties);
+      console.log(uniqueProperties);
+      res.status(200).json(uniqueProperties);
   } catch (error) {
-    next(error);
+      next(error);
   }
 };
-
+//check whether the search works properly or not
 
 export const getListingById = async (req, res, next) => {
     const { listingId } = req.params; // Assuming the ID is passed as a URL parameter
