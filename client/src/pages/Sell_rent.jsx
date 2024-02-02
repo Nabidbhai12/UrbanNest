@@ -382,6 +382,8 @@ export default function test() {
 
     e.preventDefault();
     const formData = new FormData();
+    console.log(filters);
+    console.log(sentImages);
   
     // Append filters data to formData
     for (const key in filters) {
@@ -396,11 +398,16 @@ export default function test() {
       }
     }
   
-    sentImages.forEach((file, index) => {
-      formData.append(`images[${index}]`, file);
+    sentImages.forEach((file) => {
+      formData.append('images', file); // Use 'images' as the field name for all files
     });
     
-    console.log("Form data: " + formData.entries);
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+  
+    
+    
     try {
       const response = await fetch('/api/users/addPropertyForSale', {
         method: 'POST',
