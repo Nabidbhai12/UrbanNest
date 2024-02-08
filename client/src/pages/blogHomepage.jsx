@@ -11,8 +11,18 @@ const BlogHome = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await axios.get('/api/blogs/recent');
-                setBlogs(response.data);
+                const response = await fetch ('/api/blogs/recent',
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const data=await response.json();
+                console.log('data received by client side : ', data);
+
+
+                setBlogs(data);
             } catch (error) {
                 console.error('Error fetching blogs:', error);
             }
