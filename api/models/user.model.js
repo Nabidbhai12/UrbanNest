@@ -30,6 +30,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  upvotedBlogs: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Blog'
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

@@ -2,6 +2,46 @@ import Blog from "../models/blog.model.js";
 import User from '../models/user.model.js';
 import Comment from '../models/comment.model.js';
 import mongoose from "mongoose";
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import {v2 as cloudinary} from 'cloudinary';
+import multer from "multer";
+
+cloudinary.config({ 
+    cloud_name: 'dtzwdn1jf', 
+    api_key: '741567594763319', 
+    api_secret: 'zQUzLn_BFPqVNcmbWG-WCsoNv0k' 
+  });
+
+  const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'blogPicture',
+      format: async (req, file) => 'png', // or other formats
+      public_id: (req, file) => `property-${Date.now()}`, // Example to generate a unique ID    },
+    },
+  });
+  
+  const parser = multer({ storage: storage });
+
+export  const uploadImage = parser.single('image');
+  
+ export  const handleImageUpload = (req, res) => {
+    console.log(req.body);
+    console.log(req.file);
+   
+
+    if (!req.file) {
+      return res.status(400).send({ message: 'Please upload an image.' });
+    }
+  
+    // The image URL will be in req.file.path
+    const imageUrl = req.file.path;
+    console.log(imageUrl);
+  
+    res.send({ url: imageUrl });
+  };
+
+
 
 //Write createBlog function here. It will first check if the user is logged in or not. 
 //If the user is logged in, it will create a new blog and save it to the database. 
@@ -61,8 +101,10 @@ export const showMyBlogs = async (req, res) => {
 //Show one blog
 export const showBlog = async (req, res) => {
     try {
+        console.log("showblog");
         const blogid = req.params.id;
         const blog = await Blog.findById(blogid);
+        console.log(blog);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
@@ -95,12 +137,17 @@ export const updateBlog = async (req, res) => {
 export const upvoteBlog = async (req, res) => {
     try {
         const blogid = req.params.id;
+        const userid = req.user.id;
+
         const blog = await Blog.findById(blogid);
+        const user = await User.findById(userid);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
         blog.numOfUpvotes += 1;
+        user.upvotedBlogs.push(blogid);
         await blog.save();
+        await user.save();
         res.status(200).json(blog);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -128,12 +175,17 @@ export const downvoteBlog = async (req, res) => {
 export const decreaseUpvoteBlog = async (req, res) => {
     try {
         const blogid = req.params.id;
+        const userid = req.user.id;
+
         const blog = await Blog.findById(blogid);
+        const user = await User.findById(userid);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
         blog.numOfUpvotes -= 1;
+        user.upvotedBlogs.pull(blogid);
         await blog.save();
+        await user.save();
         res.status(200).json(blog);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -155,6 +207,27 @@ export const decreaseDownvoteBlog = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
+//check whether the user has upvoted the blog or not
+export const checkUpvote = async (req, res) => {
+    try {
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid);
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        const userId = req.user.id;
+        //find the user
+        const user = await User.findById(userId);
+        if (user.upvotedBlogs.includes(blogid)) {
+            res.status(200).json({ hasUpvoted: true });
+        } else {
+            res.status(200).json({ hasUpvoted: false });
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
 
 //Show all blogs
 export const showAllBlogsByTitle = async (req, res) => {
@@ -239,6 +312,15 @@ export const showTopFive = async (req, res) => {
     try {
         const blogs = await Blog.find().sort({ numOfUpvotes: -1 }).limit(5);
         res.status(200).json(blogs);
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+};
+// Get top 5 recent blogs
+export const getRecentBlogs = async (req, res) => {
+    try {
+        const recentBlogs = await Blog.find().sort({ createdAt: -1 }).limit(5);
+        res.status(200).json(recentBlogs);
     } catch (error) {
         res.status(404).json({ message: error.message });
     }

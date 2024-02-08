@@ -1,6 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../controllers/user.controller.js';
-import { createBlog } from '../controllers/blog.controller.js';
+import { createBlog,handleImageUpload,uploadImage } from '../controllers/blog.controller.js';
 import {showMyBlogs} from '../controllers/blog.controller.js';
 import {showBlog} from '../controllers/blog.controller.js';
 import { updateBlog } from '../controllers/blog.controller.js';
@@ -9,6 +9,7 @@ import {upvoteBlog} from '../controllers/blog.controller.js';
 import  {downvoteBlog} from '../controllers/blog.controller.js';
 import { decreaseUpvoteBlog } from '../controllers/blog.controller.js';
 import { decreaseDownvoteBlog } from '../controllers/blog.controller.js';
+import { checkUpvote } from '../controllers/blog.controller.js';
 
 import { deleteBlog } from '../controllers/blog.controller.js';
 
@@ -38,10 +39,30 @@ import { showAllCommentsByUpvotes } from '../controllers/blog.controller.js';
 import { showAllCommentsByDownvotes } from '../controllers/blog.controller.js';
 
 import { showAllComments } from '../controllers/blog.controller.js';
+import { getRecentBlogs } from '../controllers/blog.controller.js';
 
 const router = express.Router();
+import { storage } from '../config/cloudinaryConfig.js';
+import multer from "multer";
+const upload = multer({ storage });
+router.post('/upload',authenticateToken,uploadImage,handleImageUpload);
+router.post('/createBlog',authenticateToken,   upload.array('images'),
+(error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    // A Multer error occurred when uploading.
+    console.log("unexpected field");
+    console.log(req.body);
+    console.log(req.files);
+    return res.status(500).json({ error: error.message });
+  } else if (error) {
+    // An unknown error occurred when uploading.
+    return res.status(500).json({ error: 'An unknown error occurred when uploading.' });
+  }
 
-router.post('/createBlog',authenticateToken, createBlog);
+  // Everything went fine.
+  next();
+} ,createBlog);
+router.get('/recent', authenticateToken,getRecentBlogs);
 router.get('/showMyBlogs',authenticateToken,showMyBlogs);
 router.get('/showBlog/:id',authenticateToken,showBlog);
 router.put('/updateBlog/:id',authenticateToken,updateBlog);
@@ -50,6 +71,7 @@ router.put('/upvoteBlog/:id',authenticateToken,upvoteBlog);
 router.put('/downvoteBlog/:id',authenticateToken,downvoteBlog);
 router.put('/decreaseUpvoteBlog/:id',authenticateToken,decreaseUpvoteBlog);
 router.put('/decreaseDownvoteBlog/:id',authenticateToken,decreaseDownvoteBlog);
+router.get('/checkUpvote/:id',authenticateToken,checkUpvote);
 
 router.delete('/deleteBlog/:id',authenticateToken,deleteBlog);
 

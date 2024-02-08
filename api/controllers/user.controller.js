@@ -4,7 +4,9 @@ import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
 export const authenticateToken = (req, res, next) => {
-  console.log("au");
+  console.log("from authenticateToken");
+  
+
   // console.log(req);
   // const authHeader = req.headers.authorization;
   // const token = authHeader && authHeader.split(' ')[1];
@@ -38,6 +40,7 @@ export const getUserDetails = async (req, res) => {
 
 // Function to update user profile and password
 export const updateProfile = async (req, res) => {
+
   const userId = req.user.id; // Extract user ID from token
   const { currentPassword, newPassword, ...updates } = req.body;
 
