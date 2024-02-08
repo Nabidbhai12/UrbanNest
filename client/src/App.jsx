@@ -11,6 +11,9 @@ const Test = React.lazy(() => import("./pages/test"));
 const Search = React.lazy(() => import("./pages/Search"));
 
 const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
+const CreateAblog=React.lazy(() =>import("./pages/createAblog"));
+const BlogHome= React.lazy(() => import("./pages/blogHomepage"));
+const BlogDetail=React.lazy(() => import("./pages/BlogDetail.jsx"));
 
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
@@ -29,6 +32,9 @@ export default function App() {
       <BrowserRouter>
       <LandingPageHeader />
         <Routes>
+        <Route path="/blogHome/:id" element={<BlogDetail/>} />
+          <Route path="/blogHome" element={<BlogHome />} />
+          <Route path="/createblog" element={<CreateAblog />} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/search-results" element={<SearchResults />} />
