@@ -5,7 +5,7 @@ import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
 export const authenticateToken = (req, res, next) => {
   console.log("from authenticateToken");
-  console.log(req.body);
+  
 
   // console.log(req);
   // const authHeader = req.headers.authorization;
