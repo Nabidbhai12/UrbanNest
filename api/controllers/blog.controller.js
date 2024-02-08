@@ -137,12 +137,17 @@ export const updateBlog = async (req, res) => {
 export const upvoteBlog = async (req, res) => {
     try {
         const blogid = req.params.id;
+        const userid = req.user.id;
+
         const blog = await Blog.findById(blogid);
+        const user = await User.findById(userid);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
         blog.numOfUpvotes += 1;
+        user.upvotedBlogs.push(blogid);
         await blog.save();
+        await user.save();
         res.status(200).json(blog);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -170,12 +175,17 @@ export const downvoteBlog = async (req, res) => {
 export const decreaseUpvoteBlog = async (req, res) => {
     try {
         const blogid = req.params.id;
+        const userid = req.user.id;
+
         const blog = await Blog.findById(blogid);
+        const user = await User.findById(userid);
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
         blog.numOfUpvotes -= 1;
+        user.upvotedBlogs.pull(blogid);
         await blog.save();
+        await user.save();
         res.status(200).json(blog);
     } catch (error) {
         res.status(404).json({ message: error.message });
@@ -197,6 +207,27 @@ export const decreaseDownvoteBlog = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
+//check whether the user has upvoted the blog or not
+export const checkUpvote = async (req, res) => {
+    try {
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid);
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        const userId = req.user.id;
+        //find the user
+        const user = await User.findById(userId);
+        if (user.upvotedBlogs.includes(blogid)) {
+            res.status(200).json({ hasUpvoted: true });
+        } else {
+            res.status(200).json({ hasUpvoted: false });
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
 
 //Show all blogs
 export const showAllBlogsByTitle = async (req, res) => {
