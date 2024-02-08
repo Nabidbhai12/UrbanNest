@@ -104,7 +104,7 @@ const LandingPageHeader = (props) => {
             <Text
               className="common-pointer cursor-pointer text-base text-gray-900 w-auto"
               size="txtManropeSemiBold16"
-              onClick={() => navigate("/blogpage")}
+              onClick={() => navigate("/blogHome")}
             >
               Blog
             </Text>

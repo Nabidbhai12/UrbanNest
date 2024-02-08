@@ -9,6 +9,7 @@ import {upvoteBlog} from '../controllers/blog.controller.js';
 import  {downvoteBlog} from '../controllers/blog.controller.js';
 import { decreaseUpvoteBlog } from '../controllers/blog.controller.js';
 import { decreaseDownvoteBlog } from '../controllers/blog.controller.js';
+import { checkUpvote } from '../controllers/blog.controller.js';
 
 import { deleteBlog } from '../controllers/blog.controller.js';
 
@@ -70,6 +71,7 @@ router.put('/upvoteBlog/:id',authenticateToken,upvoteBlog);
 router.put('/downvoteBlog/:id',authenticateToken,downvoteBlog);
 router.put('/decreaseUpvoteBlog/:id',authenticateToken,decreaseUpvoteBlog);
 router.put('/decreaseDownvoteBlog/:id',authenticateToken,decreaseDownvoteBlog);
+router.get('/checkUpvote/:id',authenticateToken,checkUpvote);
 
 router.delete('/deleteBlog/:id',authenticateToken,deleteBlog);
 
