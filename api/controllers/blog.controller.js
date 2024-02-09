@@ -229,6 +229,27 @@ export const checkUpvote = async (req, res) => {
     }
 }
 
+//check whether the user has downvoted the blog or not
+export const checkDownvote = async (req, res) => {
+    try {
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid);
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        const userId = req.user.id;
+        //find the user
+        const user = await User.findById(userId);
+        if (user.downvotedBlogs.includes(blogid)) {
+            res.status(200).json({ hasDownvoted: true });
+        } else {
+            res.status(200).json({ hasDownvoted: false });
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+}
+
 //Show all blogs
 export const showAllBlogsByTitle = async (req, res) => {
     try {
@@ -317,7 +338,7 @@ export const showTopFive = async (req, res) => {
     }
 };
 // Get top 5 recent blogs
-export const getRecentBlogs = async (req, res) => {
+export const showRecentBlogs = async (req, res) => {
     try {
         const recentBlogs = await Blog.find().sort({ createdAt: -1 }).limit(5);
         res.status(200).json(recentBlogs);
