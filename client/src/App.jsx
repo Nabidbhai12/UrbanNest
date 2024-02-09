@@ -27,7 +27,20 @@ const LandingPageHeader = React.lazy(() => import("./components/LandingPageHeade
 const PrivateRoute = React.lazy(() => import("./components/PrivateRoute"));
 
 export default function App() {
+  //check if user is logged in. We have used authenticaion token to check if user is logged in or not
+  //if user is logged in then return true else false
+  const isLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    //check if token is expired
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      return decodedToken.exp * 1000 > Date.now();
+    }
+    return false;
+  };
+  
   return (
+    //isLoggedIn={isLoggedIn}
     <React.Suspense fallback={<>Loading...</>}>
       <BrowserRouter>
       <LandingPageHeader />

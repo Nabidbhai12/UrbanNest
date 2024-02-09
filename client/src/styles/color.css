@@ -19,6 +19,7 @@
 --gray_900:#191919; 
 --bluegray_100:#d6d6d6; 
 --yellow_50:#fff7f0; 
+--yellow_100:#fff6ae;
 --gray_300:#dbdbdb; 
 --bluegray_600:#406f85; 
 --bluegray_102:#cfcfcf; 
@@ -26,3 +27,13 @@
 --white_A700:#ffffff;
 --red_700:#ff0000 
 }
+
+.bg-yellow-50-custom {
+    background-color: var(--yellow_50);
+}
+
+.bg-yellow-100-custom {
+    background-color: var(--yellow_100);
+}
+
+

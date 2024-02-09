@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import parse from 'html-react-parser'; // Install this package to parse HTML
+import parse from 'html-react-parser'; // Used to parse HTML strings
+import '../styles/color.css';
+import { Img } from "../components/image";
+import { Text } from "../components/text";
+import { List } from "../components/list";
+import { Slider } from "../components/slider";
 
-const BlogHome = () => {
+//{isLoggedIn}
+const blogHomepage = () => {
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const blogsPerPage = 6; // 3+3 blogs per page
+    const blogsPerPage = 6;
 
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await fetch ('/api/blogs/recent',
+                const response = await fetch ('/api/blogs/showAllBlogsByDateDesc',
                 {
                     method: 'GET',
                     headers: {
@@ -45,29 +51,50 @@ const BlogHome = () => {
         return { text, image };
     };
 
-    return (
-        <div className="container mx-auto px-4 sm:px-8">
-            <div className="py-8">
-                <div className="grid grid-cols-2 gap-4">
-                    {currentBlogs.map((blog) => {
-                        const { text, image } = extractContent(blog.content);
-                        return (
-                            <div key={blog._id} className="transition duration-500 ease-in-out transform hover:-translate-x-1 hover:scale-105">
+    return(
+        // {isLoggedIn && <CreateBlogDialog />} {
+        //     /* Conditionally render CreateBlogDialog based on isLoggedIn */
+            
+        // }
+        <div className='background bg-yellow-50-custom'>
+            <div className="container mx-auto px-4 sm:px-8">
+                <div className="py-8">
+                    <div className="flex flex-wrap -m-4"> {/* Use flexbox for a responsive layout */}
+                        {currentBlogs.map((blog) => {
+                            const { text, image } = extractContent(blog.content);
+                            return (
+                            <div key={blog._id} className="p-4 lg:w-1/3 md:w-1/2"> {/* Adjust the width per card based on screen size */}
                                 <Link to={`/blogHome/${blog._id}`}>
-                                    <div className="bg-white hover:shadow-xl rounded-lg overflow-hidden" style={{ height: '300px', width: '300px' }}>
-                                        <img src={image} alt={blog.title} className="w-full object-cover h-48" />
-                                        <div className="p-4 h-52">
-                                            <h2 className="font-bold text-lg mb-2">{blog.title}</h2>
-                                            <p className="text-gray-700 text-sm">{parse(text.substring(0, 100))}...</p>
+                                    <div className="h-full  bg-white-A700 hover:shadow-xl rounded-3xl overflow-hidden" style={{width: '400px', height: '400px'}}>
+                                        <img src={image} alt={blog.title} className="lg:h-48 md:h-36 w-full object-cover object-center" />
+                                        <div className="p-6">
+                                        <Text
+                                            className="leading-[140.00%] sm:text-4xl md:text-[42px] text-[46px] text-gray-900 tracking-[-0.92px]"
+                                            size="txtManropeExtraBold46"
+                                        >
+                                            {blog.title}
+                                        </Text>
+                                            <p className="leading-relaxed text-base">{parse(text.substring(0, 100))}</p>
                                         </div>
                                     </div>
                                 </Link>
                             </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
+                    <Pagination blogsPerPage={blogsPerPage} totalBlogs={blogs.length} paginate={paginate} />
                 </div>
-                <Pagination blogsPerPage={blogsPerPage} totalBlogs={blogs.length} paginate={paginate} />
             </div>
+        </div>
+    );
+};
+
+const CreateBlogDialog = () => {
+    // Add logic for creating a new blog post
+    return (
+        <div className="create-blog-dialog">
+            {/* Add form or UI elements for creating a new blog post */}
+            <p>Create a new blog post here...</p>
         </div>
     );
 };
@@ -94,4 +121,5 @@ const Pagination = ({ blogsPerPage, totalBlogs, paginate }) => {
     );
 };
 
-export default BlogHome;
+
+export default blogHomepage;
