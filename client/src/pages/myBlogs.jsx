@@ -1,3 +1,4 @@
+// shows all blogs of a user. It is a protected route. 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
@@ -8,9 +9,9 @@ import { Img } from "../components/image";
 import { Text } from "../components/text";
 import { List } from "../components/list";
 import { Slider } from "../components/slider";
+import { set } from 'mongoose';
 
-//{isLoggedIn}
-const blogHomepage = () => {
+const myBlogs = () => {
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const blogsPerPage = 6;
@@ -18,7 +19,7 @@ const blogHomepage = () => {
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
-                const response = await fetch ('/api/blogs/showAllBlogsByDateDesc',
+                const response = await fetch ('/api/blogs/showMyBlogs',
                 {
                     method: 'GET',
                     headers: {
@@ -28,12 +29,11 @@ const blogHomepage = () => {
                 const data=await response.json();
                 console.log('data received by client side : ', data);
 
-
                 setBlogs(data);
             } catch (error) {
                 console.error('Error fetching blogs:', error);
             }
-        };
+        }
 
         fetchBlogs();
     }, []);
@@ -90,16 +90,6 @@ const blogHomepage = () => {
     );
 };
 
-const CreateBlogDialog = () => {
-    // Add logic for creating a new blog post
-    return (
-        <div className="create-blog-dialog">
-            {/* Add form or UI elements for creating a new blog post */}
-            <p>Create a new blog post here...</p>
-        </div>
-    );
-};
-
 const Pagination = ({ blogsPerPage, totalBlogs, paginate }) => {
     const pageNumbers = [];
 
@@ -122,5 +112,4 @@ const Pagination = ({ blogsPerPage, totalBlogs, paginate }) => {
     );
 };
 
-
-export default blogHomepage;
+export default myBlogs;

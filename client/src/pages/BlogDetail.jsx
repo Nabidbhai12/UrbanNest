@@ -113,6 +113,7 @@ const BlogDetail = () => {
       if (response.ok) {
         setComment('');
         // Optionally fetch updated blog data
+        window.location.reload();
       } else {
         console.error('Error submitting the comment:', response.statusText);
       }
@@ -126,7 +127,13 @@ const BlogDetail = () => {
     return <div className="text-center mt-20">Loading...</div>;
   }
 
-  const sanitizedContent = DOMPurify.sanitize(blog.content);
+  const extractContent = (content) => {
+    const div = document.createElement('div');
+    div.innerHTML = content;
+    const text = div.textContent || div.innerText || '';
+    const image = div.querySelector('img') ? div.querySelector('img').src : 'default-image.jpg';
+    return { text, image };
+  };
   //const sanitizedComments = DOMPurify.sanitize(blog.commentList);
 
   return (
@@ -141,28 +148,56 @@ const BlogDetail = () => {
               >
                 {blog.title}
             </Text>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500 text-center">{blog.authorName}</p>
+            <p className="mt-1 max-w-2xl text-sm text-gray-500 text-center">{blog.authorName} - {new Date(blog.createdAt).toLocaleString()}</p>
           </div>
           {/* Post Content */}
-          <div className="px-4 py-5 sm:p-6">
-            <div className="prose max-w-none text-center" dangerouslySetInnerHTML={{ __html: sanitizedContent }} />
+          <div className="px-4 py-5 sm:p-6 ">
+            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: extractContent(blog.content).text }} />
+            {/* get the image */}
+            <div className='object-center'>
+              <img
+                src={extractContent(blog.content).image}
+                className="h-2/3 w-2/3 object-center object-cover"
+                alt={blog.title}
+              />
+            </div>
           </div>
-          {/* Interaction Bar */}
-          <div className="px-4 py-4 sm:px-6 border-t text-center">
+          
+          <div className="flex items-center space-x-4">
             <button
               onClick={handleUpVote}
-              className={`px-4 py-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full ${hasUpvoted ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
+              className={`p-2 border rounded-full hover:bg-gray-100 text-black ${hasUpvoted ? 'bg-green-600' : 'bg-gray-100'}`}
             >
-              {hasUpvoted ? 'Cancel Upvote' : 'Upvote'}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                {/* Use an arrow-up icon for upvoted */}
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+              </svg>
             </button>
+            <span className="text-xl font-bold">{blog.numOfUpvotes || 0}</span>
             <button
               onClick={handleDownVote}
-              className={`px-4 py-2 inline-flex items-center text-xs leading-5 font-semibold rounded-full ${hasDownvoted ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
+              className={`p-2 border rounded-full hover:bg-gray-100 text-black ${hasDownvoted ? 'bg-red-600' : 'bg-gray-100'}`}
             >
-              {hasDownvoted ? 'Cancel Downvote' : 'Downvote'}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                {/* Use an arrow-down icon for downvoted */}
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </button>
-            <span className="text-sm font-medium text-gray-500 ml-2">{blog.numOfUpvotes || 0} upvotes</span>
-            <span className="text-sm font-medium text-gray-500 ml-2">{blog.numOfDownvotes || 0} downvotes</span>
+            <span className="text-xl font-bold">{blog.numOfDownvotes || 0}</span>
           </div>
           {/* Comment Section */}
           <div className="px-4 py-4 sm:px-6 border-t">
@@ -195,12 +230,16 @@ const BlogDetail = () => {
             </ul>
           </div> */}
           <div className="container p-4 max-w-2xl mx-auto">
-            <h3 className="text-xl font-semibold pt-5 pb-2">Comments</h3>
+            <h1 className="text-3xl font-semibold pt-5 pb-2">Comments</h1>
             {comments.length > 0 ? (
               comments.map(comment => (
-                <div key={comment._id} className="bg-white p-3 my-2 rounded shadow">
-                  <p className="text-gray-800">{comment.content}</p>
+                <div key={comment._id} className="bg-yellow-50-custom p-3 my-2 rounded-2xl shadow">
+                  {/* display comment so that text wraps to next line if exceeds container length */}
+                  <p className="break-words text-xl">{comment.content}</p>
                   {/* Display additional comment information such as author and timestamp if available */}
+                  <div className="text-xs text-gray-500">
+                    {comment.authorName} - {new Date(comment.createdAt).toLocaleString()}
+                  </div>
                 </div>
               ))
             ) : (
