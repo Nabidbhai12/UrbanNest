@@ -23,7 +23,7 @@ const LandingPageCard = (props) => {
                 className="flex-1 text-base text-gray-900 w-auto"
                 size="txtManropeSemiBold16"
               >
-                {props?.p286162ndaveoaklone}
+                {props?.location}
               </Text>
             </div>
             <div className="flex flex-col gap-[21px] items-start justify-start w-full">
@@ -38,7 +38,7 @@ const LandingPageCard = (props) => {
                     className="flex-1 text-base text-gray-700 w-auto"
                     size="txtManropeSemiBold16Gray700"
                   >
-                    {props?.p3bedroom}
+                    {props?.beds}
                   </Text>
                 </div>
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
@@ -51,7 +51,7 @@ const LandingPageCard = (props) => {
                     className="text-base text-gray-700 w-auto"
                     size="txtManropeSemiBold16Gray700"
                   >
-                    {props?.bathcounter}
+                    {props?.baths}
                   </Text>
                 </div>
               </div>
@@ -66,7 +66,7 @@ const LandingPageCard = (props) => {
                     className="flex-1 text-base text-gray-700 w-auto"
                     size="txtManropeSemiBold16Gray700"
                   >
-                    {props?.sqftcounter}
+                    {props?.area}
                   </Text>
                 </div>
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
@@ -79,7 +79,7 @@ const LandingPageCard = (props) => {
                     className="text-base text-gray-700 w-auto"
                     size="txtManropeSemiBold16Gray700"
                   >
-                    {props?.p1bath}
+                    {props?.type}
                   </Text>
                 </div>
               </div>
@@ -106,9 +106,9 @@ LandingPageCard.defaultProps = {
   image: "images/img_image_260x384.png",
   location: "2861 62nd Ave, Oakland, CA 94605",
   beds: "3 Bed Room",
-  bathcounter: "1 Bath",
-  sqftcounter: "1,032 sqft",
-  p1bath: "Family",
+  baths: "1 Bath",
+  area: "1,032 sqft",
+  type: "Family",
   viewDetails: "View Details",
   price: "$649,900",
 };

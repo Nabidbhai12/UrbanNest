@@ -303,6 +303,9 @@ export default function search() {
 
       const data = await response.json();
       console.log("Search results:", data);
+      console.log("Search results returned: " + data.length);
+      console.log("Search results: ", data[0])
+      console.log(typeof(data[0].addess));
       setSearchResults(data); // Set the search results in the state
       navigate("/search-results", { state: { listings: data } }); // Pass searchResults as state      // Handle the search results as needed
     } catch (error) {
