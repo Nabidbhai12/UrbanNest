@@ -14,19 +14,17 @@ const BlogDetail = () => {
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
   const [comments, setComments] = useState([]);
+  const [commentUpvote, setCommentUpvote] = useState(false);
+  const [commentDownvote, setCommentDownvote] = useState(false);
   const { id } = useParams();
+  const { commentId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const blogResponse = await fetch(`/api/blogs/showBlog/${id}`);
-        const userUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvote/${id}`, {
-          // Add necessary headers for authentication, e.g.,
-          // headers: { 
-          //   'Authorization': `Bearer ${token}`,
-          // },
-        });
+        const userUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvote/${id}`, {});
 
         const userDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvote/${id}`, {});
   
@@ -39,7 +37,7 @@ const BlogDetail = () => {
           setHasUpvoted(hasUpvoted);
           setHasDownvoted(hasDownvoted);
         } else {
-          console.error('Error fetching blog details:', blogResponse.statusText, userUpvoteStatusResponse.statusText);
+          console.error('Error fetching blog details:', blogResponse.statusText);
           navigate('/404');
         }
       } catch (error) {
@@ -51,8 +49,54 @@ const BlogDetail = () => {
     const fetchComments = async () => {
       try{
         const response = await axios.get(`/api/blogs/showAllComments/${id}`);
+
+        const commentIds = response.data;
+
+        const cmdTemp = [];
+
+        for(let i = 0; i < commentIds.length; i++){
+          const userCommentUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvoteComment/${commentIds[i]}`, {});
+          const userCommentDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvoteComment/${commentIds[i]}`, {});
+
+          if (response.ok && userCommentUpvoteStatusResponse.ok && userCommentDownvoteStatusResponse.ok) {
+            const commentData = await response.json();
+            cmdTemp.push(commentData);
+            const hasUpvoted = await userCommentUpvoteStatusResponse.json().hasUpvoted;
+            const hasDownvoted = await userCommentDownvoteStatusResponse.json().hasDownvoted;
+    
+            setCommentUpvote(hasUpvoted);
+            setCommentDownvote(hasDownvoted);
+          }else{
+            console.error('Error fetching comments:', response.statusText);
+            navigate('/404');
+          }
+
+          setComments(cmdTemp);
+        }
+
+        //response.data is an array of comments
+        //need loop through the array and check if the user has upvoted or downvoted the comment
+        
+
+        
+
+        /* const userCommentUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvoteComment/${commentId}`, {});
+        const userCommentDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvoteComment/${commentId}`, {});
+
+        if (response.ok && userCommentUpvoteStatusResponse.ok && userCommentDownvoteStatusResponse.ok) {
+          const commentData = await response.json();
+          const hasUpvoted = await userCommentUpvoteStatusResponse.json().hasUpvoted;
+          const hasDownvoted = await userCommentDownvoteStatusResponse.json().hasDownvoted;
+  
+          setComments(commentData);
+          setHasUpvoted(hasUpvoted);
+          setHasDownvoted(hasDownvoted);
+        }else{
+          console.error('Error fetching comments:', response.statusText);
+          navigate('/404');
+        }
+        console.log("Comments: ", response.data); */
         setComments(response.data);
-        console.log("Comments: ", response.data);
       }catch(error){
         console.error('Error fetching comments:', error);
       }
@@ -119,6 +163,37 @@ const BlogDetail = () => {
       }
     } catch (error) {
       console.error('Error during comment submission:', error);
+    }
+  };
+
+  const handleCommentUpvote = async (commentId) => {
+    try{
+      if(commentUpvote){
+        await handleCommentVoteChange(`/api/blogs/decreaseUpvoteComment/${commentId}`, setCommentUpvote, 'numOfUpvotes', -1);
+      }
+
+      const endpoint = commentUpvote ? `/api/blogs/decreaseUpvoteComment/${commentId}` : `/api/blogs/upvoteComment/${commentId}`;
+    }catch(error){
+      console.error('Error upvoting the comment:', error);
+    }
+  };
+
+  const handleCommentDownvote = async (commentId) => {
+
+  };
+
+  const handleCommentVoteChange = async (endpoint, setState, countKey, delta) => {
+    try{
+      const response = await axios.put(endpoint);
+      if(response.status === 200){
+        setState(prevState => !prevState);
+        setComment(prevComment => ({
+          ...prevComment,
+          [countKey]: prevComment[countKey] + delta,
+        }));
+      }
+    }catch(error){
+      console.error('Error voting on the comment:', error);
     }
   };
   

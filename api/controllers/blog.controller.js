@@ -417,6 +417,9 @@ export const createComment = async (req, res) => {
         blog.commentList.push(newComment._id);
         console.log("New comment pushed to blog.");
         await blog.save();
+        user.mycomments.push(newComment._id);
+        console.log("New comment pushed to user.");
+        await user.save();
         res.status(201).json(newComment);
     }
     catch (error) {
@@ -424,17 +427,6 @@ export const createComment = async (req, res) => {
     }
 }
 
-//show my comments
-export const showMyComments = async (req, res) => {
-    try{
-        const userId = req.user.id;
-        const user = await User.findById(userId);
-        const comments = await Comment.find({ "author" : user._id });
-        res.status(200).json(comments);
-    }catch(error){
-        res.status(404).json({ message: error.message });
-    }
-}    
 
 
 //update comment
@@ -530,6 +522,77 @@ export const decreaseDownvoteComment = async (req, res) => {
         comment.numOfDownvotes -= 1;
         await comment.save();
         res.status(200).json(comment);
+    }catch(error){
+        res.status(404).json({ message: error.message });
+    }
+}
+
+/* export const checkUpvote = async (req, res) => {
+    try {
+        const blogid = req.params.id;
+        const blog = await Blog.findById(blogid);
+        if (!blog) {
+            return res.status(404).json({ message: "Blog not found" });
+        }
+        const userId = req.user.id;
+        //find the user
+        const user = await User.findById(userId);
+        if (user.upvotedBlogs.includes(blogid)) {
+            res.status(200).json({ hasUpvoted: true });
+        } else {
+            res.status(200).json({ hasUpvoted: false });
+        }
+    } catch (error) {
+        res.status(404).json({ message: error.message });
+    }
+} */
+
+//check if comment is upvoted
+export const checkUpvoteComment = async (req, res) => {
+    try{
+        const commentid = req.params.id;
+        const userid = req.user.id;
+
+        const user = await User.findById(userid);
+        
+        if(user.upvotedComments.includes(commentid)){
+            res.status(200).json({ hasUpvoted: true });
+        }
+        else{
+            res.status(200).json({ hasUpvoted: false });
+        }
+    }catch(error){
+        res.status(404).json({ message: error.message});
+    }
+}
+
+//check if comment is downvoted
+export const checkDownvoteComment = async (req, res) => {
+    try{
+        const commentid = req.params.id;
+        const userid = req.user.id;
+
+        const user = await User.findById(userid);
+        
+        if(user.downvotedComments.includes(commentid)){
+            res.status(200).json({ hasDownvoted: true });
+        }
+        else{
+            res.status(200).json({ hasDownvoted: false });
+        }
+    }catch(error){
+        res.status(404).json({ message: error.message});    
+    }
+}
+
+//show my comments
+export const showMyCommentsByUpvotes = async (req, res) => {
+    try{
+        const userId = req.user.id;
+        const user = await User.findById(userId);
+
+        const comments = await Comment.find({ "author" : user._id }).sort({ numOfUpvotes: -1 });
+        res.status(200).json(comments);
     }catch(error){
         res.status(404).json({ message: error.message });
     }
