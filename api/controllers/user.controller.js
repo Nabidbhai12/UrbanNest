@@ -3,6 +3,33 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
+
+
+export const verifyLoginStatus = (req, res) => {
+  const token = req.cookies["access_token"];
+
+  // If there's no token, the user is not logged in
+  if (!token) {
+    return res.json({ isLoggedIn: false });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      // Token is not valid or has other issues
+      return res.json({ isLoggedIn: false });
+    }
+
+    const currentTime = Date.now() / 1000; // Get current time in seconds
+    if (decoded.exp && decoded.exp < currentTime) {
+      // Token has expired
+      return res.json({ isLoggedIn: false });
+    }
+
+    // Token is valid and not expired
+    return res.json({ isLoggedIn: true });
+  });
+};
+
 export const authenticateToken = (req, res, next) => {
   console.log("from authenticateToken");
   const token = req.cookies["access_token"];
