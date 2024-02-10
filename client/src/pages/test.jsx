@@ -69,6 +69,7 @@ import Dropdown_apartment from "../components/dropdown_apartments.jsx";
 import Dropdown_beds_baths from "../components/dropdown_beds_baths.jsx";
 import Dropdown_price from "../components/dropdown_price.jsx";
 import Dropdown_area from "../components/dropdown_area.jsx";
+import { useNavigate } from "react-router-dom";
 
 import LandingPageCard from "../components/LandingPageCard.jsx";
 import LandingPageFooter from "../components/LandingPageFooter.jsx";
@@ -163,13 +164,25 @@ const ListingMapViewPage = () => {
     });
   };
 
-  const handleRangeChange = (e) => {
-    const { name, value } = e.target;
+  const handleAreaChange = (min_area, max_area) => {
     setFilters({
       ...filters,
-      [name]: value.split(",").map(Number),
+      areaRange_min : min_area,
+      areaRange_max : max_area,
     });
-  };
+  }
+
+  const handleBedBath = (bedrooms, bathrooms) => {
+    setFilters({
+      ...filters,
+      beds : bedrooms,
+      baths : bathrooms,
+    });
+  }
+
+  const [searchResults, setSearchResults] = useState([]); // State to manage search results
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -246,13 +259,13 @@ const ListingMapViewPage = () => {
               <div className="flex flex-row gap-[50px] items-start justify-start w-full">
                 <div className="flex flex-row gap-5 items-start justify-start w-auto">
                   <div className="flex flex-row py-[10px]">
-                    <Dropdown_beds_baths propertyType={filters.propertyType} />
+                    <Dropdown_beds_baths propertyType={filters.propertyType} onBedBathSelect={handleBedBath} />
                   </div>
                   <div className="flex flex-row py-[10px]">
                     <Dropdown_price onPriceSelect={handlePriceChange} />
                   </div>
                   <div className="flex flex-row py-[10px]">
-                    <Dropdown_area />
+                    <Dropdown_area onAreaSelect={handleAreaChange}/>
                   </div>
                   <div className="flex flex-row py-[10px]">
                     <Button
@@ -264,6 +277,7 @@ const ListingMapViewPage = () => {
                           alt="search"
                         />
                       }
+                      onClick = {handleSubmit}
                     >
                       <div className="font-bold text-left text-lg text-white-A700">
                         Search

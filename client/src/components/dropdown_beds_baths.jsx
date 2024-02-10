@@ -5,12 +5,15 @@ import { Text } from "./text";
 const bedOptions = ["1", "2", "3", "4", "5", "6", "7", "8+"];
 const bathOptions = ["1", "2", "3", "4", "5", "6+"];
 
-const DropdownMenu = ({ propertyType }) => {
+const DropdownMenu = ({ propertyType, onBedBathSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedBeds, setSelectedBeds] = useState("");
   const [selectedBaths, setSelectedBaths] = useState("");
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+    onBedBathSelect(selectedBeds, selectedBaths);
+  }
   const selectBeds = (beds) => {
     setSelectedBeds(beds);
     //setIsOpen(false); // Optional: close dropdown upon selection
