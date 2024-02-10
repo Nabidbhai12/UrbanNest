@@ -14,8 +14,7 @@ const BlogDetail = () => {
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [hasDownvoted, setHasDownvoted] = useState(false);
   const [comments, setComments] = useState([]);
-  const [commentUpvote, setCommentUpvote] = useState(false);
-  const [commentDownvote, setCommentDownvote] = useState(false);
+  const [commentVoteStatuses, setCommentVoteStatuses] = useState([]);
   const { id } = useParams();
   const { commentId } = useParams();
   const navigate = useNavigate();
@@ -49,54 +48,16 @@ const BlogDetail = () => {
     const fetchComments = async () => {
       try{
         const response = await axios.get(`/api/blogs/showAllComments/${id}`);
-
-        const commentIds = response.data;
-
-        const cmdTemp = [];
-
-        for(let i = 0; i < commentIds.length; i++){
-          const userCommentUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvoteComment/${commentIds[i]}`, {});
-          const userCommentDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvoteComment/${commentIds[i]}`, {});
-
-          if (response.ok && userCommentUpvoteStatusResponse.ok && userCommentDownvoteStatusResponse.ok) {
-            const commentData = await response.json();
-            cmdTemp.push(commentData);
-            const hasUpvoted = await userCommentUpvoteStatusResponse.json().hasUpvoted;
-            const hasDownvoted = await userCommentDownvoteStatusResponse.json().hasDownvoted;
-    
-            setCommentUpvote(hasUpvoted);
-            setCommentDownvote(hasDownvoted);
-          }else{
-            console.error('Error fetching comments:', response.statusText);
-            navigate('/404');
-          }
-
-          setComments(cmdTemp);
-        }
-
-        //response.data is an array of comments
-        //need loop through the array and check if the user has upvoted or downvoted the comment
-        
-
-        
-
-        /* const userCommentUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvoteComment/${commentId}`, {});
-        const userCommentDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvoteComment/${commentId}`, {});
-
-        if (response.ok && userCommentUpvoteStatusResponse.ok && userCommentDownvoteStatusResponse.ok) {
-          const commentData = await response.json();
-          const hasUpvoted = await userCommentUpvoteStatusResponse.json().hasUpvoted;
-          const hasDownvoted = await userCommentDownvoteStatusResponse.json().hasDownvoted;
-  
-          setComments(commentData);
-          setHasUpvoted(hasUpvoted);
-          setHasDownvoted(hasDownvoted);
-        }else{
-          console.error('Error fetching comments:', response.statusText);
-          navigate('/404');
-        }
-        console.log("Comments: ", response.data); */
         setComments(response.data);
+
+        const voteStatusResponse = await fetch(`/api/blogs/checkVoteComment/${commentId}`, {});
+        if(voteStatusResponse.ok){
+          const voteStatusData = await voteStatusResponse.json();
+          setCommentVoteStatuses(voteStatusData);
+        }else{
+          console.error('Error fetching comment vote status:', voteStatusResponse.statusText);
+        }
+        
       }catch(error){
         console.error('Error fetching comments:', error);
       }

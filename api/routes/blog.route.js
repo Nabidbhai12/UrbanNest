@@ -33,8 +33,10 @@ import { upvoteComment } from '../controllers/blog.controller.js';
 import { downvoteComment } from '../controllers/blog.controller.js';
 import { decreaseUpvoteComment } from '../controllers/blog.controller.js';
 import { decreaseDownvoteComment } from '../controllers/blog.controller.js';
-import { checkUpvoteComment } from '../controllers/blog.controller.js';
-import { checkDownvoteComment } from '../controllers/blog.controller.js';
+// import { checkUpvoteComment } from '../controllers/blog.controller.js';
+// import { checkDownvoteComment } from '../controllers/blog.controller.js';
+
+import {checkVoteComment} from '../controllers/blog.controller.js';
 
 import { deleteComment } from '../controllers/blog.controller.js';
 
@@ -77,6 +79,7 @@ router.put('/decreaseDownvoteBlog/:id',authenticateToken,decreaseDownvoteBlog);
 router.get('/checkUpvote/:id',authenticateToken,checkUpvote);
 router.get('/checkDownvote/:id',authenticateToken,checkDownvote);
 
+
 router.delete('/deleteBlog/:id',authenticateToken,deleteBlog);
 
 router.get('/showAllBlogsByTitle',showAllBlogsByTitle);
@@ -98,8 +101,9 @@ router.put('/upvoteComment/:id',authenticateToken,upvoteComment);
 router.put('/downvoteComment/:id',authenticateToken,downvoteComment);
 router.put('/decreaseUpvoteComment/:id',authenticateToken,decreaseUpvoteComment);
 router.put('/decreaseDownvoteComment/:id',authenticateToken,decreaseDownvoteComment);
-router.get('/checkUpvoteComment/:id',authenticateToken,checkUpvoteComment);
-router.get('/checkDownvoteComment/:id',authenticateToken,checkDownvoteComment);
+// router.get('/checkUpvoteComment/:id',authenticateToken,checkUpvoteComment);
+// router.get('/checkDownvoteComment/:id',authenticateToken,checkDownvoteComment);
+router.get('/checkVoteComment/:id',authenticateToken,checkVoteComment);
 
 router.delete('/deleteComment/:id',authenticateToken,deleteComment);
 

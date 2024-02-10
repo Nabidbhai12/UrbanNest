@@ -547,7 +547,7 @@ export const decreaseDownvoteComment = async (req, res) => {
     }
 } */
 
-//check if comment is upvoted
+/* //check if comment is upvoted
 export const checkUpvoteComment = async (req, res) => {
     try{
         const commentid = req.params.id;
@@ -582,6 +582,36 @@ export const checkDownvoteComment = async (req, res) => {
         }
     }catch(error){
         res.status(404).json({ message: error.message});    
+    }
+} */
+
+//check whether every comment of a blog is upvoted, or downvoted, or none by a user. 
+//Retrun a list of integers. 0 for none, 1 for upvote, -1 for downvote.
+export const checkVoteComment = async (req, res) => {
+    try{
+        const blogid = req.params.id;
+        const userid = req.user.id;
+
+        const user = await User.findById(userid);
+        const blog = await Blog.findById(blogid);
+
+        const comments = blog.commentList;
+        let result = [];
+
+        for(let i = 0; i < comments.length; i++){
+            if(user.upvotedComments.includes(comments[i])){
+                result.push(1);
+            }
+            else if(user.downvotedComments.includes(comments[i])){
+                result.push(-1);
+            }
+            else{
+                result.push(0);
+            }
+        }
+        res.status(200).json(result);
+    }catch(error){
+        res.status(404).json({ message: error.message});
     }
 }
 
