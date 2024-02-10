@@ -222,6 +222,11 @@ export default function Profile() {
             <p className='text-gray-600'>{formData.email}</p>
             <button className='px-4 py-1 text-sm text-white bg-blue-500 rounded' onClick={() => {}}>Update Profile</button>
           </div>
+          <div className='mt-4'>
+            <Link to={`/createblog`}>
+              <button className='text-green-700'>Write a Blog</button>
+            </Link>
+          </div>
         </div>
 
         <h2 className='text-xl text-gray-700 font-semibold mb-4'>Wishlist</h2>
