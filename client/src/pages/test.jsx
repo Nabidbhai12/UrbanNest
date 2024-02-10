@@ -69,26 +69,11 @@ import Dropdown_apartment from "../components/dropdown_apartments.jsx";
 import Dropdown_beds_baths from "../components/dropdown_beds_baths.jsx";
 import Dropdown_price from "../components/dropdown_price.jsx";
 import Dropdown_area from "../components/dropdown_area.jsx";
-import { useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import SearchResults from "./SearchResults.jsx";
 
 import LandingPageCard from "../components/LandingPageCard.jsx";
 import LandingPageFooter from "../components/LandingPageFooter.jsx";
-
-const dropdownlargeOptionsList = [
-  { label: "Option1", value: "option1" },
-  { label: "Option2", value: "option2" },
-  { label: "Option3", value: "option3" },
-];
-const priceOptionsList = [
-  { label: "Option1", value: "option1" },
-  { label: "Option2", value: "option2" },
-  { label: "Option3", value: "option3" },
-];
-const dropdownlargeOneOptionsList = [
-  { label: "Option1", value: "option1" },
-  { label: "Option2", value: "option2" },
-  { label: "Option3", value: "option3" },
-];
 
 const ListingMapViewPage = () => {
   const landingPageCardPropList = [
@@ -167,18 +152,18 @@ const ListingMapViewPage = () => {
   const handleAreaChange = (min_area, max_area) => {
     setFilters({
       ...filters,
-      areaRange_min : min_area,
-      areaRange_max : max_area,
+      areaRange_min: min_area,
+      areaRange_max: max_area,
     });
-  }
+  };
 
   const handleBedBath = (bedrooms, bathrooms) => {
     setFilters({
       ...filters,
-      beds : bedrooms,
-      baths : bathrooms,
+      beds: bedrooms,
+      baths: bathrooms,
     });
-  }
+  };
 
   const [searchResults, setSearchResults] = useState([]); // State to manage search results
 
@@ -228,6 +213,31 @@ const ListingMapViewPage = () => {
     }
   };
 
+  // const location = useLocation(); // Access location
+  // const allListings = location.state?.listings; // Access listings from state
+  // console.log("Inside test Listings:" + allListings);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const listingsPerPage = 4;
+  // const totalPages = Math.ceil(allListings?.length / listingsPerPage);
+
+  // // Calculate the currently displayed listings
+  // const indexOfLastListing = currentPage * listingsPerPage;
+  // const indexOfFirstListing = indexOfLastListing - listingsPerPage;
+  // const currentListings = allListings?.slice(
+  //   indexOfFirstListing,
+  //   indexOfLastListing
+  // );
+
+  // // Pagination Pages
+  // const pageNumbers = [];
+  // for (let i = 1; i <= totalPages; i++) {
+  //   pageNumbers.push(i);
+  // }
+
+  // if (!allListings || allListings.length === 0) {
+  //   return <div className="text-center py-12">No Listings Found</div>;
+  // }
+
   return (
     <>
       <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
@@ -259,13 +269,16 @@ const ListingMapViewPage = () => {
               <div className="flex flex-row gap-[50px] items-start justify-start w-full">
                 <div className="flex flex-row gap-5 items-start justify-start w-auto">
                   <div className="flex flex-row py-[10px]">
-                    <Dropdown_beds_baths propertyType={filters.propertyType} onBedBathSelect={handleBedBath} />
+                    <Dropdown_beds_baths
+                      propertyType={filters.propertyType}
+                      onBedBathSelect={handleBedBath}
+                    />
                   </div>
                   <div className="flex flex-row py-[10px]">
                     <Dropdown_price onPriceSelect={handlePriceChange} />
                   </div>
                   <div className="flex flex-row py-[10px]">
-                    <Dropdown_area onAreaSelect={handleAreaChange}/>
+                    <Dropdown_area onAreaSelect={handleAreaChange} />
                   </div>
                   <div className="flex flex-row py-[10px]">
                     <Button
@@ -277,7 +290,7 @@ const ListingMapViewPage = () => {
                           alt="search"
                         />
                       }
-                      onClick = {handleSubmit}
+                      onClick={handleSubmit}
                     >
                       <div className="font-bold text-left text-lg text-white-A700">
                         Search
@@ -339,6 +352,14 @@ const ListingMapViewPage = () => {
           </div>
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+        {
+        <Routes>
+          <Route
+            path="/search-results"
+            element={<SearchResults listings={searchResults} />}
+          />
+        </Routes>
+                }
       </div>
     </>
   );
