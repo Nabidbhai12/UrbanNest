@@ -26,6 +26,8 @@ const BlogDetail = () => {
         const userUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvote/${id}`, {});
 
         const userDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvote/${id}`, {});
+
+        console.log('in fetchBlog id:', id);
   
         if (blogResponse.ok && userUpvoteStatusResponse.ok && userDownvoteStatusResponse.ok) {
           const blogData = await blogResponse.json();
@@ -48,9 +50,14 @@ const BlogDetail = () => {
     const fetchComments = async () => {
       try{
         const response = await axios.get(`/api/blogs/showAllComments/${id}`);
+
+        console.log('in fetchComments response:', response);
         setComments(response.data);
 
-        const voteStatusResponse = await fetch(`/api/blogs/checkVoteComment/${commentId}`, {});
+        console.log('in fetchComments id:', id);
+
+        const voteStatusResponse = await fetch(`/api/blogs/checkVoteComment/${id}`, {});
+        console.log('in fetchComments voteStatusResponse:', voteStatusResponse);
         if(voteStatusResponse.ok){
           const voteStatusData = await voteStatusResponse.json();
           setCommentVoteStatuses(voteStatusData);
@@ -127,34 +134,68 @@ const BlogDetail = () => {
     }
   };
 
-  const handleCommentUpvote = async (commentId) => {
-    try{
-      if(commentUpvote){
-        await handleCommentVoteChange(`/api/blogs/decreaseUpvoteComment/${commentId}`, setCommentUpvote, 'numOfUpvotes', -1);
+  const handleCommentVoteChange = async (endpoint, index, newStatus) => {
+    try {
+      console.log('in handleCommentVoteChange endpoint:', endpoint);
+      console.log('in handleCommentVoteChange newStatus:', newStatus);
+      const response = await axios.put(endpoint);
+      if (response.status === 200) {
+        // Directly update the specific index in the commentVoteStatuses array
+        setCommentVoteStatuses(prevStatuses =>
+          prevStatuses.map((status, idx) => (idx === index) ? newStatus : status)
+        );
       }
+    } catch (error) {
+      console.error('Error voting on the comment:', error);
+    }
+  };
+  
+  const handleCommentUpvote = async (commentId, index) => {
+    const currentStatus = commentVoteStatuses[index];
+    const isCurrentlyUpvoted = currentStatus === 1;
+    const isCurrentlyDownvoted = currentStatus === -1;
+    let endpoint;
+    
+    console.log('in handleCommentUpvote currentStatus:', currentStatus);
 
-      const endpoint = commentUpvote ? `/api/blogs/decreaseUpvoteComment/${commentId}` : `/api/blogs/upvoteComment/${commentId}`;
-    }catch(error){
-      console.error('Error upvoting the comment:', error);
+    if (currentStatus === 1) {
+      // Cancel the upvote
+      endpoint = `/api/blogs/decreaseUpvoteComment/${commentId}`;
+      await handleCommentVoteChange(endpoint, index, 0);
+
+    } else {
+      // Apply upvote
+      if (currentStatus === -1) {
+        // First, cancel the downvote
+        await handleCommentVoteChange(`/api/blogs/decreaseDownvoteComment/${commentId}`, index, 0);
+      }
+      // Then, apply the upvote
+      endpoint = `/api/blogs/upvoteComment/${commentId}`;
+      await handleCommentVoteChange(endpoint, index, 1);
     }
   };
 
-  const handleCommentDownvote = async (commentId) => {
+  const handleCommentDownvote = async (commentId, index) => {
+    const currentStatus = commentVoteStatuses[index];
+    const isCurrentlyDownvoted = currentStatus === -1;
+    const isCurrentlyUpvoted = currentStatus === 1;
+    let endpoint;
 
-  };
-
-  const handleCommentVoteChange = async (endpoint, setState, countKey, delta) => {
-    try{
-      const response = await axios.put(endpoint);
-      if(response.status === 200){
-        setState(prevState => !prevState);
-        setComment(prevComment => ({
-          ...prevComment,
-          [countKey]: prevComment[countKey] + delta,
-        }));
+    console.log('in handleCommentDownvote currentStatus:', currentStatus);
+    
+    if (currentStatus === -1) {
+      // Cancel the downvote
+      endpoint = `/api/blogs/decreaseDownvoteComment/${commentId}`;
+      await handleCommentVoteChange(endpoint, index, 0);
+    } else {
+      // Apply downvote
+      if (currentStatus === 1) {
+        // First, cancel the upvote
+        await handleCommentVoteChange(`/api/blogs/decreaseUpvoteComment/${commentId}`, index, 0);
       }
-    }catch(error){
-      console.error('Error voting on the comment:', error);
+      // Then, apply the downvote
+      endpoint = `/api/blogs/downvoteComment/${commentId}`;
+      await handleCommentVoteChange(endpoint, index, -1);
     }
   };
   
@@ -264,24 +305,51 @@ const BlogDetail = () => {
                 </li>
               ))}
             </ul>
-          </div> */}
+          </div> 
+          
+          */}
+          
           <div className="container p-4 max-w-2xl mx-auto">
             <h1 className="text-3xl font-semibold pt-5 pb-2">Comments</h1>
-            {comments.length > 0 ? (
-              comments.map(comment => (
-                <div key={comment._id} className="bg-yellow-50-custom p-3 my-2 rounded-2xl shadow">
-                  {/* display comment so that text wraps to next line if exceeds container length */}
-                  <p className="break-words text-xl">{comment.content}</p>
-                  {/* Display additional comment information such as author and timestamp if available */}
-                  <div className="text-xs text-gray-500">
-                    {comment.authorName} - {new Date(comment.createdAt).toLocaleString()}
+            {
+              comments.length > 0 ? (
+                comments.map((comment, index) => (
+                  <div key={comment._id} className="bg-yellow-50-custom p-3 my-2 rounded-2xl shadow">
+                    <p className="break-words text-xl">{comment.content}</p>
+
+                    <div className="text-xs text-gray-500">
+                      {comment.authorName} - {new Date(comment.createdAt).toLocaleString()}
+                    </div>
+
+                    <div className="flex items-center space-x-4 mt-2">
+                      <button
+                        onClick={() => handleCommentUpvote(comment._id, index)}
+                        className={`p-2 border rounded-full hover:bg-gray-100 text-black ${commentVoteStatuses[index] === 1 ? 'bg-green-600' : 'bg-gray-100'}`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+                        </svg>
+                      </button>
+                      <span className="text-xl font-bold">{comment.numOfUpvotes || 0}</span>
+                      <button
+                        onClick={() => handleCommentDownvote(comment._id, index)}
+                        className={`p-2 border rounded-full hover:bg-gray-100 text-black ${commentVoteStatuses[index] === -1 ? 'bg-red-600' : 'bg-gray-100'}`}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      <span className="text-xl font-bold">{comment.numOfDownvotes || 0}</span>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
+                ))
+              )
+              : (
               <p>No comments yet.</p>
-            )}
+              )
+            }
           </div>
+          
         </div>
       </div>
     </div>
