@@ -64,7 +64,7 @@ const NewBlogPost = () => {
     formData.append('tags', JSON.stringify(tagsArray));
     formData.append('imageUrls', JSON.stringify(imageUrls));
 
-    try {
+    try {  
       const response = await axios.post('/api/blogs/createBlog', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -72,7 +72,7 @@ const NewBlogPost = () => {
       });
       
       console.log(response.data);
-      // Handle success, maybe clear form or show a success message
+    // Handle success, maybe clear form or show a success message
     } catch (error) {
       console.error('There was an error creating the blog post:', error);
       // Handle error, show error message to the user

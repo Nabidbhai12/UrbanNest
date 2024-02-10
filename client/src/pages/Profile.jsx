@@ -173,6 +173,25 @@ export default function Profile() {
       setShowListingsError(true);
     }
   };
+  const fetchWishlistItems = async () => {
+    try {
+      const res = await fetch(`/api/wishlist/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success) {
+        // Assuming data.wishlistItems contains the wishlist items
+        setUserListings(data.wishlistItems);
+      } else {
+        // Handle error, could set an error state to show a message
+      }
+    } catch (error) {
+      // Handle error
+    }
+  };
+
+  useEffect(() => {
+    fetchWishlistItems();
+  }, []);
+
 
   const handleListingDelete = async (listingId) => {
     try {
@@ -193,38 +212,35 @@ export default function Profile() {
     }
   };
 
-
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <div className='flex items-start justify-between'>
-        {/* User Image */}
-        <img
-          src={formData.avatar || 'default-avatar.png'} // Fallback to a default image if necessary
-          alt='Profile'
-          className='rounded-full h-24 w-24 object-cover'
-        />
-        {/* User Details and Actions */}
-        <div className='flex-1 ml-4'>
-          <h1 className='text-3xl font-semibold mb-3'>{formData.username}</h1>
-          <p>{formData.email}</p>
-          {/* User bio and contact number (optional) */}
-          <p>{formData.bio}</p>
-          <p>{formData.contactNumber}</p>
-          {/* Additional User Details */}
-      
-          {/* Sign Out and Update Profile buttons */}
-          <div className='mt-4'>
-            <button onClick={handleSignOut} className='text-red-700 mr-4'>Sign Out</button>
-            <button onClick={handleShowListings} className='text-green-700'>Update Profile</button>
-          </div>
-          <div className='mt-4'>
-            <Link to={`/myblogs`}>
-              <button className='text-green-700'>My Blogs</button>
-            </Link>
+    <div className='bg-gray-100 min-h-screen p-5'>
+      <div className='bg-white shadow rounded-lg p-6'>
+        <div className='flex items-center space-x-6 mb-4'>
+          <img className='h-24 w-24 rounded-full' src={formData.avatar || 'default-avatar.png'} alt='Profile avatar' />
+          <div>
+            <h1 className='text-xl text-gray-700 font-semibold'>{formData.username}</h1>
+            <p className='text-gray-600'>{formData.email}</p>
+            <button className='px-4 py-1 text-sm text-white bg-blue-500 rounded' onClick={() => {}}>Update Profile</button>
           </div>
         </div>
+
+        <h2 className='text-xl text-gray-700 font-semibold mb-4'>Wishlist</h2>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+          {userListings.map((item) => (
+            <div key={item._id} className='bg-white shadow rounded-lg p-4 flex flex-col'>
+              <img className='rounded-lg mb-4' src={item.image} alt={item.title} />
+              <div>
+                <h3 className='text-lg text-gray-700 font-semibold'>{item.title}</h3>
+                <p className='text-gray-600'>{item.description}</p>
+                <p className='text-gray-600'>{item.price}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-      {/* ... rest of the component ... */}
     </div>
   );
-}  
+}
+
+
+  
