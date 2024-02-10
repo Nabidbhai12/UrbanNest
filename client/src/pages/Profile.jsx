@@ -35,6 +35,7 @@ export default function Profile() {
     avatar: currentUser?.avatar || 'default-avatar.png', // Provide a default avatar if needed
     // ... add other default properties if necessary ...
   });
+  
 
 
   useEffect(() => {
@@ -214,31 +215,32 @@ export default function Profile() {
 
   return (
     <div className='bg-gray-100 min-h-screen p-5'>
-      <div className='bg-white shadow rounded-lg p-6'>
-        <div className='flex items-center space-x-6 mb-4'>
-          <img className='h-24 w-24 rounded-full' src={formData.avatar || 'default-avatar.png'} alt='Profile avatar' />
-          <div>
-            <h1 className='text-xl text-gray-700 font-semibold'>{formData.username}</h1>
-            <p className='text-gray-600'>{formData.email}</p>
-            <button className='px-4 py-1 text-sm text-white bg-blue-500 rounded' onClick={() => {}}>Update Profile</button>
-          </div>
-          <div className='mt-4'>
-            <Link to={`/createblog`}>
-              <button className='text-green-700'>Write a Blog</button>
-            </Link>
-          </div>
-        </div>
 
-        <h2 className='text-xl text-gray-700 font-semibold mb-4'>Wishlist</h2>
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+      <div className='bg-white shadow rounded-lg p-6 flex'>
+        <div className='w-1/3'>
+          <img className='rounded-lg' src={formData.avatar || 'default-avatar.png'} alt='Profile avatar' />
+        </div>
+        <div className='w-2/3 pl-5'>
+          <h1 className='text-2xl font-bold mb-2'>{formData.username}</h1>
+          <p className='text-gray-700'>{formData.email}</p>
+          {/* ... other user details ... */}
+          //added
+          <button className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleSignOut}>Sign Out</button>
+
+
+        </div>
+      </div>
+
+      <div className='my-6'>
+        <h2 className='text-2xl font-bold mb-4'>Wishlist</h2>
+        <div className='flex overflow-x-auto gap-4'>
           {userListings.map((item) => (
-            <div key={item._id} className='bg-white shadow rounded-lg p-4 flex flex-col'>
+            <div key={item._id} className='min-w-max bg-white shadow rounded-lg p-4'>
               <img className='rounded-lg mb-4' src={item.image} alt={item.title} />
-              <div>
-                <h3 className='text-lg text-gray-700 font-semibold'>{item.title}</h3>
-                <p className='text-gray-600'>{item.description}</p>
-                <p className='text-gray-600'>{item.price}</p>
-              </div>
+              <h3 className='text-lg font-semibold'>{item.title}</h3>
+              <p className='text-gray-600'>{item.description}</p>
+              <p className='text-gray-600'>{item.price}</p>
+              {/* ... additional item details ... */}
             </div>
           ))}
         </div>
