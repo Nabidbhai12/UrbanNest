@@ -215,6 +215,7 @@ export default function Profile() {
 
   return (
     <div className='bg-gray-100 min-h-screen p-5'>
+
       <div className='bg-white shadow rounded-lg p-6 flex'>
         <div className='w-1/3'>
           <img className='rounded-lg' src={formData.avatar || 'default-avatar.png'} alt='Profile avatar' />
@@ -225,6 +226,8 @@ export default function Profile() {
           {/* ... other user details ... */}
           //added
           <button className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleSignOut}>Sign Out</button>
+
+
         </div>
       </div>
 

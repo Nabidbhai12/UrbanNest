@@ -16,7 +16,9 @@ export default function search() {
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
-    city: "",
+    district: "",
+    thana: "",
+    postoffice: "",
     zip: "",
     address: "",
     areaRange_min: [0, 10000],
@@ -41,7 +43,7 @@ export default function search() {
   const handleCitySelection = (selectedCity) => {
     setFilters({
       ...filters,
-      city: selectedCity,
+      district: selectedCity,
     });
   };
 
@@ -279,7 +281,9 @@ export default function search() {
           saleType: filters.saleType,
           propertyType: filters.propertyType,
           condition: filters.condition,
-          city: filters.city,
+          district: filters.district,
+          thana: filters.thana,
+          postoffice: filters.postoffice,
           zip: filters.zip,
           address: filters.address,
           areaRange_min: filters.areaRange_min[0],
@@ -474,26 +478,43 @@ export default function search() {
                   </label>
                 </div>
               </div>
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Select District
+                    </span>
+                    <Selector onCitySelect={handleCitySelection} />
+                  </div>
 
-              <div className="flex flex-row">
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Select City
-                  </span>
-                  <Selector onCitySelect={handleCitySelection} />
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Select Thana
+                    </span>
+                    <Selector onCitySelect={handleCitySelection} />
+                  </div>
                 </div>
 
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Zip
-                  </span>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={filters.zip}
-                    onChange={handleInputChange}
-                    className="block w-full h-[50px] mt-1 rounded-[50px] font-extrabold font-manrope"
-                  />
+                <div className="flex flex-row">
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Select Post-office
+                    </span>
+                    <Selector onCitySelect={handleCitySelection} />
+                  </div>
+
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Zip
+                    </span>
+                    <input
+                      type="text"
+                      name="zip"
+                      value={filters.zip}
+                      onChange={handleInputChange}
+                      className="block w-full h-[50px] mt-1 rounded-[50px] font-extrabold font-manrope"
+                    />
+                  </div>
                 </div>
               </div>
 

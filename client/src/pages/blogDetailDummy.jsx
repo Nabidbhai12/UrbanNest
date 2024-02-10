@@ -257,6 +257,24 @@ const BlogDetail = () => {
               </button>
             </form>
           </div>
+
+          <div className="container p-4 max-w-2xl mx-auto">
+            <h1 className="text-3xl font-semibold pt-5 pb-2">Comments</h1>
+            {comments.length > 0 ? (
+              comments.map(comment => (
+                <div key={comment._id} className="bg-yellow-50-custom p-3 my-2 rounded-2xl shadow">
+                  {/* display comment so that text wraps to next line if exceeds container length */}
+                  <p className="break-words text-xl">{comment.content}</p>
+                  {/* Display additional comment information such as author and timestamp if available */}
+                  <div className="text-xs text-gray-500">
+                    {comment.authorName} - {new Date(comment.createdAt).toLocaleString()}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No comments yet.</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

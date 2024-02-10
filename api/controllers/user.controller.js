@@ -122,6 +122,8 @@ export const addPropertyForSale = async (req, res, next) => {
       propertyType,
     } = req.body;
     const imageUrls = req.files.map((file) => file.path); // Cloudinary URLs
+
+    console.log("Req body: " + req.body);
     //print imageurl
     console.log("Image URLs:" + imageUrls);
     // // Extract the user ID from the token
