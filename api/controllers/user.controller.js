@@ -10,11 +10,13 @@ export const verifyLoginStatus = (req, res) => {
 
   // If there's no token, the user is not logged in
   if (!token) {
+    console.log("No token found");
     return res.json({ isLoggedIn: false });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
+      console.error(`Error verifying JWT: ${err}`);
       // Token is not valid or has other issues
       return res.json({ isLoggedIn: false });
     }
@@ -23,7 +25,10 @@ export const verifyLoginStatus = (req, res) => {
     if (decoded.exp && decoded.exp < currentTime) {
       // Token has expired
       return res.json({ isLoggedIn: false });
+      console.log("Token has expired");
     }
+    // The token is valid and hasn't expired yet
+    console.log("Token is valid and not expired");
 
     // Token is valid and not expired
     return res.json({ isLoggedIn: true });
