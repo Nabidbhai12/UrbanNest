@@ -3,23 +3,50 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
+
+
+export const verifyLoginStatus = (req, res) => {
+  const token = req.cookies["access_token"];
+
+  // If there's no token, the user is not logged in
+  if (!token) {
+    return res.json({ isLoggedIn: false });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      // Token is not valid or has other issues
+      return res.json({ isLoggedIn: false });
+    }
+
+    const currentTime = Date.now() / 1000; // Get current time in seconds
+    if (decoded.exp && decoded.exp < currentTime) {
+      // Token has expired
+      return res.json({ isLoggedIn: false });
+    }
+
+    // Token is valid and not expired
+    return res.json({ isLoggedIn: true });
+  });
+};
+
 export const authenticateToken = (req, res, next) => {
   console.log("from authenticateToken");
-  
-
-  // console.log(req);
-  // const authHeader = req.headers.authorization;
-  // const token = authHeader && authHeader.split(' ')[1];
   const token = req.cookies["access_token"];
 
   if (token == null) return res.sendStatus(401);
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) return res.sendStatus(403); // Token is not valid or expired
+    const currentTime = Date.now() / 1000; // Get current time in seconds
+    if (decoded.exp < currentTime) {
+      return res.sendStatus(403); // Token has expired
+    }
+    req.user = decoded; // Add decoded token to the request object
     next();
   });
 };
+
 export const getUserDetails = async (req, res) => {
   const userId = req.user.id; // Extract user ID from token
 
@@ -90,6 +117,8 @@ export const addPropertyForSale = async (req, res, next) => {
       propertyType,
     } = req.body;
     const imageUrls = req.files.map((file) => file.path); // Cloudinary URLs
+
+    console.log("Req body: " + req.body);
     //print imageurl
     console.log("Image URLs:" + imageUrls);
     // // Extract the user ID from the token
