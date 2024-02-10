@@ -64,7 +64,7 @@ const NewBlogPost = () => {
     formData.append('tags', JSON.stringify(tagsArray));
     formData.append('imageUrls', JSON.stringify(imageUrls));
 
-    try {
+    try {  
       const response = await axios.post('/api/blogs/createBlog', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -72,7 +72,7 @@ const NewBlogPost = () => {
       });
       
       console.log(response.data);
-      // Handle success, maybe clear form or show a success message
+    // Handle success, maybe clear form or show a success message
     } catch (error) {
       console.error('There was an error creating the blog post:', error);
       // Handle error, show error message to the user
@@ -102,8 +102,9 @@ const NewBlogPost = () => {
   };
 
   return (
-    <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded shadow-lg">
+    // <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
+    <div className="bg-yellow-50-custom min-h-screen pt-16 align-center">
+      <form onSubmit={handleSubmit} className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded shadow-lg max-w-2xl">
         <div>
           <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900">Title</label>
           <input

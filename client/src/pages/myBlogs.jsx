@@ -1,7 +1,7 @@
 // shows all blogs of a user. It is a protected route. 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import parse from 'html-react-parser'; // Used to parse HTML strings
 import '../styles/color.css';
 import LandingPageHeader from "../components/LandingPageHeader";
@@ -15,6 +15,8 @@ const myBlogs = () => {
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const blogsPerPage = 6;
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBlogs = async () => {
@@ -52,6 +54,25 @@ const myBlogs = () => {
         return { text, image };
     };
 
+    const handleEdit = (blogid) => {
+        navigate(`/editBlog/${blogid}`);
+    }
+
+    const handleDelete = async (blogid) => {
+        if(window.confirm('Are you sure you want to delete this blog?')){
+            try {
+                const response = await axios.delete(`/api/blogs/deleteBlog/${blogid}`);
+
+                if(response.status === 200){
+                    setBlogs(blogs.filter(blog => blog._id !== blogid));
+                    navigate('/myBlogs');
+                }
+            }catch{
+                console.error('Error deleting blog:', error);
+            }
+        }
+    }
+
     return(
         // {isLoggedIn && <CreateBlogDialog />} {
         //     /* Conditionally render CreateBlogDialog based on isLoggedIn */
@@ -79,6 +100,18 @@ const myBlogs = () => {
                                         </div>
                                     </div>
                                 </Link>
+                                <div className="flex justify-center">
+                                        <button onClick={() => handleEdit(blog._id)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                            Edit
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleDelete(blog._id)}
+                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                        >
+                                            Delete
+                                        </button>
+                                </div>
                             </div>
                             );
                         })}
