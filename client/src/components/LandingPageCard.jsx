@@ -104,8 +104,8 @@ const LandingPageCard = (props) => {
 
 LandingPageCard.defaultProps = {
   image: "images/img_image_260x384.png",
-  p286162ndaveoaklone: "2861 62nd Ave, Oakland, CA 94605",
-  p3bedroom: "3 Bed Room",
+  location: "2861 62nd Ave, Oakland, CA 94605",
+  beds: "3 Bed Room",
   bathcounter: "1 Bath",
   sqftcounter: "1,032 sqft",
   p1bath: "Family",
