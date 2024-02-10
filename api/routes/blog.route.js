@@ -10,6 +10,7 @@ import  {downvoteBlog} from '../controllers/blog.controller.js';
 import { decreaseUpvoteBlog } from '../controllers/blog.controller.js';
 import { decreaseDownvoteBlog } from '../controllers/blog.controller.js';
 import { checkUpvote } from '../controllers/blog.controller.js';
+import { checkDownvote } from '../controllers/blog.controller.js';
 
 import { deleteBlog } from '../controllers/blog.controller.js';
 
@@ -23,6 +24,7 @@ import {showBlogsByTag} from '../controllers/blog.controller.js';
 
 import { showTopFive } from '../controllers/blog.controller.js';
 import {showBlogNoAuth} from '../controllers/blog.controller.js';
+import { showRecentBlogs } from '../controllers/blog.controller.js';
 
 import {createComment} from '../controllers/blog.controller.js';
 import {showMyComments} from '../controllers/blog.controller.js';
@@ -39,7 +41,6 @@ import { showAllCommentsByUpvotes } from '../controllers/blog.controller.js';
 import { showAllCommentsByDownvotes } from '../controllers/blog.controller.js';
 
 import { showAllComments } from '../controllers/blog.controller.js';
-import { getRecentBlogs } from '../controllers/blog.controller.js';
 
 const router = express.Router();
 import { storage } from '../config/cloudinaryConfig.js';
@@ -62,7 +63,6 @@ router.post('/createBlog',authenticateToken,   upload.array('images'),
   // Everything went fine.
   next();
 } ,createBlog);
-router.get('/recent', authenticateToken,getRecentBlogs);
 router.get('/showMyBlogs',authenticateToken,showMyBlogs);
 router.get('/showBlog/:id',authenticateToken,showBlog);
 router.put('/updateBlog/:id',authenticateToken,updateBlog);
@@ -72,6 +72,7 @@ router.put('/downvoteBlog/:id',authenticateToken,downvoteBlog);
 router.put('/decreaseUpvoteBlog/:id',authenticateToken,decreaseUpvoteBlog);
 router.put('/decreaseDownvoteBlog/:id',authenticateToken,decreaseDownvoteBlog);
 router.get('/checkUpvote/:id',authenticateToken,checkUpvote);
+router.get('/checkDownvote/:id',authenticateToken,checkDownvote);
 
 router.delete('/deleteBlog/:id',authenticateToken,deleteBlog);
 
@@ -82,6 +83,7 @@ router.get('/showAllBlogsByDateDesc',showAllBlogsByDateDesc);
 router.get('/showAllBlogsByUpvotes',showAllBlogsByUpvotes);
 router.get('/showAllBlogsByDownvotes',showAllBlogsByDownvotes);
 router.get('/showBlogsByTag/:tag',showBlogsByTag);
+router.get('/recent',showRecentBlogs);
 
 router.get('/showTopFive',showTopFive);
 router.get('/showBlogNoAuth/:id',showBlogNoAuth);

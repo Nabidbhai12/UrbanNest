@@ -192,6 +192,8 @@ export default function Profile() {
       console.log(error.message);
     }
   };
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <div className='flex items-start justify-between'>
@@ -214,6 +216,11 @@ export default function Profile() {
           <div className='mt-4'>
             <button onClick={handleSignOut} className='text-red-700 mr-4'>Sign Out</button>
             <button onClick={handleShowListings} className='text-green-700'>Update Profile</button>
+          </div>
+          <div className='mt-4'>
+            <Link to={`/myblogs`}>
+              <button className='text-green-700'>My Blogs</button>
+            </Link>
           </div>
         </div>
       </div>

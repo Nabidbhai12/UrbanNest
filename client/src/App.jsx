@@ -15,6 +15,7 @@ const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
 const CreateAblog=React.lazy(() =>import("./pages/createAblog"));
 const BlogHome= React.lazy(() => import("./pages/blogHomepage"));
 const BlogDetail=React.lazy(() => import("./pages/BlogDetail.jsx"));
+const MyBlogs=React.lazy(() => import("./pages/myBlogs.jsx"));
 
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
@@ -28,7 +29,20 @@ const LandingPageHeader = React.lazy(() => import("./components/LandingPageHeade
 const PrivateRoute = React.lazy(() => import("./components/PrivateRoute"));
 
 export default function App() {
+  //check if user is logged in. We have used authenticaion token to check if user is logged in or not
+  //if user is logged in then return true else false
+  const isLoggedIn = () => {
+    const token = localStorage.getItem("token");
+    //check if token is expired
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      return decodedToken.exp * 1000 > Date.now();
+    }
+    return false;
+  };
+  
   return (
+    //isLoggedIn={isLoggedIn}
     <React.Suspense fallback={<>Loading...</>}>
       <BrowserRouter>
       <LandingPageHeader />
@@ -36,6 +50,7 @@ export default function App() {
         <Route path="/blogHome/:id" element={<BlogDetail/>} />
           <Route path="/blogHome" element={<BlogHome />} />
           <Route path="/createblog" element={<CreateAblog />} />
+          <Route path="/myblogs" element={<MyBlogs />} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/search-results" element={<SearchResults />} />
