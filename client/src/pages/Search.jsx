@@ -6,12 +6,12 @@ import { Button } from "../components/button";
 import { Input } from "../components/input";
 import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import Selector from "../components/selector";
 import SearchResults from "./SearchResults";
 
-
-export default function test() {
+export default function search() {
   const [filters, setFilters] = useState({
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
@@ -38,6 +38,13 @@ export default function test() {
     });
   };
 
+  const handleCitySelection = (selectedCity) => {
+    setFilters({
+      ...filters,
+      city: selectedCity,
+    });
+  };
+
   const handleRangeChange = (e) => {
     const { name, value } = e.target;
     setFilters({
@@ -50,13 +57,16 @@ export default function test() {
 
   const BackButton = () => {
     const navigate = useNavigate();
-  
+
     const goBack = () => {
       navigate(-1);
     };
-  
+
     return (
-      <button onClick={goBack} className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black">
+      <button
+        onClick={goBack}
+        className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-red-700 hover:text-black"
+      >
         Cancel
       </button>
     );
@@ -241,7 +251,6 @@ export default function test() {
         </span>
       );
     } else {
-
       return (
         <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
           Select Apartment Type
@@ -249,21 +258,23 @@ export default function test() {
       );
     }
   };
+
   const [searchResults, setSearchResults] = useState([]); // State to manage search results
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
-  
+
     // Retrieve the token from local storage or cookies
-  
+
     try {
-      const response = await fetch('/api/search/property', {
-        method: 'POST',
+      const response = await fetch("/api/search/property", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        credentials: 'include', 
+        credentials: "include",
         body: JSON.stringify({
           saleType: filters.saleType,
           propertyType: filters.propertyType,
@@ -280,23 +291,20 @@ export default function test() {
           apartmentType: filters.apartmentType,
           // Add other fields as needed
         }),
-       
-
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
       console.log("Search results:", data);
       setSearchResults(data); // Set the search results in the state
-      navigate('/search-results', { state: { listings: data } }); // Pass searchResults as state      // Handle the search results as needed
+      navigate("/search-results", { state: { listings: data } }); // Pass searchResults as state      // Handle the search results as needed
     } catch (error) {
       console.error("Error during API call:", error);
     }
   };
-  
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -472,18 +480,7 @@ export default function test() {
                   <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                     Select City
                   </span>
-                  <select
-                    name="city"
-                    value={filters.city}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 font-extrabold font-manrope rounded-[50px]"
-                  >
-                    <option value="Dhaka">Dhaka</option>
-                    <option value="Rajshahi">Rajshahi</option>
-                    <option value="Chittagong">Chittagong</option>
-                    <option value="Khulna">Khulna</option>
-                    <option value="Sylhet">Sylhet</option>
-                  </select>
+                  <Selector onCitySelect={handleCitySelection} />
                 </div>
 
                 <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
@@ -495,7 +492,7 @@ export default function test() {
                     name="zip"
                     value={filters.zip}
                     onChange={handleInputChange}
-                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                    className="block w-full h-[50px] mt-1 rounded-[50px] font-extrabold font-manrope"
                   />
                 </div>
               </div>
@@ -776,7 +773,10 @@ export default function test() {
         </div>
       </div>
       <Routes>
-        <Route path="/search-results" element={<SearchResults listings={searchResults} />} />
+        <Route
+          path="/search-results"
+          element={<SearchResults listings={searchResults} />}
+        />
       </Routes>
     </div>
   );

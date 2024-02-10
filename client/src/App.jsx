@@ -8,6 +8,7 @@ const SignIn = React.lazy(() => import("./pages/SignIn"));
 const SignUp = React.lazy(() => import("./pages/SignUp"));
 const Profile = React.lazy(() => import("./pages/Profile"));
 const Test = React.lazy(() => import("./pages/test"));
+const Test_backup = React.lazy(() => import("./pages/test_backup"));
 const Search = React.lazy(() => import("./pages/Search"));
 
 const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/search-results" element={<SearchResults />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/test-backup" element={<Test_backup />} />
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/search" element={<Search />} />
