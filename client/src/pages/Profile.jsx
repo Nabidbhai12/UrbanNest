@@ -222,6 +222,11 @@ export default function Profile() {
               <button className='text-green-700'>My Blogs</button>
             </Link>
           </div>
+          <div className='mt-4'>
+            <Link to={`/createblog`}>
+              <button className='text-green-700'>Write a Blog</button>
+            </Link>
+          </div>
         </div>
       </div>
       {/* ... rest of the component ... */}
