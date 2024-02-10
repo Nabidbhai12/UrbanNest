@@ -4,11 +4,14 @@ import { authenticateToken,updateProfile,getUserDetails } from "../controllers/u
 import { addPropertyForSale } from "../controllers/user.controller.js";
 import { getUserWishlist,getUserBoughtlist,getUserSellinglist,getUserSoldlist } from "../controllers/user.controller.js";
 import { storage } from '../config/cloudinaryConfig.js';
+import { verifyLoginStatus } from '../controllers/user.controller.js';
+
 import multer from "multer";
 const upload = multer({ storage });
 //for single image
 const upload1 = multer({ storage: storage }).single('image');
 const router = express.Router();
+router.post('/verify',verifyLoginStatus);
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
