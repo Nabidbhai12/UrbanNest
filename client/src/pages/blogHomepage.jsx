@@ -8,14 +8,26 @@ import { Img } from "../components/image";
 import { Text } from "../components/text";
 import { List } from "../components/list";
 import { Slider } from "../components/slider";
+//import CreateBlogDialog from "../components/createBlogDialog";
 
 //{isLoggedIn}
 const blogHomepage = () => {
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const blogsPerPage = 6;
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     useEffect(() => {
+        const verifyLoginStatus = async () => {
+            try {
+                const response = await axios.get('/api/users/verify');
+                setIsLoggedIn(response.data.isLoggedIn);
+                console.log('Login status:', response.data.isLoggedIn);
+            } catch (error) {
+                console.error('Error verifying login status:', error);
+            }
+        };
+
         const fetchBlogs = async () => {
             try {
                 const response = await fetch ('/api/blogs/showAllBlogsByDateDesc',
@@ -35,6 +47,7 @@ const blogHomepage = () => {
             }
         };
 
+        verifyLoginStatus();
         fetchBlogs();
     }, []);
 
@@ -85,17 +98,14 @@ const blogHomepage = () => {
                     </div>
                     <Pagination blogsPerPage={blogsPerPage} totalBlogs={blogs.length} paginate={paginate} />
                 </div>
+                {isLoggedIn && 
+                    <Link to="/createBlog" className="fixed bottom-4 right-4 bg-orange-400 hover:bg-orange-300 text-white font-bold p-4 rounded-full text-3xl">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-8 h-8">
+                            <path d="M12 5v14m7-7H5" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
+                        </svg>
+                    </Link>
+                }
             </div>
-        </div>
-    );
-};
-
-const CreateBlogDialog = () => {
-    // Add logic for creating a new blog post
-    return (
-        <div className="create-blog-dialog">
-            {/* Add form or UI elements for creating a new blog post */}
-            <p>Create a new blog post here...</p>
         </div>
     );
 };
@@ -124,3 +134,5 @@ const Pagination = ({ blogsPerPage, totalBlogs, paginate }) => {
 
 
 export default blogHomepage;
+
+

@@ -36,4 +36,8 @@
     background-color: var(--yellow_100);
 }
 
+.bg-orange-400-custom {
+    background-color: var(--deep_orange_400);
+}
+
 
