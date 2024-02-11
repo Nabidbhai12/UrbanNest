@@ -87,6 +87,7 @@ const myBlogs = () => {
                             return (
                             <div key={blog._id} className="p-4 lg:w-1/3 md:w-1/2"> {/* Adjust the width per card based on screen size */}
                                 <Link to={`/blogHome/${blog._id}`}>
+                                    
                                     <div className="h-full  bg-white-A700 hover:shadow-xl rounded-3xl overflow-hidden" style={{width: '400px', height: '400px'}}>
                                         <img src={image} alt={blog.title} className="lg:h-48 md:h-36 w-full object-cover object-center" />
                                         <div className="p-6">
@@ -101,16 +102,20 @@ const myBlogs = () => {
                                     </div>
                                 </Link>
                                 <div className="flex justify-center">
-                                        <button onClick={() => handleEdit(blog._id)} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                    
+                                    <Link to={`/myblogs/editBlog/${blog._id}`}>
+                                        {console.log("In link: ", blog._id)}
+                                        <button className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                             Edit
                                         </button>
-
-                                        <button
-                                            onClick={() => handleDelete(blog._id)}
-                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                        >
-                                            Delete
-                                        </button>
+                                    </Link>
+                                    <button
+                                        onClick={() => handleDelete(blog._id)}
+                                        className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Delete
+                                    </button>
+                                    
                                 </div>
                             </div>
                             );

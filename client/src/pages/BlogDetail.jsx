@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import '../styles/color.css';
 import { Img } from "../components/image";
@@ -37,6 +38,8 @@ const BlogDetail = () => {
           setBlog(blogData);
           setHasUpvoted(hasUpvoted);
           setHasDownvoted(hasDownvoted);
+
+          console.log('in fetchBlog blogData:', blogData);
         } else {
           console.error('Error fetching blog details:', blogResponse.statusText);
           navigate('/404');
@@ -209,7 +212,18 @@ const BlogDetail = () => {
     div.innerHTML = content;
     const text = div.textContent || div.innerText || '';
     const image = div.querySelector('img') ? div.querySelector('img').src : 'default-image.jpg';
-    return { text, image };
+    let tags;
+    try {
+        // Assuming `blog.tags` is something like ['["ab","bc","cd"]']
+        // and you want to parse it to get the actual array of tags
+        tags = JSON.parse(blog.tags[0]);
+    } catch (error) {
+        console.error('Error parsing tags:', error);
+        tags = []; // Default to an empty array in case of parsing failure
+    }
+
+    console.log('in extractContent tags:', tags);
+    return { text, image, tags };
   };
   //const sanitizedComments = DOMPurify.sanitize(blog.commentList);
 
@@ -238,6 +252,15 @@ const BlogDetail = () => {
                 alt={blog.title}
               />
             </div>
+            {/* get the tags*/}
+            <div className="flex justify-left space-x-4 mt-5">
+              {extractContent(blog).tags.map((tag) => (
+                <Link to={`/blogHome/${tag}`} key={tag}>
+                  <span key={tag} className="py-1 text-md font-semibold text-gray-700 mb-2">{tag}</span>
+                </Link>
+              ))}
+            </div>
+
           </div>
           
           <div className="flex items-center space-x-4">

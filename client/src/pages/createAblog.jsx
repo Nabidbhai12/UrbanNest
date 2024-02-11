@@ -11,7 +11,6 @@ const NewBlogPost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  const [images, setImages] = useState([]);
   const [imageUrls, setImageUrls] = useState([]);
 
   const [preview, setPreview] = useState(false);
