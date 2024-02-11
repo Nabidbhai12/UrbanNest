@@ -11,7 +11,7 @@ const upload = multer({ storage });
 //for single image
 const upload1 = multer({ storage: storage }).single('image');
 const router = express.Router();
-router.post('/verify',verifyLoginStatus);
+router.get('/verify',verifyLoginStatus);
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
