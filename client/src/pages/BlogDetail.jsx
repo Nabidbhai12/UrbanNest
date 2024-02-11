@@ -256,7 +256,7 @@ const BlogDetail = () => {
             <div className="flex justify-left space-x-4 mt-5">
               {extractContent(blog).tags.map((tag) => (
                 <Link to={`/blogHome/${tag}`} key={tag}>
-                  <span key={tag} className="py-1 text-md font-semibold text-gray-700 mb-2">{tag}</span>
+                  <span key={tag} className="py-1 px-3 text-sm font-semibold bg-gray-401 rounded-full text-gray-700 mb-2">{tag}</span>
                 </Link>
               ))}
             </div>
