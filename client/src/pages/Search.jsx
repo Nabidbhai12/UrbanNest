@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
@@ -9,7 +9,9 @@ import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Selector from "../components/selector";
+import Selector_thana from "../components/selector_thana";
 import SearchResults from "./SearchResults";
+import { AiFillWarning } from "react-icons/ai";
 
 export default function search() {
   const [filters, setFilters] = useState({
@@ -32,6 +34,27 @@ export default function search() {
     contactInfo: "",
   });
 
+  const handleAPICall = async(e) => {
+    
+    try{
+      console.log("Inside fnction");
+      const response = await fetch ("https://barikoi.xyz/v1/api/bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b/cities?q=Sylhet", {
+        method: "GET",
+        headers: { },
+       
+      });
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Data: " + JSON.stringify(data));
+    } catch(err){
+      console.error(err);
+    }
+  }
+
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFilters({
@@ -40,12 +63,33 @@ export default function search() {
     });
   };
 
-  const handleCitySelection = (selectedCity) => {
+  const handleDistrictSelection = (selectedCity) => {
     setFilters({
       ...filters,
       district: selectedCity,
     });
   };
+
+  useEffect(() => {
+    // Ensure district is not an empty string
+    if (filters.district) {
+      handleAPICall();
+    }
+  }, [filters.district]); 
+
+  const handleThanaSelection = (selectedThana) => {
+    setFilters({
+      ...filters,
+      thana : selectedThana
+    });
+  }
+
+  const handlePostofficeSelection = (selectedPostoffice) => {
+    setFilters({
+      ...filters,
+      postoffice : selectedPostoffice
+    });
+  }
 
   const handleRangeChange = (e) => {
     const { name, value } = e.target;
@@ -263,7 +307,7 @@ export default function search() {
 
   const [searchResults, setSearchResults] = useState([]); // State to manage search results
   const navigate = useNavigate();
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitted filters:", filters);
@@ -487,14 +531,14 @@ export default function search() {
                     <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                       Select District
                     </span>
-                    <Selector onCitySelect={handleCitySelection} />
+                    <Selector onCitySelect={handleDistrictSelection} />
                   </div>
 
                   <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
                     <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                       Select Thana
                     </span>
-                    <Selector onCitySelect={handleCitySelection} />
+                    <Selector onCitySelect={handleDistrictSelection} />
                   </div>
                 </div>
 
@@ -503,7 +547,7 @@ export default function search() {
                     <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                       Select Post-office
                     </span>
-                    <Selector onCitySelect={handleCitySelection} />
+                    <Selector onCitySelect={handleDistrictSelection} />
                   </div>
 
                   <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
