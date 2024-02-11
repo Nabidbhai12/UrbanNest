@@ -25,3 +25,4 @@ dist-ssr
 .env
 
 /client/src/pages/blogDetailDummy.jsx
+/client/src/pages/editBlogDummy.jsx
