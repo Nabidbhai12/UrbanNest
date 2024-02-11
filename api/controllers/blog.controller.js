@@ -56,16 +56,7 @@ export const createBlog = async (req, res) => {
 
 
         const { title, content, tags, image } = req.body;
-        //traverse through tags and check if each tag is valid or not
-        //if not valid, send a 400 status code with a message "Invalid tag"
-
-        /* if (tags) {
-            for (let i = 0; i < tags.length; i++) {
-                if (tags[i].length > 20) {
-                    return res.status(400).json({ message: "Invalid tag" });
-                }
-            }
-        } */
+        
 
         const newBlog = new Blog({
             author : user,
@@ -122,9 +113,10 @@ export const updateBlog = async (req, res) => {
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
-        const { title, content} = req.body;
+        const { title, content, tags} = req.body;
         blog.title = title;
         blog.content = content;
+        blog.tags = tags;
         await blog.save();
         res.status(200).json(blog);
     } catch (error) {

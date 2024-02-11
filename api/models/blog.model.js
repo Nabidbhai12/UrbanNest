@@ -39,10 +39,12 @@ const blogSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    tags: {
-        type: [String],
-        default: []
-    },
+    tags: [
+        {
+            type: String,
+            default: []
+        }
+    ],
     image: {
         type: String, //url to image
         default: ''
