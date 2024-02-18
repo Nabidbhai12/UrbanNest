@@ -54,7 +54,7 @@
 // export default SearchBar;
 
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "../components/button.jsx";
 import { GoogleMap } from "../components/GoogleMap.jsx";
 import { Img } from "../components/image.jsx";
@@ -94,11 +94,58 @@ const ListingMapViewPage = () => {
     { value: "vanilla", label: "Vanilla" },
   ];
 
+  const API_KEY =
+    "bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b";
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+    const loadCsvFile = async () => {
+      try {
+        const response = await fetch("assets/districts.csv"); // Update the path to your CSV file
+        const csvText = await response.text();
+
+        const lines = csvText.split("\n");
+        const districtsData = []; // Renamed to avoid confusion with state variable
+
+        lines.forEach((line, index) => {
+          // Skip the header or empty lines if present
+          if (index !== 0 && line) {
+            const columns = line.split(",");
+            if (columns.length > 5) {
+              // Ensure there are enough columns
+              let district = columns[2].trim(); // Assuming the third column contains the districts
+              let lat = columns[4].trim();
+              let lon = columns[5].trim();
+              // Remove potential quotes
+              district = district.replace(/^"|"$/g, "");
+              lat = lat.replace(/^"|"$/g, "");
+              lon = lon.replace(/^"|"$/g, "");
+
+              districtsData.push({
+                name: district,
+                latitude: lat,
+                longitude: lon,
+              });
+            }
+          }
+        });
+
+        setDistricts(districtsData); // Update state
+      } catch (error) {
+        console.error("Error loading or parsing CSV:", error);
+      }
+    };
+
+    loadCsvFile();
+  }, []);
+
   const [filters, setFilters] = useState({
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
-    city: "",
+    district: "",
+    thana: "",
+    postoffice: "",
     zip: "",
     address: "",
     areaRange_min: [0, 10000],
@@ -111,6 +158,82 @@ const ListingMapViewPage = () => {
     email: "",
     contactInfo: "",
   });
+
+  let district_names = [];
+
+  for (let i = 0; i < districts.length; i++) {
+    district_names.push(districts[i].name);
+  }
+
+  let data = [];
+  let areas = [];
+  const handleAreaAPICall = async () => {
+    areas.splice(0, areas.length);
+    console.log("Inside function: " + filters.district);
+    const request_link =
+      "https://barikoi.xyz/v1/api/" + API_KEY + "/cities?q=" + filters.district;
+
+    try {
+      console.log("Inside fnction");
+      const response = await fetch(request_link, {
+        method: "GET",
+        headers: {},
+      });
+      //console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      data = await response.json();
+
+      console.log(data);
+
+      let i = 0;
+      if (data.places[0].areas.length == 0) {
+        var string = filters.district + " sadar";
+        areas.push(string);
+      } else {
+        for (i = 0; i < data.places[0].areas.length; i++) {
+          areas.push(data.places[0].areas[i].name);
+        }
+        if (areas[0] == "test") {
+          areas.shift();
+        }
+      }
+      //return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  let result = [];
+  let zipcode;
+  const handleZipAPICall = async () => {
+    const request_link =
+      "https://barikoi.xyz/v2/api/search/rupantor/geocode?api_key=" + API_KEY;
+    const formData = new FormData();
+    formData.append("q", filters.address);
+    formData.append("thana", "yes");
+    formData.append("district", "yes");
+    formData.append("bangla", "yes");
+
+    try {
+      const response = await axios.post(request_link, formData, {
+        headers: formData.getHeaders ? formData.getHeaders() : {},
+      });
+      result = response.data;
+      console.log("Geocode result: ", result);
+      zipcode = result.geocoded_address.postcode;
+      console.log(zipcode);
+      //return zipcode;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // handleZipAPICall().then(zipcode => {
+  //   console.log("Zipcode outside the function:", zipcode);
+  // });
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -164,6 +287,46 @@ const ListingMapViewPage = () => {
       baths: bathrooms,
     });
   };
+
+  const handleDistrictSelection = (selectedCity) => {
+    setFilters({
+      ...filters,
+      district: selectedCity,
+    });
+  };
+
+  const handleZipSelection = () => {
+    setFilters({
+      ...filters,
+      zip: "" + zipcode,
+    });
+  };
+
+  const handleAreaSelection = (selectedArea) => {
+    setFilters({
+      ...filters,
+      thana: selectedArea,
+    });
+  };
+
+  useEffect(() => {
+    // Ensure district is not an empty string
+    if (filters.district) {
+      handleAreaAPICall();
+    }
+  }, [filters.district]);
+
+  useEffect(() => {
+    if (filters.district) {
+      handleAreaAPICall();
+    }
+  }, [filters.thana]);
+
+  // useEffect(() => {
+  //   if (filters.thana) {
+  //     handleZipAPICall();
+  //   }
+  // }, [filters.address]);
 
   const [searchResults, setSearchResults] = useState([]); // State to manage search results
 
@@ -250,52 +413,82 @@ const ListingMapViewPage = () => {
               >
                 Find Property
               </Text>
-              <div className="flex flex-row gap-[50px] items-start justify-start w-full">
-                <div className="flex flex-row gap-5 items-start justify-start w-auto">
-                  <div className="flex sm:flex-1 flex-col items-start justify-start w-auto sm:w-full">
-                    <Selector onCitySelect={handleCitySelection} />
+              <div>
+                <div className="flex flex-row gap-[50px] items-start justify-start w-full">
+                  <div className="flex flex-row gap-5 items-start justify-start w-auto">
+                    <div className="flex sm:flex-1 flex-col items-start justify-start w-auto sm:w-full">
+                      <Selector
+                        districts={district_names}
+                        onCitySelect={handleDistrictSelection}
+                        place_holder={"Select district"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row gap-5 items-start justify-start w-auto">
+                    <div className="flex sm:flex-1 flex-col items-start justify-start w-auto sm:w-full">
+                      <Selector
+                        districts={areas}
+                        onCitySelect={handleAreaSelection}
+                        place_holder={"Select Area"}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-row px-3 py-[10px]">
+                    <Dropdown_buy_rent />
                   </div>
                 </div>
-                <div className="flex flex-row px-3 py-[10px]">
-                  <Dropdown_buy_rent />
+                <div className="flex flex-row gap-[50px] items-start justify-start w-full">
+                  <div className="flex flex-row gap-[50px] items-start justify-start w-auto">
+                    <div className="flex flex-row py-[10px]">
+                      <Dropdown_apartment
+                        onTypeSelect={handlePropertyType}
+                        onClassSelect={handleApartmentType}
+                      />
+                    </div>
+                    <div className="flex flex-row py-[10px]">
+                      <Dropdown_beds_baths
+                        propertyType={filters.propertyType}
+                        onBedBathSelect={handleBedBath}
+                      />
+                    </div>
+                    <div className="flex flex-row px-[10px] py-[10px]">
+                      <Dropdown_price onPriceSelect={handlePriceChange} />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-row px-3 py-[10px]">
-                  <Dropdown_apartment
-                    onTypeSelect={handlePropertyType}
-                    onClassSelect={handleApartmentType}
-                  />
-                </div>
-              </div>
-              <div className="flex flex-row gap-[50px] items-start justify-start w-full">
-                <div className="flex flex-row gap-5 items-start justify-start w-auto">
-                  <div className="flex flex-row py-[10px]">
-                    <Dropdown_beds_baths
-                      propertyType={filters.propertyType}
-                      onBedBathSelect={handleBedBath}
-                    />
-                  </div>
-                  <div className="flex flex-row py-[10px]">
-                    <Dropdown_price onPriceSelect={handlePriceChange} />
-                  </div>
-                  <div className="flex flex-row py-[10px]">
-                    <Dropdown_area onAreaSelect={handleAreaChange} />
-                  </div>
-                  <div className="flex flex-row py-[10px]">
-                    <Button
-                      className="bg-gray-900 cursor-pointer flex items-center justify-center min-w-[124px] px-4 py-[8px] rounded-[10px]"
-                      rightIcon={
-                        <Img
-                          className="h-5 mt-px mb-[3px] ml-2.5"
-                          src="images/img_search_white_a700.svg"
-                          alt="search"
-                        />
-                      }
-                      onClick={handleSubmit}
-                    >
-                      <div className="font-bold text-left text-lg text-white-A700">
-                        Search
-                      </div>
-                    </Button>
+                <div className="flex flex-row gap-[50px] items-start justify-start w-full">
+                  <div className="flex flex-row gap-[50px] items-start justify-start w-auto">
+                    <div className="flex flex-row py-[10px]">
+                      <Dropdown_area onAreaSelect={handleAreaChange} />
+                    </div>
+                    <div className="flex flex-row py-[10px]">
+                      <input
+                        type="text"
+                        name="zip"
+                        value={filters.zip}
+                        onChange={handleInputChange}
+                        placeholder="Zip"
+                        className="block bg-white-A700 border border-black border-opacity-30 w-[350px] h-[45px] mt-1 rounded-[10px] font-extrabold font-manrope items-center justify-center text-center"
+                      />
+                    </div>
+                    <div className="flex flex-row px-[10px] py-[10px]">
+                      <Button
+                        className="bg-gray-900 cursor-pointer flex items-center justify-center min-w-[150px] px-4 py-[8px] rounded-[10px]"
+                        rightIcon={
+                          <Img
+                            className="h-5 mt-px mb-[3px] ml-2.5"
+                            src="images/img_search_white_a700.svg"
+                            alt="search"
+                          />
+                        }
+                        onClick={handleSubmit}
+                      >
+                        <div className="font-bold text-left text-lg text-white-A700">
+                          Search
+                        </div>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,13 +546,13 @@ const ListingMapViewPage = () => {
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
         {
-        <Routes>
-          <Route
-            path="/search-results"
-            element={<SearchResults listings={searchResults} />}
-          />
-        </Routes>
-                }
+          <Routes>
+            <Route
+              path="/search-results"
+              element={<SearchResults listings={searchResults} />}
+            />
+          </Routes>
+        }
       </div>
     </>
   );

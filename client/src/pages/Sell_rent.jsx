@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
@@ -8,18 +8,66 @@ import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import LandingPageFooter from "../components/LandingPageFooter";
+import Selector from "../components/selector";
 import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import axios from "axios";
 import { OpenStreetMapProvider } from "leaflet-geosearch";
 
 export default function test() {
+  const API_KEY =
+    "bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b";
+  const [districts, setDistricts] = useState([]);
+
+  useEffect(() => {
+    const loadCsvFile = async () => {
+      try {
+        const response = await fetch("assets/districts.csv"); // Update the path to your CSV file
+        const csvText = await response.text();
+
+        const lines = csvText.split("\n");
+        const districtsData = []; // Renamed to avoid confusion with state variable
+
+        lines.forEach((line, index) => {
+          // Skip the header or empty lines if present
+          if (index !== 0 && line) {
+            const columns = line.split(",");
+            if (columns.length > 5) {
+              // Ensure there are enough columns
+              let district = columns[2].trim(); // Assuming the third column contains the districts
+              let lat = columns[4].trim();
+              let lon = columns[5].trim();
+              // Remove potential quotes
+              district = district.replace(/^"|"$/g, "");
+              lat = lat.replace(/^"|"$/g, "");
+              lon = lon.replace(/^"|"$/g, "");
+
+              districtsData.push({
+                name: district,
+                latitude: lat,
+                longitude: lon,
+              });
+            }
+          }
+        });
+
+        setDistricts(districtsData); // Update state
+      } catch (error) {
+        console.error("Error loading or parsing CSV:", error);
+      }
+    };
+
+    loadCsvFile();
+  }, []);
+  
   const { currentUser } = useSelector((state) => state.user);
 
   const [filters, setFilters] = useState({
     saleType: "sell", // 'sell' or 'rent'
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
-    city: "",
+    district: "",
+    thana : "",
     zip: "",
     address: "",
     areaRange: 0,
@@ -38,8 +86,79 @@ export default function test() {
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [sentImages, setSentImages] = useState([]);
- 
 
+  let district_names = [];
+
+  for (let i = 0; i < districts.length; i++) {
+    district_names.push(districts[i].name);
+  }
+ 
+  let data = [];
+  let areas = [];
+  const handleAreaAPICall = async () => {
+    areas.splice(0, areas.length);
+    console.log("Inside function: " + filters.district);
+    const request_link =
+      "https://barikoi.xyz/v1/api/" + API_KEY + "/cities?q=" + filters.district;
+
+    try {
+      console.log("Inside fnction");
+      const response = await fetch(request_link, {
+        method: "GET",
+        headers: {},
+      });
+      //console.log(response);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      data = await response.json();
+
+      console.log(data);
+
+      let i = 0;
+      if (data.places[0].areas.length == 0) {
+        var string = filters.district + " sadar";
+        areas.push(string);
+      } else {
+        for (i = 0; i < data.places[0].areas.length; i++) {
+          areas.push(data.places[0].areas[i].name);
+        }
+        if (areas[0] == "test") {
+          areas.shift();
+        }
+      }
+      //return data;
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+  let result = [];
+  let zipcode;
+  const handleZipAPICall = async () => {
+    const request_link =
+      "https://barikoi.xyz/v2/api/search/rupantor/geocode?api_key=" + API_KEY;
+    const formData = new FormData();
+    formData.append("q", filters.address);
+    formData.append("thana", "yes");
+    formData.append("district", "yes");
+    formData.append("bangla", "yes");
+
+    try {
+      const response = await axios.post(request_link, formData, {
+        headers: formData.getHeaders ? formData.getHeaders() : {},
+      });
+      result = response.data;
+      console.log("Geocode result: ", result);
+      zipcode = result.geocoded_address.postcode;
+      console.log(zipcode);
+      //return zipcode;
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleMultipleFileChange = (event) => {
     setSelectedImages(event.target.files[0]);
@@ -69,6 +188,40 @@ export default function test() {
 
     console.log("Name: " + name + " Value: " + value);
   };
+
+  const handleDistrictSelection = (selectedCity) => {
+    setFilters({
+      ...filters,
+      district: selectedCity,
+    });
+  };
+
+  const handleZipSelection = () => {
+    setFilters({
+      ...filters,
+      zip : ('' + zipcode),
+    });
+  }
+
+  const handleAreaSelection = (selectedArea) => {
+    setFilters({
+      ...filters,
+      thana: selectedArea,
+    });
+  };
+
+  useEffect(() => {
+    // Ensure district is not an empty string
+    if (filters.district) {
+      handleAreaAPICall();
+    }
+  }, [filters.district]);
+
+  useEffect(() => {
+    if (filters.district) {
+      handleAreaAPICall();
+    }
+  }, [filters.thana]);
 
   const BackButton = () => {
     const navigate = useNavigate();
@@ -607,54 +760,62 @@ export default function test() {
                 </div>
               </div>
 
-              <div className="flex flex-row">
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Select City
-                  </span>
-                  <select
-                    name="city"
-                    value={filters.city}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 font-extrabold font-manrope rounded-[50px]"
-                  >
-                    <option value="Dhaka">Dhaka</option>
-                    <option value="Rajshahi">Rajshahi</option>
-                    <option value="Chittagong">Chittagong</option>
-                    <option value="Khulna">Khulna</option>
-                    <option value="Sylhet">Sylhet</option>
-                  </select>
+              <div className="flex flex-col">
+                <div className="flex flex-row">
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Select District
+                    </span>
+                    <Selector
+                      districts={district_names}
+                      onCitySelect={handleDistrictSelection}
+                      place_holder={"Select district"}
+                    />
+                  </div>
+
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] pr-[40px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Select Area
+                    </span>
+                    <Selector
+                      districts={areas}
+                      onCitySelect={handleAreaSelection}
+                      place_holder={"Select area"}
+                    />
+                  </div>
                 </div>
 
-                <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Zip
-                  </span>
-                  <input
-                    type="text"
-                    name="zip"
-                    value={filters.zip}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                  />
-                </div>
-              </div>
+                <div className="flex flex-col">
+                  <div>
+                    <label className="flex items-center space-x-3 pt-[50px] font-markoone">
+                      <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                        Address
+                      </span>
+                      <input
+                        type="text"
+                        name="address"
+                        value={filters.address}
+                        onChange={handleInputChange}
+                        className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
+                        placeholder="Enter Address, Location or Neighbourhood"
+                        required
+                      />
+                    </label>
+                  </div>
 
-              <div>
-                <label className="flex items-center space-x-3 pt-[50px] font-markoone">
-                  <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
-                    Address
-                  </span>
-                  <input
-                    type="text"
-                    name="address"
-                    value={filters.address}
-                    onChange={handleInputChange}
-                    className="block w-full mt-1 rounded-[50px] font-extrabold font-manrope"
-                    placeholder="Enter Address, Location or Neighbourhood"
-                    required
-                  />
-                </label>
+                  <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
+                    <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
+                      Zip
+                    </span>
+                    <input
+                      type="text"
+                      name="zip"
+                      value={filters.zip}
+                      onChange={handleInputChange}
+                      className="block w-full h-[50px] mt-1 rounded-[50px] font-extrabold font-manrope"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -1023,6 +1184,7 @@ export default function test() {
             </div>
           </form>
         </div>
+        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
     </div>
   );

@@ -62,7 +62,7 @@ const SearchResults = () => {
     return <div className="text-center py-12">No Listings Found</div>;
   }
 
-  {
+  {/*
   return (
     <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
             <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
@@ -114,7 +114,7 @@ const SearchResults = () => {
             </div>
           </div>
   );
-                }
+                */ }
   return (
     <div className="py-12">
       <div className="max-w-7xl mx-auto px-4">
