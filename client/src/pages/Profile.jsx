@@ -223,7 +223,7 @@ export default function Profile() {
           <h1 className='text-2xl font-bold mb-2'>{formData.username}</h1>
           <p className='text-gray-700'>{formData.email}</p>
           {/* ... other user details ... */}
-          //added
+         
           <button className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleSignOut}>Sign Out</button>
         </div>
       </div>
