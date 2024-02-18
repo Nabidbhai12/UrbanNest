@@ -63,11 +63,10 @@ import Listing from '../models/listing.model.js';
       }
 
       // Location (City, Address, Zip)
-      if (city || address || zip) {
+      if (district || area) {
           const locationQuery = {};
-          if (city) locationQuery['location.city'] = new RegExp(city, 'i');
-          if (address) locationQuery['location.address'] = new RegExp(address, 'i');
-          if (zip) locationQuery['location.zipCode'] = zip;
+          if (district) locationQuery['location.district'] = new RegExp(district, 'i');
+          if (area) locationQuery['location.area'] = new RegExp(area, 'i');
           queries.push(Listing.find(locationQuery));
       }
 
