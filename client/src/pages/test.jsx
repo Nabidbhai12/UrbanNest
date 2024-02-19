@@ -74,19 +74,10 @@ import SearchResults from "./SearchResults.jsx";
 
 import LandingPageCard from "../components/LandingPageCard.jsx";
 import LandingPageFooter from "../components/LandingPageFooter.jsx";
+import { all } from "axios";
 
 const ListingMapViewPage = () => {
-  const landingPageCardPropList = [
-    {},
-    { image: "images/img_image_1.png" },
-    { image: "images/img_image_1.png" },
-    { image: "images/img_image_3.png" },
-    { image: "images/img_image_4.png" },
-    { image: "images/img_image_4.png" },
-    { image: "images/img_image_5.png" },
-    { image: "images/img_image_2.png" },
-    { image: "images/img_image_2.png" },
-  ];
+  const landingPageCardPropList = [];
 
   const options = [
     { value: "chocolate", label: "Chocolate" },
@@ -381,26 +372,89 @@ const ListingMapViewPage = () => {
     }
   };
 
-  // const location = useLocation(); // Access location
-  // const allListings = location.state?.listings; // Access listings from state
-  // console.log("Inside test Listings:" + allListings);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const listingsPerPage = 4;
-  // const totalPages = Math.ceil(allListings?.length / listingsPerPage);
+  const location = useLocation(); // Access location
+  const allListings = location.state?.listings; // Access listings from state
+  console.log("Inside test Listings:" + allListings.length);
+  console.log("Inside test Listings:" + allListings);
 
-  // // Calculate the currently displayed listings
-  // const indexOfLastListing = currentPage * listingsPerPage;
-  // const indexOfFirstListing = indexOfLastListing - listingsPerPage;
-  // const currentListings = allListings?.slice(
-  //   indexOfFirstListing,
-  //   indexOfLastListing
-  // );
+  for (var i = 0; i < allListings.length; i++) {
+    let bed_string = "bed",
+      bath_string = "bath";
+    if (allListings[i].beds > 1) {
+      bed_string = "beds";
+    }
+    if (allListings[i].baths > 1) {
+      bath_string = "baths";
+    }
 
-  // // Pagination Pages
-  // const pageNumbers = [];
-  // for (let i = 1; i <= totalPages; i++) {
-  //   pageNumbers.push(i);
-  // }
+    landingPageCardPropList.push({
+      image: allListings[i].images[0].url,
+      location: allListings[i].address,
+      beds: allListings[i].beds + " " + bed_string,
+      baths: allListings[i].baths + " " + bath_string,
+      size: allListings[i].size + " sqft",
+      type: allListings[i].apartmentType,
+      area: allListings[i].area,
+      district: allListings[i].district,
+      price: allListings[i].price,
+    });
+  }
+
+  for (var i = 0; i < landingPageCardPropList.length; i++) {
+    console.log(landingPageCardPropList[i]);
+  }
+  const [currentPage, setCurrentPage] = useState(1);
+  const listingsPerPage = 9;
+  const totalPages = Math.ceil(allListings?.length / listingsPerPage);
+
+  // Calculate the currently displayed listings
+  const indexOfLastListing = currentPage * listingsPerPage;
+  const indexOfFirstListing = indexOfLastListing - listingsPerPage;
+  const currentListings = allListings?.slice(
+    indexOfFirstListing,
+    indexOfLastListing
+  );
+
+  const currentPropList = [];
+
+  for (var i = 0; i < currentListings.length; i++) {
+    let bed_string = "bed",
+      bath_string = "bath";
+    if (allListings[i].beds > 1) {
+      bed_string = "beds";
+    }
+    if (allListings[i].baths > 1) {
+      bath_string = "baths";
+    }
+    currentPropList.push({
+      image: currentListings[i].images[0].url,
+      location: currentListings[i].address,
+      beds: currentListings[i].beds + " " + bed_string,
+      baths: currentListings[i].baths + " " + bath_string,
+      size: currentListings[i].size + " sqft",
+      type: currentListings[i].apartmentType,
+      area: currentListings[i].area,
+      district: currentListings[i].district,
+      price: currentListings[i].price,
+    });
+  }
+
+  // Pagination Pages
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  console.log(pageNumbers)
+  
+  const handleNextPageClick = () => {
+    let num = pageNumbers.length;
+    let i = 0;
+    if(i < num){
+      console.log("Inside if");
+      setCurrentPage(i+1)
+    }
+  }
 
   // if (!allListings || allListings.length === 0) {
   //   return <div className="text-center py-12">No Listings Found</div>;
@@ -504,10 +558,10 @@ const ListingMapViewPage = () => {
             <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
               <div className="flex flex-col items-start justify-start w-full">
                 <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
-                  {landingPageCardPropList.map((props, index) => (
+                  {currentPropList.map((props, index) => (
                     <React.Fragment key={`LandingPageCard${index}`}>
                       <LandingPageCard
-                        className="flex flex-1 flex-col h-[512px] md:h-auto items-start justify-start w-full"
+                        className="flex flex-1 flex-col h-[560px] md:h-auto items-start justify-start w-full"
                         {...props}
                       />
                     </React.Fragment>
@@ -516,22 +570,19 @@ const ListingMapViewPage = () => {
               </div>
               <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
                 <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
-                  <Button className="border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
-                    1
-                  </Button>
-                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
-                    2
-                  </Button>
-                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
-                    3
-                  </Button>
-                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
-                    4
-                  </Button>
-                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
-                    5
-                  </Button>
+                  {pageNumbers.map((number) => (
+                    <Button
+                      key={number}
+                      className={`border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12 ${
+                        currentPage === number ? "bg-black text-white-A700" : ""
+                      } text-white rounded`}
+                      onClick={() => setCurrentPage(number)}
+                    >
+                      {number}
+                    </Button>
+                  ))}
                 </div>
+                {/*
                 <Button
                   className="border border-bluegray-102 border-solid cursor-pointer flex items-center justify-center min-w-[134px] px-[17px] py-[13px] rounded-[10px]"
                   rightIcon={
@@ -541,12 +592,15 @@ const ListingMapViewPage = () => {
                       alt="arrow_right"
                     />
                   }
+                  onClick={handleNextPageClick}
                 >
                   <div className="font-semibold text-base text-gray-900 text-left">
                     Next Page
                   </div>
                 </Button>
+                */}
               </div>
+              <div className="flex justify-center mt-8"></div>
             </div>
           </div>
         </div>
