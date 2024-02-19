@@ -5,6 +5,7 @@ const router=express.Router();
 import { getorCreateConversation } from "../controllers/conversation.controller.js";
 import { sendMessage } from "../controllers/conversation.controller.js";
 import { gettAllConversation } from "../controllers/conversation.controller.js";
+import { getConversation} from "../controllers/conversation.controller.js";
 
 export default router;
 

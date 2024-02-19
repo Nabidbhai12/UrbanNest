@@ -66,7 +66,7 @@ export default function search() {
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
     district: "",
-    thana: "",
+    area: "",
     postoffice: "",
     zip: "",
     address: "",
@@ -183,7 +183,7 @@ export default function search() {
   const handleAreaSelection = (selectedArea) => {
     setFilters({
       ...filters,
-      thana: selectedArea,
+      area: selectedArea,
     });
   };
 
@@ -198,7 +198,7 @@ export default function search() {
     if (filters.district) {
       handleAreaAPICall();
     }
-  }, [filters.thana]);
+  }, [filters.area]);
 
   // useEffect(() => {
   //   if (filters.thana) {
@@ -220,7 +220,7 @@ export default function search() {
     "Selected District: " +
       filters.district +
       ", Selected Area: " +
-      filters.thana
+      filters.area
   );
 
   const BackButton = () => {
@@ -448,7 +448,7 @@ export default function search() {
           propertyType: filters.propertyType,
           condition: filters.condition,
           district: filters.district,
-          thana: filters.thana,
+          area: filters.area,
           postoffice: filters.postoffice,
           zip: filters.zip,
           address: filters.address,

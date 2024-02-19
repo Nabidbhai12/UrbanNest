@@ -34,24 +34,24 @@ const SearchResults = () => {
 
   console.log("Length of all listings: " + allListings.length);
   console.log("Length of current listings: " + currentListings.length);
-  console.log(allListings[20].images[0].url);
+  //console.log(allListings[20].images[0].url);
 
-  let i = 0;
-  for(i=0;i < allListings.length; i++){
-    propList.push({
-      image : allListings[i].images[0].url,
-      location : (allListings[i].location.address + allListings[i].location.thana + allListings[i].location.district + "-" + allListings[i].location.zip),
-      beds : allListings[i].rooms.bedrooms,
-      baths : allListings[i].rooms.bathrooms,
-      area : allListings[i].area.value,
-      type : allListings[i].propertyType,
-      value : allListings[i].price.amount
-    })
-  }
+  // let i = 0;
+  // for(i=0;i < allListings.length; i++){
+  //   propList.push({
+  //     image : allListings[i].images[0].url,
+  //     location : (allListings[i].location.address + allListings[i].location.thana + allListings[i].location.district + "-" + allListings[i].location.zip),
+  //     beds : allListings[i].rooms.bedrooms,
+  //     baths : allListings[i].rooms.bathrooms,
+  //     area : allListings[i].area.value,
+  //     type : allListings[i].propertyType,
+  //     value : allListings[i].price.amount
+  //   })
+  // }
 
-  propList.forEach((element, index) => {
-    console.log('Property ${index}:', element.image, element.location, element.beds, element.baths, element.area, element.type, element.value);
-  });
+  // propList.forEach((element, index) => {
+  //   console.log('Property ${index}:', element.image, element.location, element.beds, element.baths, element.area, element.type, element.value);
+  // });
   // Pagination Pages
   const pageNumbers = [];
   for (let i = 1; i <= totalPages; i++) {

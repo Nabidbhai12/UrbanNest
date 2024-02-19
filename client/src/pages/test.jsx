@@ -144,7 +144,7 @@ const ListingMapViewPage = () => {
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
     district: "",
-    thana: "",
+    area: "",
     postoffice: "",
     zip: "",
     address: "",
@@ -305,7 +305,7 @@ const ListingMapViewPage = () => {
   const handleAreaSelection = (selectedArea) => {
     setFilters({
       ...filters,
-      thana: selectedArea,
+      area: selectedArea,
     });
   };
 
@@ -320,7 +320,7 @@ const ListingMapViewPage = () => {
     if (filters.district) {
       handleAreaAPICall();
     }
-  }, [filters.thana]);
+  }, [filters.area]);
 
   // useEffect(() => {
   //   if (filters.thana) {
@@ -349,7 +349,9 @@ const ListingMapViewPage = () => {
           saleType: filters.saleType,
           propertyType: filters.propertyType,
           condition: filters.condition,
-          city: filters.city,
+          district: filters.district,
+          area: filters.area,
+          postoffice: filters.postoffice,
           zip: filters.zip,
           address: filters.address,
           areaRange_min: filters.areaRange_min[0],
@@ -369,6 +371,9 @@ const ListingMapViewPage = () => {
 
       const data = await response.json();
       console.log("Search results:", data);
+      console.log("Search results returned: " + data.length);
+      console.log("Search results: ", data[0]);
+      console.log(typeof data[0].addess);
       setSearchResults(data); // Set the search results in the state
       navigate("/search-results", { state: { listings: data } }); // Pass searchResults as state      // Handle the search results as needed
     } catch (error) {
@@ -474,6 +479,7 @@ const ListingMapViewPage = () => {
                     </div>
                     <div className="flex flex-row px-[10px] py-[10px]">
                       <Button
+                        type="submit"
                         className="bg-gray-900 cursor-pointer flex items-center justify-center min-w-[150px] px-4 py-[8px] rounded-[10px]"
                         rightIcon={
                           <Img

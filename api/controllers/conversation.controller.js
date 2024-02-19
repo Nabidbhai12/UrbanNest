@@ -1,5 +1,5 @@
-import ConversationModel from "../models/conversation.model";
-import MessageModel from "../models/message.model";
+import ConversationModel from "../models/conversation.model.js";
+import MessageModel from "../models/message.model.js";
 
 export const getorCreateConversation=async(req,res)=>
 {
