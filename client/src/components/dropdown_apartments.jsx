@@ -3,7 +3,7 @@ import { BiChevronDown } from "react-icons/bi";
 import { Text } from "./text";
 
 const propertyTypes = {
-  Residential: ["Apartment", "Penthouse", "Studio", "Plot", "Duplex", "Room"],
+  Residential: ["House", "Penthouse", "Studio", "Plot", "Duplex", "Room"],
   Commercial: [
     "Office",
     "Shop",
