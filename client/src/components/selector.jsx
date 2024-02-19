@@ -2,42 +2,10 @@ import React, { useState } from "react";
 import { BiChevronDown } from "react-icons/bi";
 import { AiOutlineSearch } from "react-icons/ai";
 
-let districts = [];
-const parseCsv = (csvContent) => {
-  const lines = csvContent.split('\n');
-  const result = [];
-
-  lines.forEach((line) => {
-    const columns = line.split(',');
-    if (columns.length > 2) { // Ensure the column exists
-      let district = columns[2].trim(); // Assuming the third column contains the districts
-      district = district.replace(/^"|"$/g, '');
-      result.push(district);
-    }
-  });
-
-  return result;
-};
-
-const loadCsvFile = async () => {
-  try {
-    const response = await fetch('assets/districts.csv'); // Update the path to your CSV file
-    const csvText = await response.text();
-    districts = parseCsv(csvText);
-    console.log(districts); // Array of districts
-  } catch (error) {
-    console.error('Error loading or parsing CSV:', error);
-  }
-};
-
-// Call this function when you enter the page or when you want to load the CSV file
-loadCsvFile();
-
-
-const Selector = ({ onCitySelect }) => {
+const Selector = ({ districts, onCitySelect, place_holder }) => {
   // Array of district cities of Bangladesh
   const districtCities = districts;
-
+  console.log("Inside Selector: " + districts);
   const [inputValue, setInputValue] = useState("");
   const [selected, setSelected] = useState("");
   const [open, setOpen] = useState(false);
@@ -53,11 +21,11 @@ const Selector = ({ onCitySelect }) => {
     <div className="w-[350px] font-extrabold font-manrope pt-[7px]">
       <div
         onClick={() => setOpen(!open)}
-        className={`bg-white-A700 w-full px-2 py-[12px] flex items-center justify-between rounded-[10px] border border-black border-opacity-30 ${
+        className={`bg-white-A700 w-full px-2 py-[12px] flex items-center justify-center rounded-[10px] border border-black border-opacity-30 ${
           !selected && "text-black opacity-60"
         }`}
       >
-        {selected || "Select District"}
+        {selected || place_holder}
         <BiChevronDown size={20} className={`${open && "rotate-180 transition-transform duration-100"}`} />
       </div>
       <ul

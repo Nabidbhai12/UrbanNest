@@ -42,6 +42,24 @@ const userSchema = new mongoose.Schema({
       ref: 'Blog'
     }
   ],
+  mycomments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ],
+  upvotedComments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ],
+  downvotedComments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment'
+    }
+  ],
   createdAt: {
     type: Date,
     default: Date.now

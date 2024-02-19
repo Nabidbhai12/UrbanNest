@@ -27,15 +27,20 @@ import {showBlogNoAuth} from '../controllers/blog.controller.js';
 import { showRecentBlogs } from '../controllers/blog.controller.js';
 
 import {createComment} from '../controllers/blog.controller.js';
-import {showMyComments} from '../controllers/blog.controller.js';
 import { updateComment} from '../controllers/blog.controller.js';
 
 import { upvoteComment } from '../controllers/blog.controller.js';
 import { downvoteComment } from '../controllers/blog.controller.js';
 import { decreaseUpvoteComment } from '../controllers/blog.controller.js';
 import { decreaseDownvoteComment } from '../controllers/blog.controller.js';
+// import { checkUpvoteComment } from '../controllers/blog.controller.js';
+// import { checkDownvoteComment } from '../controllers/blog.controller.js';
+
+import {checkVoteComment} from '../controllers/blog.controller.js';
 
 import { deleteComment } from '../controllers/blog.controller.js';
+
+import { showMyCommentsByUpvotes } from '../controllers/blog.controller.js';
 
 import { showAllCommentsByUpvotes } from '../controllers/blog.controller.js';
 import { showAllCommentsByDownvotes } from '../controllers/blog.controller.js';
@@ -65,7 +70,23 @@ router.post('/createBlog',authenticateToken,   upload.array('images'),
 } ,createBlog);
 router.get('/showMyBlogs',authenticateToken,showMyBlogs);
 router.get('/showBlog/:id',authenticateToken,showBlog);
-router.put('/updateBlog/:id',authenticateToken,updateBlog);
+
+router.put('/updateBlog/:id',authenticateToken, upload.array('images'),
+ (error, req, res, next) => {
+  if (error instanceof multer.MulterError) {
+    // A Multer error occurred when uploading.
+    console.log("unexpected field");
+    console.log(req.body);
+    console.log(req.files);
+    return res.status(500).json({ error: error.message });
+  } else if (error) {
+    // An unknown error occurred when uploading.
+    return res.status(500).json({ error: 'An unknown error occurred when uploading.' });
+  }
+
+  // Everything went fine.
+  next();
+ } ,updateBlog);
 
 router.put('/upvoteBlog/:id',authenticateToken,upvoteBlog);
 router.put('/downvoteBlog/:id',authenticateToken,downvoteBlog);
@@ -73,6 +94,7 @@ router.put('/decreaseUpvoteBlog/:id',authenticateToken,decreaseUpvoteBlog);
 router.put('/decreaseDownvoteBlog/:id',authenticateToken,decreaseDownvoteBlog);
 router.get('/checkUpvote/:id',authenticateToken,checkUpvote);
 router.get('/checkDownvote/:id',authenticateToken,checkDownvote);
+
 
 router.delete('/deleteBlog/:id',authenticateToken,deleteBlog);
 
@@ -89,15 +111,19 @@ router.get('/showTopFive',showTopFive);
 router.get('/showBlogNoAuth/:id',showBlogNoAuth);
 
 router.post('/createComment/:id',authenticateToken,createComment);
-router.get('/showMyComments',authenticateToken,showMyComments);
 router.put('/updateComment/:id',authenticateToken,updateComment);
 
 router.put('/upvoteComment/:id',authenticateToken,upvoteComment);
 router.put('/downvoteComment/:id',authenticateToken,downvoteComment);
 router.put('/decreaseUpvoteComment/:id',authenticateToken,decreaseUpvoteComment);
 router.put('/decreaseDownvoteComment/:id',authenticateToken,decreaseDownvoteComment);
+// router.get('/checkUpvoteComment/:id',authenticateToken,checkUpvoteComment);
+// router.get('/checkDownvoteComment/:id',authenticateToken,checkDownvoteComment);
+router.get('/checkVoteComment/:id',authenticateToken,checkVoteComment);
 
 router.delete('/deleteComment/:id',authenticateToken,deleteComment);
+
+router.get('/showMyComments',authenticateToken,showMyCommentsByUpvotes);
 
 router.get('/showAllCommentsByUpvotes',showAllCommentsByUpvotes);
 router.get('/showAllCommentsByDownvotes',showAllCommentsByDownvotes);

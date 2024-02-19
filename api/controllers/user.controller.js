@@ -48,6 +48,7 @@ export const authenticateToken = (req, res, next) => {
       return res.sendStatus(403); // Token has expired
     }
     req.user = decoded; // Add decoded token to the request object
+    console.log("Auth done");
     next();
   });
 };
@@ -109,6 +110,7 @@ export const addPropertyForSale = async (req, res, next) => {
   console.log("addPropertyForSale called");
   try {
     console.log(req.body);
+    console.log("Price range: " + req.body.priceRange);
     const {
       title,
       description,
@@ -121,7 +123,12 @@ export const addPropertyForSale = async (req, res, next) => {
       condition,
       propertyType,
     } = req.body;
+
+    console.log("Before image URL");
     const imageUrls = req.files.map((file) => file.path); // Cloudinary URLs
+    console.log("After image URL");
+
+    //console.log("Req body: " + req.body);
     //print imageurl
     console.log("Image URLs:" + imageUrls);
     // // Extract the user ID from the token

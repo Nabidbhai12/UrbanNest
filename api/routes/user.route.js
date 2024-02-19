@@ -11,7 +11,7 @@ const upload = multer({ storage });
 //for single image
 const upload1 = multer({ storage: storage }).single('image');
 const router = express.Router();
-router.post('/verify',verifyLoginStatus);
+router.get('/verify',verifyLoginStatus);
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
 router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
@@ -23,11 +23,12 @@ router.post(
     authenticateToken,
     upload.array('images'),
     (error, req, res, next) => {
+      console.log("Image upload test");
       if (error instanceof multer.MulterError) {
         // A Multer error occurred when uploading.
         console.log("unexpected field");
-        console.log(req.body);
-        console.log(req.files);
+        //console.log(req.body);
+        //console.log(req.files);
         return res.status(500).json({ error: error.message });
       } else if (error) {
         // An unknown error occurred when uploading.
@@ -35,6 +36,8 @@ router.post(
       }
   
       // Everything went fine.
+ 
+      
       next();
     },
     addPropertyForSale

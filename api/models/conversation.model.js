@@ -5,5 +5,5 @@ const ConversationSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-const ConversationModel= mongoose.model('Conversation', ConversationSchema);
+const ConversationModel= mongoose.model('ConversationModel', ConversationSchema);
 export default ConversationModel;
