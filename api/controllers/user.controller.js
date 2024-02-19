@@ -114,10 +114,14 @@ export const addPropertyForSale = async (req, res, next) => {
     const {
       title,
       description,
-      location,
+      district,
+      thana,
+      zip,
+      address,
       priceRange,
       areaRange,
-      rooms,
+      beds,
+      baths,
       saleType,
       apartmentType,
       condition,
@@ -144,10 +148,21 @@ export const addPropertyForSale = async (req, res, next) => {
       title,
       description,
       images: imageUrls.map((url) => ({ url, caption: "Property Image" })),
-      location,
-      priceRange,
+      location: {
+        district: district,
+        area: thana,
+        zipCode: zip,
+        address: address
+      },
+      price: {
+        amount: parseInt(priceRange[0], 10),
+        currency: "TAKA" // Assuming you're dealing with USD, you can change it accordingly
+      },
       size: parseInt(areaRange[0], 10),
-      rooms,
+      rooms: {
+        bedrooms: beds,
+        bathrooms: baths
+      },
       owner: userId,
       propertyStatus,
       apartmentType,
