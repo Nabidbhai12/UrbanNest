@@ -66,7 +66,7 @@ const LandingPageCard = (props) => {
                     className="flex-1 text-base text-gray-700 w-auto"
                     size="txtManropeSemiBold16Gray700"
                   >
-                    {props?.area}
+                    {props?.size}
                   </Text>
                 </div>
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
@@ -80,6 +80,34 @@ const LandingPageCard = (props) => {
                     size="txtManropeSemiBold16Gray700"
                   >
                     {props?.type}
+                  </Text>
+                </div>
+              </div>
+              <div className="flex flex-row gap-10 items-center justify-between w-full">
+                <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                  <Img
+                    className="h-5 w-5"
+                    src="images/img_icon.svg"
+                    alt="icon"
+                  />
+                  <Text
+                    className="flex-1 text-base text-gray-700 w-auto"
+                    size="txtManropeSemiBold16Gray700"
+                  >
+                    {props?.area}
+                  </Text>
+                </div>
+                <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
+                  <Img
+                    className="h-5 w-5"
+                    src="images/img_settings.svg"
+                    alt="settings"
+                  />
+                  <Text
+                    className="text-base text-gray-700 w-auto"
+                    size="txtManropeSemiBold16Gray700"
+                  >
+                    {props?.district}
                   </Text>
                 </div>
               </div>
@@ -103,14 +131,16 @@ const LandingPageCard = (props) => {
 };
 
 LandingPageCard.defaultProps = {
-  image: "images/img_image_260x384.png",
-  location: "2861 62nd Ave, Oakland, CA 94605",
-  beds: "3 Bed Room",
-  baths: "1 Bath",
-  area: "1,032 sqft",
-  type: "Family",
+  image: "Unavailable",
+  location: "Unavailable",
+  beds: "Unavailable",
+  baths: "Unavailable",
+  size: "Unavailable",
+  type: "Unavailable",
+  district: "Unavailable",
+  area: "Unavailable",
   viewDetails: "View Details",
-  price: "$649,900",
+  price: "Unavailable",
 };
 
 export default LandingPageCard;

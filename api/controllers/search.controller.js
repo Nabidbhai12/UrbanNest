@@ -1,16 +1,17 @@
 import Listing from '../models/listing.model.js';
+import { ObjectId } from 'mongodb';
  // Adjust the path as necessary
  export const searchProperties = async (req, res, next) => {
   console.log("from search");
+  console.log(req.body);
 
   try {
       const {
           saleType,
           propertyType,
           condition,
-          city,
-          zip,
-          address,
+          district,
+          area,
           areaRange_min,
           areaRange_max,
           priceRange_min,
@@ -63,12 +64,12 @@ import Listing from '../models/listing.model.js';
       }
 
       // Location (City, Address, Zip)
-      if (city || address || zip) {
+      if (district || area) {
           const locationQuery = {};
-          if (city) locationQuery['location.city'] = new RegExp(city, 'i');
-          if (address) locationQuery['location.address'] = new RegExp(address, 'i');
-          if (zip) locationQuery['location.zipCode'] = zip;
+          if (district) locationQuery['location.district'] = new RegExp(district, 'i');
+          if (area) locationQuery['location.area'] = new RegExp(area, 'i');
           queries.push(Listing.find(locationQuery));
+
       }
 
       // Property Type, Condition, and Apartment Type
@@ -95,10 +96,21 @@ import Listing from '../models/listing.model.js';
       const queryResults = await Promise.all(queries);
 
       // Combine results and filter out duplicates
-      let combinedProperties = [].concat(...queryResults);
-      let uniqueProperties = Array.from(new Set(combinedProperties.map(p => p._id))).map(id => {
-          return combinedProperties.find(p => p._id.toString() === id.toString());
-      });
+      const combinedProperties = [].concat(...queryResults); // Flatten the array of arrays
+      console.log(combinedProperties);
+      console.log("searching...");
+      const uniqueProperties = Object.values(
+        combinedProperties.reduce((uniqueMap, property) => {
+          const id = property._id; // Don't convert to string
+          if (!uniqueMap[id]) {
+            uniqueMap[id] = property;
+          }
+          return uniqueMap;
+        }, {})
+      );
+      
+      
+      console.log("done sorting...")
 
       console.log(uniqueProperties);
       res.status(200).json(uniqueProperties);

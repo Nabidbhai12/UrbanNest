@@ -17,10 +17,10 @@ const propertyListingSchema = new mongoose.Schema({
     }
   ],
   location: {
-    address: String,
-    city: String,
-    state: String,
+    district: String,
+    area: String,
     zipCode: String,
+    address: String,
     coordinates: { // GeoJSON format for geospatial queries
       type: {
         type: String,

@@ -24,7 +24,7 @@ const LandingPageFooter = (props) => {
                   className="text-orange-A700 text-xl w-auto"
                   size="txtMarkoOneRegular20"
                 >
-                  Relasto
+                  UrbanNest
                 </Text>
               </div>
               <div className="flex flex-col gap-7 h-[194px] md:h-auto items-start justify-start w-full">
@@ -33,9 +33,9 @@ const LandingPageFooter = (props) => {
                   size="txtManropeSemiBold16"
                 >
                   <>
-                    59 Bervely Hill Ave, Brooklyn Town,
+                    House #5, Block C, Banasree,
                     <br />
-                    New York, NY 5630, CA, US
+                    Rampura, Dhaka-1219
                   </>
                 </Text>
                 <div className="flex flex-col gap-1 items-start justify-start w-auto">
@@ -43,13 +43,13 @@ const LandingPageFooter = (props) => {
                     className="text-base text-gray-900 w-auto"
                     size="txtManropeSemiBold16"
                   >
-                    +(123) 456-7890
+                    +8801710520808
                   </Text>
                   <Text
                     className="text-base text-gray-900 w-auto"
                     size="txtManropeSemiBold16"
                   >
-                    info@mail.com
+                    urbannest@gmail.com
                   </Text>
                 </div>
                 <div className="flex flex-row gap-3 items-start justify-start w-full">

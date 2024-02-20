@@ -131,7 +131,7 @@ const LandingPageHeader = (props) => {
               }
             >
               <div className="font-bold font-manrope text-gray-900 text-left text-lg">
-                Search
+                Search 
               </div>
             </Button>
             <Button
