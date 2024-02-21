@@ -1,5 +1,6 @@
 // NewBlogPost.js
 import React, { useState, useEffect } from 'react';
+import { useNavigate} from 'react-router-dom';
 import ReactQuill, { Quill } from 'react-quill';
 import axios from 'axios'; // Make sure to install axios if not already
 import ImageResize from 'quill-image-resize-module-react';
@@ -12,6 +13,7 @@ const NewBlogPost = () => {
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
   const [imageUrls, setImageUrls] = useState([]);
+  const navigate = useNavigate();
 
   const [preview, setPreview] = useState(false);
   const quillRef = React.useRef();
@@ -71,6 +73,8 @@ const NewBlogPost = () => {
       });
       
       console.log(response.data);
+      navigate('/blogHome');
+
     // Handle success, maybe clear form or show a success message
     } catch (error) {
       console.error('There was an error creating the blog post:', error);
@@ -102,7 +106,7 @@ const NewBlogPost = () => {
 
   return (
     // <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
-    <div className="bg-yellow-50-custom min-h-screen pt-16 align-center">
+    <div className="bg-yellow-50-custom min-h-screen pt-16 align-center justify-center">
       <form onSubmit={handleSubmit} className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded shadow-lg max-w-2xl">
         <div>
           <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900">Title</label>
