@@ -1,20 +1,25 @@
 # Use the official Node.js 16 as a base image
 FROM node:16-alpine
 
-# Set the working directory for the app
+# Set the working directory for the app inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json to install dependencies efficiently
+# Copy package.json and package-lock.json (or npm-shrinkwrap.json) to install dependencies
 COPY package*.json ./
+# After copying your package.json and before npm install
+COPY .env ./
 
-# Install dependencies in a multi-stage build for smaller container size
-RUN npm ci --production
 
-# Copy the rest of the project files
+# Install production dependencies.
+# Note: If you're using npm@7 or above, `npm ci` behaves differently with 'type="module"'.
+# You might need to use `npm install --only=production` instead.
+RUN npm install --only=production
+
+# Copy the rest of your application code
 COPY . .
 
-# Expose the port for container communication
+# Expose the port your app runs on
 EXPOSE 5000
 
-# Start the Node.js app using a specific script for better maintainability
-CMD ["npm", "run", "start:prod"]
+# Define the command to run your app. This uses the "start" script from your package.json.
+CMD ["npm", "start"]
