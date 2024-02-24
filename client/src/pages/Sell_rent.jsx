@@ -1,18 +1,14 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
-import { Input } from "../components/input";
-import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LandingPageFooter from "../components/LandingPageFooter";
 import Selector from "../components/selector";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import axios from "axios";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { useDebounce } from "use-debounce";
+import LogInModal from "../modals/mapModal";
 
 export default function test() {
   const API_KEY =
@@ -59,7 +55,7 @@ export default function test() {
 
     loadCsvFile();
   }, []);
-  
+
   const { currentUser } = useSelector((state) => state.user);
 
   const [filters, setFilters] = useState({
@@ -67,7 +63,7 @@ export default function test() {
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
     district: "",
-    thana : "",
+    area: "",
     zip: "",
     address: "",
     areaRange: 0,
@@ -82,7 +78,7 @@ export default function test() {
     gym: false,
     mosque: false,
     title: "",
-    description: ""
+    description: "",
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [sentImages, setSentImages] = useState([]);
@@ -92,7 +88,7 @@ export default function test() {
   for (let i = 0; i < districts.length; i++) {
     district_names.push(districts[i].name);
   }
- 
+
   let data = [];
   let areas = [];
   const handleAreaAPICall = async () => {
@@ -134,6 +130,15 @@ export default function test() {
     }
   };
 
+  var area_info;
+
+  const getAreaInfo = async () => {
+    const request_link = "https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=API_KEY&q=jessore&city=dhaka&bangla=true"
+  }
+
+  const [debouncedValue] = useDebounce(filters.address, 500);
+
+  console.log(debouncedValue);
 
   let result = [];
   let zipcode;
@@ -166,7 +171,7 @@ export default function test() {
     console.log("Test: " + event.target.files[0]);
     console.log("Profile picture: " + profilePicture);
     console.log(selectedImages.length);
-    if (warning) setWarning('');
+    if (warning) setWarning("");
   };
 
   const handleInputChange = (e) => {
@@ -177,6 +182,13 @@ export default function test() {
       [name]: type === "checkbox" ? checked : value,
     });
     console.log("Parking: " + filters.parking);
+  };
+
+  const handleAddressChange = (e) => {
+    setFilters({
+      ...filters,
+      address: debouncedValue,
+    });
   };
 
   const handleRangeChange = (e) => {
@@ -199,14 +211,14 @@ export default function test() {
   const handleZipSelection = () => {
     setFilters({
       ...filters,
-      zip : ('' + zipcode),
+      zip: "" + zipcode,
     });
-  }
+  };
 
   const handleAreaSelection = (selectedArea) => {
     setFilters({
       ...filters,
-      thana: selectedArea,
+      area: selectedArea,
     });
   };
 
@@ -221,7 +233,13 @@ export default function test() {
     if (filters.district) {
       handleAreaAPICall();
     }
-  }, [filters.thana]);
+  }, [filters.area]);
+
+  // useEffect(() => {
+  //   if (filters.area) {
+  //     handleZipAPICall();
+  //   }
+  // }, [filters.address]);
 
   const BackButton = () => {
     const navigate = useNavigate();
@@ -437,7 +455,6 @@ export default function test() {
         formData.append("images", sentImages[i]);
       }
 
-
       //filters.images.append(selectedFiles);
 
       console.log(
@@ -448,7 +465,7 @@ export default function test() {
       const selectedFilesArray = Array.from(selectedFiles);
       const sentImagesArray = Array.from(sentImages);
 
-      setSentImages(prevImages => [...prevImages, ... sentImagesArray]);
+      setSentImages((prevImages) => [...prevImages, ...sentImagesArray]);
 
       console.log("Selected files array: " + selectedFilesArray);
 
@@ -532,12 +549,11 @@ export default function test() {
   };
   const navigate = useNavigate(); // Create an instance of useNavigate
   const handleSubmit_sell_rent = async (e) => {
-
     e.preventDefault();
     const formData = new FormData();
     console.log(filters);
     console.log(sentImages);
-  
+
     // Append filters data to formData
     for (const key in filters) {
       if (key !== "images") {
@@ -550,30 +566,30 @@ export default function test() {
         }
       }
     }
-  
+
     sentImages.forEach((file) => {
-      formData.append('images', file); // Use 'images' as the field name for all files
+      formData.append("images", file); // Use 'images' as the field name for all files
     });
-    
+
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-  
-    
-    
+
     try {
-      const response = await fetch('/api/users/addPropertyForSale', {
-        method: 'POST',
+      const response = await fetch("/api/users/addPropertyForSale", {
+        method: "POST",
         body: formData, // send the FormData
         // Note: When using FormData with fetch, do NOT set Content-Type header
         // The browser will set it automatically including the boundary parameter
       });
-  
+
       const data = await response.json(); // Parse JSON data from the response
       if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          data.message || `HTTP error! status: ${response.status}`
+        );
       }
-  
+
       alert("Your property has been added successfully!");
       navigate("/"); // Ensure navigate is correctly defined
       console.log("Response:", data);
@@ -581,10 +597,15 @@ export default function test() {
       console.error("Error uploading property data and images:", error);
     }
   };
-  
-  
-  
- 
+
+  const [isOpenLogInModal, setLogInModal] = React.useState(false);
+
+  function handleOpenLogInModal() {
+    setLogInModal(true);
+  }
+  function handleCloseLogInModal() {
+    setLogInModal(false);
+  }
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -800,9 +821,20 @@ export default function test() {
                         placeholder="Enter Address, Location or Neighbourhood"
                         required
                       />
+                      <Button
+                        type="submit"
+                        className="bg-gray-51 cursor-pointer border-2 border-black border-opacity-30 flex items-center justify-center min-w-[50px] px-4 py-[8px] rounded-[10px]"
+                        rightIcon={
+                          <Img
+                            className="h-5 mt-px mb-[3px] ml-2.5"
+                            src="images/img_addLocation.svg"
+                            alt="search"
+                          />
+                        }
+                        onClick={handleOpenLogInModal}
+                      ></Button>
                     </label>
                   </div>
-
                   <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
                     <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                       Zip
@@ -843,7 +875,6 @@ export default function test() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -871,7 +902,6 @@ export default function test() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -1186,6 +1216,12 @@ export default function test() {
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
+      {isOpenLogInModal ? (
+        <LogInModal
+          isOpen={isOpenLogInModal}
+          onRequestClose={handleCloseLogInModal}
+        />
+      ) : null}
     </div>
   );
 }

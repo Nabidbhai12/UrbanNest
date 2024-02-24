@@ -13,21 +13,22 @@ const Search = React.lazy(() => import("./pages/Search"));
 
 const Sell_rent = React.lazy(() => import("./pages/Sell_rent"));
 
-const CreateAblog=React.lazy(() =>import("./pages/createAblog"));
+const CreateAblog = React.lazy(() => import("./pages/createAblog"));
 const EditBlog = React.lazy(() => import("./pages/editBlog"));
-const BlogHome= React.lazy(() => import("./pages/blogHomepage"));
-const BlogDetail=React.lazy(() => import("./pages/BlogDetail"));
-const MyBlogs=React.lazy(() => import("./pages/myBlogs"));
-
+const BlogHome = React.lazy(() => import("./pages/blogHomepage"));
+const BlogDetail = React.lazy(() => import("./pages/BlogDetail"));
+const MyBlogs = React.lazy(() => import("./pages/myBlogs"));
+//const propertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
 
-const SearchResults=React.lazy(() => import("./pages/SearchResults"));
-
+const SearchResults = React.lazy(() => import("./pages/SearchResults"));
 
 //Components
 const Header = React.lazy(() => import("./components/Header"));
-const LandingPageHeader = React.lazy(() => import("./components/LandingPageHeader"));
+const LandingPageHeader = React.lazy(() =>
+  import("./components/LandingPageHeader")
+);
 const PrivateRoute = React.lazy(() => import("./components/PrivateRoute"));
 
 export default function App() {
@@ -42,14 +43,14 @@ export default function App() {
     }
     return false;
   };
-  
+
   return (
     //isLoggedIn={isLoggedIn}
     <React.Suspense fallback={<>Loading...</>}>
       <BrowserRouter>
-      <LandingPageHeader />
+        <LandingPageHeader />
         <Routes>
-        <Route path="/blogHome/:id" element={<BlogDetail/>} />
+          <Route path="/blogHome/:id" element={<BlogDetail />} />
           <Route path="/blogHome" element={<BlogHome />} />
           <Route path="/createblog" element={<CreateAblog />} />
           <Route path="/myblogs/editBlog/:id" element={<EditBlog />} />
@@ -64,7 +65,7 @@ export default function App() {
           <Route path="/search" element={<Search />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
-            <Route path="/sell_rent" element={<Sell_rent/>} />
+            <Route path="/sell_rent" element={<Sell_rent />} />
           </Route>
         </Routes>
       </BrowserRouter>
