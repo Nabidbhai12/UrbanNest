@@ -375,9 +375,29 @@ const ListingMapViewPage = () => {
   const location = useLocation(); // Access location
   const allListings = location.state?.listings; // Access listings from state
   console.log("Inside test Listings:" + allListings.length);
-  console.log("Inside test Listings:" + allListings);
+  //console.log("Inside test Listings:" + allListings[0].location.json);
+  for (var i = 0; i < allListings.length; i++) {
+    console.log(allListings[i]);
+  }
 
   for (var i = 0; i < allListings.length; i++) {
+    // console.log(
+    //   allListings[i].location.address +
+    //     " " +
+    //     allListings[i].rooms.bedrooms +
+    //     " " +
+    //     allListings[i].rooms.bathrooms +
+    //     " " +
+    //     allListings[i].size +
+    //     " " +
+    //     allListings[i].apartmentType +
+    //     " " +
+    //     allListings[i].loaction.area +
+    //     " " +
+    //     allListings[i].location.district +
+    //     " " +
+    //     allListings[i].price.amount
+    // );
     let bed_string = "bed",
       bath_string = "bath";
     if (allListings[i].beds > 1) {
@@ -387,16 +407,18 @@ const ListingMapViewPage = () => {
       bath_string = "baths";
     }
 
+    console.log(allListings[0].location.area);
+
     landingPageCardPropList.push({
       image: allListings[i].images[0].url,
-      location: allListings[i].address,
-      beds: allListings[i].beds + " " + bed_string,
-      baths: allListings[i].baths + " " + bath_string,
+      location: allListings[i].location.address,
+      beds: allListings[i].rooms.bedrooms + " " + bed_string,
+      baths: allListings[i].rooms.bathrooms + " " + bath_string,
       size: allListings[i].size + " sqft",
       type: allListings[i].apartmentType,
-      area: allListings[i].area,
-      district: allListings[i].district,
-      price: allListings[i].price,
+      area: allListings[i].location.area,
+      district: allListings[i].location.district,
+      price: allListings[i].price.amount + " " + allListings[i].price.currency,
     });
   }
 
@@ -415,27 +437,29 @@ const ListingMapViewPage = () => {
     indexOfLastListing
   );
 
+  console.log(currentListings);
+
   const currentPropList = [];
 
   for (var i = 0; i < currentListings.length; i++) {
     let bed_string = "bed",
       bath_string = "bath";
-    if (allListings[i].beds > 1) {
+    if (currentListings[i].rooms.bedrooms > 1) {
       bed_string = "beds";
     }
-    if (allListings[i].baths > 1) {
+    if (currentListings[i].rooms.bathrooms > 1) {
       bath_string = "baths";
     }
     currentPropList.push({
       image: currentListings[i].images[0].url,
-      location: currentListings[i].address,
-      beds: currentListings[i].beds + " " + bed_string,
-      baths: currentListings[i].baths + " " + bath_string,
+      location: currentListings[i].location.address,
+      beds: currentListings[i].rooms.bedrooms + " " + bed_string,
+      baths: currentListings[i].rooms.bathrooms + " " + bath_string,
       size: currentListings[i].size + " sqft",
       type: currentListings[i].apartmentType,
-      area: currentListings[i].area,
-      district: currentListings[i].district,
-      price: currentListings[i].price,
+      area: currentListings[i].location.area,
+      district: currentListings[i].location.district,
+      price: currentListings[i].price.amount + " " + allListings[i].price.currency,
     });
   }
 
