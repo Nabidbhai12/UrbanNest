@@ -22,7 +22,7 @@ UrbanNest/
 │   └── package.json (Dependencies for the frontend)
 │
 ├── api/ (Backend)
-│   ├── models/ (Database models)
+│   ├── models/ (Database models)-
 │   │   ├── User.js
 │   │   ├── Property.js
 │   │   └── ... (Other database models)
