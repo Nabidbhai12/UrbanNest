@@ -8,11 +8,14 @@ import LandingPageFooter from "../components/LandingPageFooter";
 import Selector from "../components/selector";
 import axios from "axios";
 import { useDebounce } from "use-debounce";
-import LogInModal from "../modals/mapModal";
+import AddressSelectionModal from "../modals/mapModal";
 
 export default function test() {
   const API_KEY =
     "bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b";
+
+  const GOOGLE_API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g";
+
   const [districts, setDistricts] = useState([]);
 
   useEffect(() => {
@@ -65,6 +68,8 @@ export default function test() {
     district: "",
     area: "",
     zip: "",
+    latitude: null,
+    longitude: null,
     address: "",
     areaRange: 0,
     priceRange: 1000000,
@@ -133,8 +138,9 @@ export default function test() {
   var area_info;
 
   const getAreaInfo = async () => {
-    const request_link = "https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=API_KEY&q=jessore&city=dhaka&bangla=true"
-  }
+    const request_link =
+      "https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=API_KEY&q=jessore&city=dhaka&bangla=true";
+  };
 
   const [debouncedValue] = useDebounce(filters.address, 500);
 
@@ -144,7 +150,7 @@ export default function test() {
   let zipcode;
   const handleZipAPICall = async () => {
     const request_link =
-      "https://barikoi.xyz/v2/api/search/rupantor/geocode?api_key=" + API_KEY;
+      "https://barikoi.xyz/v2/api/search/rupantor/place?api_key=" + API_KEY;
     const formData = new FormData();
     formData.append("q", filters.address);
     formData.append("thana", "yes");
@@ -163,6 +169,34 @@ export default function test() {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  let globalCoordinates = { lat: null, lng: null }; // Global variable
+
+  const [coords, setCoords] = useState({
+    lat : null,
+    lng : null
+  });
+
+  const getAreaCoordinates = async () => {
+    const areaName = filters.area + ", " + filters.district;
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      areaName
+    )}&key=${GOOGLE_API_KEY}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "OK") {
+          const { lat, lng } = data.results[0].geometry.location;
+          setCoords({lat, lng});
+          console.log("Geocoding success");
+        } else {
+          console.error("Geocoding failed:", data.status);
+        }
+      })
+      .catch((error) => console.error("Error:", error));
   };
 
   const handleMultipleFileChange = (event) => {
@@ -222,6 +256,22 @@ export default function test() {
     });
   };
 
+  const handleLocationSelectMap = (lat, lng, addr, zipcode) => {
+    setFilters({
+      ...filters,
+      latitude: lat,
+      longitude: lng,
+      address: addr,
+      zip : zipcode,
+    });
+  };
+
+  useEffect(() => {
+    console.log(
+      filters.latitude + " " + filters.longitude + " " + filters.address + " " + filters.zip
+    );
+  }, [filters.latitude, filters.longitude, filters.address, filters.zip]);
+
   useEffect(() => {
     // Ensure district is not an empty string
     if (filters.district) {
@@ -234,6 +284,12 @@ export default function test() {
       handleAreaAPICall();
     }
   }, [filters.area]);
+
+  useEffect(() => {
+    if(filters.district && filters.area){
+      getAreaCoordinates();
+    }
+  }, [filters.district, filters.area]);
 
   // useEffect(() => {
   //   if (filters.area) {
@@ -598,13 +654,14 @@ export default function test() {
     }
   };
 
-  const [isOpenLogInModal, setLogInModal] = React.useState(false);
+  const [isOpenAddressSelectionModal, setAddressSelectionModal] =
+    React.useState(false);
 
-  function handleOpenLogInModal() {
-    setLogInModal(true);
+  function handleOpenAddressSelectionModal() {
+    setAddressSelectionModal(true);
   }
-  function handleCloseLogInModal() {
-    setLogInModal(false);
+  function handleCloseAddressSelectionModal() {
+    setAddressSelectionModal(false);
   }
 
   return (
@@ -831,7 +888,7 @@ export default function test() {
                             alt="search"
                           />
                         }
-                        onClick={handleOpenLogInModal}
+                        onClick={handleOpenAddressSelectionModal}
                       ></Button>
                     </label>
                   </div>
@@ -1216,10 +1273,13 @@ export default function test() {
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
-      {isOpenLogInModal ? (
-        <LogInModal
-          isOpen={isOpenLogInModal}
-          onRequestClose={handleCloseLogInModal}
+      {isOpenAddressSelectionModal ? (
+        <AddressSelectionModal
+          isOpen={isOpenAddressSelectionModal}
+          onRequestClose={handleCloseAddressSelectionModal}
+          onLocationSelect={handleLocationSelectMap}
+          latitude={coords.lat}
+          longitude={coords.lng}
         />
       ) : null}
     </div>
