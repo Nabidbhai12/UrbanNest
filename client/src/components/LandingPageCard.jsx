@@ -72,7 +72,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_settings.svg"
+                    src="images/img_apartment.svg"
                     alt="settings"
                   />
                   <Text
@@ -87,7 +87,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_icon.svg"
+                    src="images/img_area.svg"
                     alt="icon"
                   />
                   <Text
@@ -100,7 +100,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_settings.svg"
+                    src="images/img_location_city.svg"
                     alt="settings"
                   />
                   <Text

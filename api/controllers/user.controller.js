@@ -4,7 +4,6 @@ import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
 
-
 export const verifyLoginStatus = (req, res) => {
   const token = req.cookies["access_token"];
 
@@ -73,7 +72,6 @@ export const getUserDetails = async (req, res) => {
 
 // Function to update user profile and password
 export const updateProfile = async (req, res) => {
-
   const userId = req.user.id; // Extract user ID from token
   const { currentPassword, newPassword, ...updates } = req.body;
 
@@ -115,7 +113,7 @@ export const addPropertyForSale = async (req, res, next) => {
       title,
       description,
       district,
-      thana,
+      area,
       zip,
       address,
       priceRange,
@@ -128,6 +126,36 @@ export const addPropertyForSale = async (req, res, next) => {
       propertyType,
     } = req.body;
 
+    console.log(
+      title +
+        "\n " +
+        description +
+        "\n " +
+        district +
+        "\n " +
+        area +
+        "\n " +
+        zip +
+        "\n " +
+        address +
+        "\n " +
+        priceRange +
+        "\n " +
+        areaRange +
+        "\n " +
+        typeof(beds) +
+        "\n " +
+        baths + 
+        "\n " + 
+        saleType + 
+        "\n " + 
+        apartmentType + 
+        "\n " + 
+        condition + 
+        "\n " +
+        propertyType 
+    );
+
     console.log("Before image URL");
     const imageUrls = req.files.map((file) => file.path); // Cloudinary URLs
     console.log("After image URL");
@@ -139,9 +167,9 @@ export const addPropertyForSale = async (req, res, next) => {
     // const token = req.headers.authorization.split(' ')[1];
     // const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const userId = req.user.id;
-    let propertyStatus= saleType === "sell" ? "For Sale" : "For Rent";
+    let propertyStatus = saleType === "sell" ? "For Sale" : "For Rent";
 
-    console.log("Property status: " + propertyStatus)
+    console.log("Property status: " + propertyStatus);
 
     // Create a new property listing
     const newProperty = new Listing({
@@ -150,18 +178,18 @@ export const addPropertyForSale = async (req, res, next) => {
       images: imageUrls.map((url) => ({ url, caption: "Property Image" })),
       location: {
         district: district,
-        area: thana,
+        area: area,
         zipCode: zip,
         address: address
       },
       price: {
         amount: parseInt(priceRange[0], 10),
-        currency: "TAKA" // Assuming you're dealing with USD, you can change it accordingly
+        currency: "BDT", // Assuming you're dealing with USD, you can change it accordingly
       },
       size: parseInt(areaRange[0], 10),
       rooms: {
-        bedrooms: beds,
-        bathrooms: baths
+        bedrooms: parseInt(beds[0], 10),
+        bathrooms: parseInt(baths[0], 10)
       },
       owner: userId,
       propertyStatus,
@@ -170,6 +198,10 @@ export const addPropertyForSale = async (req, res, next) => {
       propertyType,
       propertyStatus,
     });
+
+    console.log("Listing created");
+
+    console.log(newProperty);
 
     // Save the property listing
     const savedProperty = await newProperty.save();
