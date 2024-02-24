@@ -104,6 +104,7 @@ export const updateProfile = async (req, res) => {
       .json({ message: "Error updating profile", error: error.message });
   }
 };
+
 export const addPropertyForSale = async (req, res, next) => {
   console.log("addPropertyForSale called");
   try {
@@ -124,37 +125,9 @@ export const addPropertyForSale = async (req, res, next) => {
       apartmentType,
       condition,
       propertyType,
+      latitude,
+      longitude
     } = req.body;
-
-    console.log(
-      title +
-        "\n " +
-        description +
-        "\n " +
-        district +
-        "\n " +
-        area +
-        "\n " +
-        zip +
-        "\n " +
-        address +
-        "\n " +
-        priceRange +
-        "\n " +
-        areaRange +
-        "\n " +
-        typeof(beds) +
-        "\n " +
-        baths + 
-        "\n " + 
-        saleType + 
-        "\n " + 
-        apartmentType + 
-        "\n " + 
-        condition + 
-        "\n " +
-        propertyType 
-    );
 
     console.log("Before image URL");
     const imageUrls = req.files.map((file) => file.path); // Cloudinary URLs
@@ -180,7 +153,11 @@ export const addPropertyForSale = async (req, res, next) => {
         district: district,
         area: area,
         zipCode: zip,
-        address: address
+        address: address,
+        coordinates: { // Ensure these are in GeoJSON format for geospatial queries
+          type: "Point",
+          coordinates: [longitude, latitude], // Note: GeoJSON format is [longitude, latitude]
+        }
       },
       price: {
         amount: parseInt(priceRange[0], 10),
