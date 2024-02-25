@@ -212,31 +212,34 @@ export default function Profile() {
       console.log(error.message);
     }
   };
+
   return (
-    <div className="bg-gray-100 min-h-screen p-5">
-      {/* Profile Section */}
-      <div className="bg-white shadow rounded-lg p-6 flex items-center space-x-6">
-        <div className="w-24 h-24">
-          <img className="rounded-full object-cover h-full w-full" src={currentUser?.profilePicture || 'default-avatar.png'} alt="Profile" />
+    <div className='bg-gray-100 min-h-screen p-5'>
+
+      <div className='bg-white shadow rounded-lg p-6 flex'>
+        <div className='w-1/3'>
+          <img className='rounded-lg' src={formData.avatar || 'default-avatar.png'} alt='Profile avatar' />
         </div>
-        <div>
-          <h1 className="text-2xl font-bold">{currentUser?.username}</h1>
-          <p className="text-gray-700">{currentUser?.email}</p>
-          <p className="text-gray-500">{currentUser?.contactNumber}</p>
-          <p className="text-gray-500">{currentUser?.bio}</p>
+        <div className='w-2/3 pl-5'>
+          <h1 className='text-2xl font-bold mb-2'>{formData.username}</h1>
+          <p className='text-gray-700'>{formData.email}</p>
+          {/* ... other user details ... */}
+         
+          <button className='mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' onClick={handleSignOut}>Sign Out</button>
+
+
         </div>
       </div>
 
-      {/* Wishlist Section */}
-      <div className="my-6">
-        <h2 className="text-2xl font-bold mb-4">Wishlist</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {currentUser?.wishlist?.map((item) => ( // Assuming wishlist is an array in currentUser
-            <div key={item._id} className="bg-white shadow rounded-lg p-4">
-              <img className="rounded-lg mb-4 w-full h-48 object-cover" src={item.image} alt={item.title} />
-              <h3 className="text-lg font-semibold">{item.title}</h3>
-              <p className="text-gray-600">{item.description}</p>
-              <p className="text-gray-600">{item.price}</p>
+      <div className='my-6'>
+        <h2 className='text-2xl font-bold mb-4'>Wishlist</h2>
+        <div className='flex overflow-x-auto gap-4'>
+          {userListings.map((item) => (
+            <div key={item._id} className='min-w-max bg-white shadow rounded-lg p-4'>
+              <img className='rounded-lg mb-4' src={item.image} alt={item.title} />
+              <h3 className='text-lg font-semibold'>{item.title}</h3>
+              <p className='text-gray-600'>{item.description}</p>
+              <p className='text-gray-600'>{item.price}</p>
               {/* ... additional item details ... */}
             </div>
           ))}
@@ -245,7 +248,6 @@ export default function Profile() {
     </div>
   );
 }
-  
 
 
   
