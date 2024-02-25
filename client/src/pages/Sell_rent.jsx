@@ -1,22 +1,21 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LandingPageHeader from "../components/LandingPageHeader";
 import { Button } from "../components/button";
-import { Input } from "../components/input";
-import { CheckBox } from "../components/checkBox";
 import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import LandingPageFooter from "../components/LandingPageFooter";
 import Selector from "../components/selector";
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
 import axios from "axios";
-import { OpenStreetMapProvider } from "leaflet-geosearch";
+import { useDebounce } from "use-debounce";
+import AddressSelectionModal from "../modals/mapModal";
 
 export default function test() {
   const API_KEY =
     "bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b";
+
+  const GOOGLE_API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g";
+
   const [districts, setDistricts] = useState([]);
 
   useEffect(() => {
@@ -59,7 +58,7 @@ export default function test() {
 
     loadCsvFile();
   }, []);
-  
+
   const { currentUser } = useSelector((state) => state.user);
 
   const [filters, setFilters] = useState({
@@ -67,8 +66,10 @@ export default function test() {
     propertyType: "residential", // 'commercial' or 'residential'
     condition: "new", // 'new', 'used', or 'under-construction'
     district: "",
-    thana : "",
+    area: "",
     zip: "",
+    latitude: null,
+    longitude: null,
     address: "",
     areaRange: 0,
     priceRange: 1000000,
@@ -82,7 +83,7 @@ export default function test() {
     gym: false,
     mosque: false,
     title: "",
-    description: ""
+    description: "",
   });
   const [selectedImages, setSelectedImages] = useState([]);
   const [sentImages, setSentImages] = useState([]);
@@ -92,7 +93,7 @@ export default function test() {
   for (let i = 0; i < districts.length; i++) {
     district_names.push(districts[i].name);
   }
- 
+
   let data = [];
   let areas = [];
   const handleAreaAPICall = async () => {
@@ -134,12 +135,22 @@ export default function test() {
     }
   };
 
+  var area_info;
+
+  const getAreaInfo = async () => {
+    const request_link =
+      "https://barikoi.xyz/v2/api/search/autocomplete/place?api_key=API_KEY&q=jessore&city=dhaka&bangla=true";
+  };
+
+  const [debouncedValue] = useDebounce(filters.address, 500);
+
+  console.log(debouncedValue);
 
   let result = [];
   let zipcode;
   const handleZipAPICall = async () => {
     const request_link =
-      "https://barikoi.xyz/v2/api/search/rupantor/geocode?api_key=" + API_KEY;
+      "https://barikoi.xyz/v2/api/search/rupantor/place?api_key=" + API_KEY;
     const formData = new FormData();
     formData.append("q", filters.address);
     formData.append("thana", "yes");
@@ -160,13 +171,41 @@ export default function test() {
     }
   };
 
+  let globalCoordinates = { lat: null, lng: null }; // Global variable
+
+  const [coords, setCoords] = useState({
+    lat : null,
+    lng : null
+  });
+
+  const getAreaCoordinates = async () => {
+    const areaName = filters.area + ", " + filters.district;
+
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+      areaName
+    )}&key=${GOOGLE_API_KEY}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status === "OK") {
+          const { lat, lng } = data.results[0].geometry.location;
+          setCoords({lat, lng});
+          console.log("Geocoding success");
+        } else {
+          console.error("Geocoding failed:", data.status);
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  };
+
   const handleMultipleFileChange = (event) => {
     setSelectedImages(event.target.files[0]);
 
     console.log("Test: " + event.target.files[0]);
     console.log("Profile picture: " + profilePicture);
     console.log(selectedImages.length);
-    if (warning) setWarning('');
+    if (warning) setWarning("");
   };
 
   const handleInputChange = (e) => {
@@ -177,6 +216,13 @@ export default function test() {
       [name]: type === "checkbox" ? checked : value,
     });
     console.log("Parking: " + filters.parking);
+  };
+
+  const handleAddressChange = (e) => {
+    setFilters({
+      ...filters,
+      address: debouncedValue,
+    });
   };
 
   const handleRangeChange = (e) => {
@@ -199,16 +245,32 @@ export default function test() {
   const handleZipSelection = () => {
     setFilters({
       ...filters,
-      zip : ('' + zipcode),
+      zip: "" + zipcode,
     });
-  }
+  };
 
   const handleAreaSelection = (selectedArea) => {
     setFilters({
       ...filters,
-      thana: selectedArea,
+      area: selectedArea,
     });
   };
+
+  const handleLocationSelectMap = (lat, lng, addr, zipcode) => {
+    setFilters({
+      ...filters,
+      latitude: lat,
+      longitude: lng,
+      address: addr,
+      zip : zipcode,
+    });
+  };
+
+  useEffect(() => {
+    console.log(
+      filters.latitude + " " + filters.longitude + " " + filters.address + " " + filters.zip
+    );
+  }, [filters.latitude, filters.longitude, filters.address, filters.zip]);
 
   useEffect(() => {
     // Ensure district is not an empty string
@@ -221,7 +283,19 @@ export default function test() {
     if (filters.district) {
       handleAreaAPICall();
     }
-  }, [filters.thana]);
+  }, [filters.area]);
+
+  useEffect(() => {
+    if(filters.district && filters.area){
+      getAreaCoordinates();
+    }
+  }, [filters.district, filters.area]);
+
+  // useEffect(() => {
+  //   if (filters.area) {
+  //     handleZipAPICall();
+  //   }
+  // }, [filters.address]);
 
   const BackButton = () => {
     const navigate = useNavigate();
@@ -437,7 +511,6 @@ export default function test() {
         formData.append("images", sentImages[i]);
       }
 
-
       //filters.images.append(selectedFiles);
 
       console.log(
@@ -448,7 +521,7 @@ export default function test() {
       const selectedFilesArray = Array.from(selectedFiles);
       const sentImagesArray = Array.from(sentImages);
 
-      setSentImages(prevImages => [...prevImages, ... sentImagesArray]);
+      setSentImages((prevImages) => [...prevImages, ...sentImagesArray]);
 
       console.log("Selected files array: " + selectedFilesArray);
 
@@ -532,12 +605,11 @@ export default function test() {
   };
   const navigate = useNavigate(); // Create an instance of useNavigate
   const handleSubmit_sell_rent = async (e) => {
-
     e.preventDefault();
     const formData = new FormData();
     console.log(filters);
     console.log(sentImages);
-  
+
     // Append filters data to formData
     for (const key in filters) {
       if (key !== "images") {
@@ -550,30 +622,30 @@ export default function test() {
         }
       }
     }
-  
+
     sentImages.forEach((file) => {
-      formData.append('images', file); // Use 'images' as the field name for all files
+      formData.append("images", file); // Use 'images' as the field name for all files
     });
-    
+
     for (const [key, value] of formData.entries()) {
       console.log(`${key}: ${value}`);
     }
-  
-    
-    
+
     try {
-      const response = await fetch('/api/users/addPropertyForSale', {
-        method: 'POST',
+      const response = await fetch("/api/users/addPropertyForSale", {
+        method: "POST",
         body: formData, // send the FormData
         // Note: When using FormData with fetch, do NOT set Content-Type header
         // The browser will set it automatically including the boundary parameter
       });
-  
+
       const data = await response.json(); // Parse JSON data from the response
       if (!response.ok) {
-        throw new Error(data.message || `HTTP error! status: ${response.status}`);
+        throw new Error(
+          data.message || `HTTP error! status: ${response.status}`
+        );
       }
-  
+
       alert("Your property has been added successfully!");
       navigate("/"); // Ensure navigate is correctly defined
       console.log("Response:", data);
@@ -581,10 +653,16 @@ export default function test() {
       console.error("Error uploading property data and images:", error);
     }
   };
-  
-  
-  
- 
+
+  const [isOpenAddressSelectionModal, setAddressSelectionModal] =
+    React.useState(false);
+
+  function handleOpenAddressSelectionModal() {
+    setAddressSelectionModal(true);
+  }
+  function handleCloseAddressSelectionModal() {
+    setAddressSelectionModal(false);
+  }
 
   return (
     <div className="bg-yellow-50 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[100px] items-center justify-start mx-auto w-full sm:w-full md:w-full">
@@ -800,9 +878,20 @@ export default function test() {
                         placeholder="Enter Address, Location or Neighbourhood"
                         required
                       />
+                      <Button
+                        type="submit"
+                        className="bg-gray-51 cursor-pointer border-2 border-black border-opacity-30 flex items-center justify-center min-w-[50px] px-4 py-[8px] rounded-[10px]"
+                        rightIcon={
+                          <Img
+                            className="h-5 mt-px mb-[3px] ml-2.5"
+                            src="images/img_addLocation.svg"
+                            alt="search"
+                          />
+                        }
+                        onClick={handleOpenAddressSelectionModal}
+                      ></Button>
                     </label>
                   </div>
-
                   <div className="flex flex-row space-y-[1px] gap-[40px] pt-[50px] font-markoone w-1/2">
                     <span className="bg-black text-white-A700 px-4 py-2 w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope">
                       Zip
@@ -843,7 +932,6 @@ export default function test() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -871,7 +959,6 @@ export default function test() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
               <div className="flex flex-col space-y-[1px] pt-[50px] font-markoone">
@@ -1186,6 +1273,15 @@ export default function test() {
         </div>
         <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
       </div>
+      {isOpenAddressSelectionModal ? (
+        <AddressSelectionModal
+          isOpen={isOpenAddressSelectionModal}
+          onRequestClose={handleCloseAddressSelectionModal}
+          onLocationSelect={handleLocationSelectMap}
+          latitude={coords.lat}
+          longitude={coords.lng}
+        />
+      ) : null}
     </div>
   );
 }
