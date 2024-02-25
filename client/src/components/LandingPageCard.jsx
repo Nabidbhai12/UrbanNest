@@ -11,11 +11,11 @@ const LandingPageCard = (props) => {
     <>
       <div className={props.className}>
         <Img
-          className="h-[260px] sm:h-auto object-cover w-full"
+          className="h-[200px] max-h-[200px] sm:h-auto object-cover w-full rounded-[10px]"
           alt="image"
           src={props?.image}
         />
-        <div className="bg-gray-51 border border-red-101 border-solid flex flex-col items-start justify-start px-5 py-[30px] rounded-bl-[10px] rounded-br-[10px] w-full">
+        <div className="bg-gray-51 border border-red-101 border-solid flex flex-col items-start justify-start px-5 py-[30px] rounded-[10px] w-full">
           <div className="flex flex-col gap-[27px] items-start justify-start w-full">
             <div className="flex flex-row gap-3 items-center justify-start w-full">
               <Img className="h-6 w-6" src="images/img_eye.svg" alt="eye" />

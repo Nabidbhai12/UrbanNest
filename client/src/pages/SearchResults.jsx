@@ -56,7 +56,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { Button } from "../components/button.jsx";
-import { GoogleMap } from "../components/GoogleMap.jsx";
 import { Img } from "../components/image.jsx";
 import { Input } from "../components/input.jsx";
 import { List } from "../components/list.jsx";
@@ -74,6 +73,7 @@ import SearchResults from "./SearchResults.jsx";
 
 import LandingPageCard from "../components/LandingPageCard.jsx";
 import LandingPageFooter from "../components/LandingPageFooter.jsx";
+import { ShowApartments } from "../components/GoogleMap.jsx";
 import { all } from "axios";
 
 const ListingMapViewPage = () => {
@@ -89,6 +89,7 @@ const ListingMapViewPage = () => {
     "bkoi_475a8f4e8b6d64df619ca67a296b8454a6b20ed5bbeeade0f50f4e65adee8e7b";
   const [districts, setDistricts] = useState([]);
 
+  var districtsData = [];
   useEffect(() => {
     const loadCsvFile = async () => {
       try {
@@ -96,7 +97,7 @@ const ListingMapViewPage = () => {
         const csvText = await response.text();
 
         const lines = csvText.split("\n");
-        const districtsData = []; // Renamed to avoid confusion with state variable
+        //const districtsData = []; // Renamed to avoid confusion with state variable
 
         lines.forEach((line, index) => {
           // Skip the header or empty lines if present
@@ -374,30 +375,29 @@ const ListingMapViewPage = () => {
 
   const location = useLocation(); // Access location
   const allListings = location.state?.listings; // Access listings from state
+
+  const center = { lat: null, lng: null };
+
+  //console.log(districts.length);
+
+  for (var i = 0; i < districts.length; i++) {
+    //console.log(districts);
+    if (districts[i].name == allListings[2].location.district) {
+      center.lat = districts[i].latitude;
+      center.lng = districts[i].longitude;
+      break;
+    }
+  }
+
+  console.log(center);
+
   console.log("Inside test Listings:" + allListings.length);
   //console.log("Inside test Listings:" + allListings[0].location.json);
   for (var i = 0; i < allListings.length; i++) {
     console.log(allListings[i]);
   }
 
-  for (var i = 0; i < allListings.length; i++) {
-    // console.log(
-    //   allListings[i].location.address +
-    //     " " +
-    //     allListings[i].rooms.bedrooms +
-    //     " " +
-    //     allListings[i].rooms.bathrooms +
-    //     " " +
-    //     allListings[i].size +
-    //     " " +
-    //     allListings[i].apartmentType +
-    //     " " +
-    //     allListings[i].loaction.area +
-    //     " " +
-    //     allListings[i].location.district +
-    //     " " +
-    //     allListings[i].price.amount
-    // );
+  for (var i = 2; i < allListings.length; i++) {
     let bed_string = "bed",
       bath_string = "bath";
     if (allListings[i].beds > 1) {
@@ -407,10 +407,11 @@ const ListingMapViewPage = () => {
       bath_string = "baths";
     }
 
-    console.log(allListings[0].location.area);
+    console.log(allListings[2].location);
 
     landingPageCardPropList.push({
       image: allListings[i].images[0].url,
+      images: allListings[i].images,
       location: allListings[i].location.address,
       beds: allListings[i].rooms.bedrooms + " " + bed_string,
       baths: allListings[i].rooms.bathrooms + " " + bath_string,
@@ -418,7 +419,17 @@ const ListingMapViewPage = () => {
       type: allListings[i].apartmentType,
       area: allListings[i].location.area,
       district: allListings[i].location.district,
+      zipcode: allListings[i].location.zipCode,
       price: allListings[i].price.amount + " " + allListings[i].price.currency,
+      latitude: allListings[i].location.coordinates.coordinates[1],
+      longitude: allListings[i].location.coordinates.coordinates[0],
+      title: allListings[i].title,
+      description: allListings[i].description,
+      condition: allListings[i].condition,
+      apartmentType: allListings[i].apartmentType,
+      propertyStatus: allListings[i].propertyStatus,
+      id: allListings[i]._id,
+      owner: allListings[i].owner,
     });
   }
 
@@ -426,7 +437,7 @@ const ListingMapViewPage = () => {
     console.log(landingPageCardPropList[i]);
   }
   const [currentPage, setCurrentPage] = useState(1);
-  const listingsPerPage = 9;
+  const listingsPerPage = 8;
   const totalPages = Math.ceil(allListings?.length / listingsPerPage);
 
   // Calculate the currently displayed listings
@@ -441,7 +452,7 @@ const ListingMapViewPage = () => {
 
   const currentPropList = [];
 
-  for (var i = 0; i < currentListings.length; i++) {
+  for (var i = 2; i < currentListings.length; i++) {
     let bed_string = "bed",
       bath_string = "bath";
     if (currentListings[i].rooms.bedrooms > 1) {
@@ -452,6 +463,7 @@ const ListingMapViewPage = () => {
     }
     currentPropList.push({
       image: currentListings[i].images[0].url,
+      images: allListings[i].images,
       location: currentListings[i].location.address,
       beds: currentListings[i].rooms.bedrooms + " " + bed_string,
       baths: currentListings[i].rooms.bathrooms + " " + bath_string,
@@ -459,7 +471,17 @@ const ListingMapViewPage = () => {
       type: currentListings[i].apartmentType,
       area: currentListings[i].location.area,
       district: currentListings[i].location.district,
+      zipcode: allListings[i].location.zipCode,
       price: currentListings[i].price.amount + " " + allListings[i].price.currency,
+      latitude: currentListings[i].location.coordinates.coordinates[1],
+      longitude: currentListings[i].location.coordinates.coordinates[0],
+      title: allListings[i].title,
+      description: allListings[i].description,
+      condition: allListings[i].condition,
+      apartmentType: allListings[i].apartmentType,
+      propertyStatus: allListings[i].propertyStatus,
+      id: allListings[i]._id,
+      owner: allListings[i].owner,
     });
   }
 
@@ -578,35 +600,38 @@ const ListingMapViewPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
-            <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
-              <div className="flex flex-col items-start justify-start w-full">
-                <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
-                  {currentPropList.map((props, index) => (
-                    <React.Fragment key={`LandingPageCard${index}`}>
-                      <LandingPageCard
-                        className="flex flex-1 flex-col h-[560px] md:h-auto items-start justify-start w-full"
-                        {...props}
-                      />
-                    </React.Fragment>
-                  ))}
+          <div className="flex flex-row font-manrope items-center justify-center md:px-10 px-[50px] sm:px-5 w-full">
+            <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-1/2">
+              <div>
+                <div className="flex flex-col items-start justify-start w-full">
+                  <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-2 justify-center min-h-[auto] w-full">
+                    {currentPropList.map((props, index) => (
+                      <React.Fragment key={`LandingPageCard${index}`}>
+                        <LandingPageCard
+                          className="flex flex-1 flex-col h-[560px] md:h-auto items-start justify-start w-full"
+                          {...props}
+                        />
+                      </React.Fragment>
+                    ))}
+                  </div>
                 </div>
-              </div>
-              <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
-                <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
-                  {pageNumbers.map((number) => (
-                    <Button
-                      key={number}
-                      className={`border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12 ${
-                        currentPage === number ? "bg-black text-white-A700" : ""
-                      } text-white rounded`}
-                      onClick={() => setCurrentPage(number)}
-                    >
-                      {number}
-                    </Button>
-                  ))}
-                </div>
-                {/*
+                <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
+                  <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
+                    {pageNumbers.map((number) => (
+                      <Button
+                        key={number}
+                        className={`border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12 ${
+                          currentPage === number
+                            ? "bg-black text-white-A700"
+                            : ""
+                        } text-white rounded`}
+                        onClick={() => setCurrentPage(number)}
+                      >
+                        {number}
+                      </Button>
+                    ))}
+                  </div>
+                  {/*
                 <Button
                   className="border border-bluegray-102 border-solid cursor-pointer flex items-center justify-center min-w-[134px] px-[17px] py-[13px] rounded-[10px]"
                   rightIcon={
@@ -623,8 +648,14 @@ const ListingMapViewPage = () => {
                   </div>
                 </Button>
                 */}
+                </div>
               </div>
+
               <div className="flex justify-center mt-8"></div>
+            </div>
+            <div className="w-px bg-black h-full mx-4"></div>
+            <div className="flex flex-col md:gap-10 items-start justify-start mx-auto w-1/2 h-auto border border-black border-opacity-30 rounded-[20px] overflow-auto">
+              <ShowApartments apartments={landingPageCardPropList} />
             </div>
           </div>
         </div>
