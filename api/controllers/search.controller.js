@@ -97,7 +97,7 @@ import { ObjectId } from 'mongodb';
 
       // Combine results and filter out duplicates
       const combinedProperties = [].concat(...queryResults); // Flatten the array of arrays
-      console.log(combinedProperties);
+     // console.log(combinedProperties);
       console.log("searching...");
       const uniqueProperties = Object.values(
         combinedProperties.reduce((uniqueMap, property) => {
@@ -112,7 +112,7 @@ import { ObjectId } from 'mongodb';
       
       console.log("done sorting...")
 
-      console.log(uniqueProperties);
+      //console.log(uniqueProperties);
       res.status(200).json(uniqueProperties);
   } catch (error) {
       next(error);
@@ -121,6 +121,7 @@ import { ObjectId } from 'mongodb';
 //check whether the search works properly or not
 
 export const getListingById = async (req, res, next) => {
+    console.log("getListingById called");
     const { listingId } = req.params; // Assuming the ID is passed as a URL parameter
 
     try {
