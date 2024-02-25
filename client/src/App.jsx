@@ -18,7 +18,7 @@ const EditBlog = React.lazy(() => import("./pages/editBlog"));
 const BlogHome = React.lazy(() => import("./pages/blogHomepage"));
 const BlogDetail = React.lazy(() => import("./pages/BlogDetail"));
 const MyBlogs = React.lazy(() => import("./pages/myBlogs"));
-//const propertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
+const PropertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
 
@@ -54,6 +54,7 @@ export default function App() {
           <Route path="/blogHome" element={<BlogHome />} />
           <Route path="/createblog" element={<CreateAblog />} />
           <Route path="/myblogs/editBlog/:id" element={<EditBlog />} />
+          <Route path="/search-results/:id" element={<PropertyDetails />} />
           <Route path="/myblogs" element={<MyBlogs />} />
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />

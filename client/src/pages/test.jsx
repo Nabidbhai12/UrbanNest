@@ -135,14 +135,14 @@ Functionality 3:
                   a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
 */
 
-// import React, { useEffect, useState } from "react";
-// import {
-//   useJsApiLoader,
-//   GoogleMap,
-//   Marker,
-//   InfoWindow,
-//   Circle,
-// } from "@react-google-maps/api";
+import React, { useEffect, useState } from "react";
+import {
+  useJsApiLoader,
+  GoogleMap,
+  Marker,
+  InfoWindow,
+  Circle,
+} from "@react-google-maps/api";
 
 const center = { lat: 23.732583, lng: 90.387045 }; // Example coordinate
 const libraries = ["places"];
