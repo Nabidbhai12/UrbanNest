@@ -70,6 +70,31 @@ export const getUserDetails = async (req, res) => {
   }
 };
 
+export const getUserDetailsByID = async (req, res) => {
+  const { userID } = req.params;
+  
+  try{
+    const user = await User.findById(userID);
+
+    if(!user){
+      return res.status(404).json({message: "User not found"});
+    }
+    //console.log(user);
+    const response = {
+      username : user.username,
+      email : user.email,
+      contactNumber : user.contactNumber,
+      avatar : user.avatar,
+      profilePicture : user.profilePicture,
+    }  
+
+    res.json(response);
+
+  } catch(error){
+    console.error(error);
+  }
+}
+
 // Function to update user profile and password
 export const updateProfile = async (req, res) => {
   const userId = req.user.id; // Extract user ID from token

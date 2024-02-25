@@ -10,7 +10,6 @@ import { Img } from "../components/image";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Selector from "../components/selector";
-import Selector_thana from "../components/selector_thana";
 import SearchResults from "./SearchResults";
 import { AiFillWarning } from "react-icons/ai";
 import LandingPageFooter from "../components/LandingPageFooter";

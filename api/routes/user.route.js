@@ -1,6 +1,6 @@
 //create api route
 import express from "express";
-import { authenticateToken,updateProfile,getUserDetails } from "../controllers/user.controller.js";
+import { authenticateToken,updateProfile,getUserDetails, getUserDetailsByID } from "../controllers/user.controller.js";
 import { addPropertyForSale } from "../controllers/user.controller.js";
 import { getUserWishlist,getUserBoughtlist,getUserSellinglist,getUserSoldlist } from "../controllers/user.controller.js";
 import { storage } from '../config/cloudinaryConfig.js';
@@ -18,6 +18,7 @@ router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
 router.get('/getUserSellinglist',authenticateToken,getUserSellinglist);
 router.get('/getUserSoldlist',authenticateToken,getUserSoldlist);
 router.get('/getUserDetails',authenticateToken,getUserDetails);
+router.get('/getUserDetailsByID/:userID', authenticateToken, getUserDetailsByID);
 router.post(
     '/addPropertyForSale',
     authenticateToken,

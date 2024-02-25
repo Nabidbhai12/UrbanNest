@@ -142,93 +142,89 @@ Functionality 3:
                   a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
 */
 
-// function NearbyPlacesComponent({ center, type }) {
-//   const center = { lat: apartments[0].latitude, lng: apartments[0].longitude };
+function NearbyPlacesComponent({ center, type }) {
+  const libraries = ["places"];
 
-//   const libraries = ["places"];
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: API_KEY, // Replace with your actual API key
+    libraries,
+  });
 
-//   const { isLoaded } = useJsApiLoader({
-//     googleMapsApiKey: API_KEY, // Replace with your actual API key
-//     libraries,
-//   });
+  const searchRadius = 1500;
+  // State to hold nearby places and the selected place
+  const [places, setPlaces] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null);
 
-//   const searchRadius = 1500;
-//   // State to hold nearby places and the selected place
-//   const [places, setPlaces] = useState([]);
-//   const [selectedPlace, setSelectedPlace] = useState(null);
+  useEffect(() => {
+    if (isLoaded) {
+      const service = new window.google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+      const request = {
+        location: center,
+        radius: "1500",
+        type: type,
+      };
 
-//   useEffect(() => {
-//     if (isLoaded) {
-//       const service = new window.google.maps.places.PlacesService(
-//         document.createElement("div")
-//       );
-//       const request = {
-//         location: center,
-//         radius: "1500",
-//         type: type,
-//       };
+      service.nearbySearch(request, (results, status) => {
+        if (
+          status === window.google.maps.places.PlacesServiceStatus.OK &&
+          results
+        ) {
+          setPlaces(results);
+          console.log(results);
+        }
+      });
+    }
+  }, [isLoaded]);
 
-//       service.nearbySearch(request, (results, status) => {
-//         if (
-//           status === window.google.maps.places.PlacesServiceStatus.OK &&
-//           results
-//         ) {
-//           setPlaces(results);
-//           console.log(results);
-//         }
-//       });
-//     }
-//   }, [isLoaded]);
+  const handleMarkerClick = (place) => {
+    setSelectedPlace(place);
+  };
 
-//   const handleMarkerClick = (place) => {
-//     setSelectedPlace(place);
-//   };
+  return isLoaded ? (
+    <GoogleMap
+      mapContainerClassName="w-full h-[100vh]"
+      center={center}
+      zoom={15}
+    >
+      {places.map((place, index) => (
+        <Marker
+          key={index}
+          position={place.geometry.location}
+          onClick={() => handleMarkerClick(place)}
+        />
+      ))}
 
-//   return isLoaded ? (
-//     <GoogleMap
-//       mapContainerClassName="w-full h-[100vh]"
-//       center={center}
-//       zoom={15}
-//     >
-//       {places.map((place, index) => (
-//         <Marker
-//           key={index}
-//           position={place.geometry.location}
-//           onClick={() => handleMarkerClick(place)}
-//         />
-//       ))}
-
-//       {selectedPlace && (
-//         <InfoWindow
-//           position={selectedPlace.geometry.location}
-//           onCloseClick={() => setSelectedPlace(null)}
-//         >
-//           <div>
-//             <h3>{selectedPlace.name}</h3>
-//             <p>{selectedPlace.vicinity}</p>
-//             {/* You can include more details here */}
-//           </div>
-//         </InfoWindow>
-//       )}
-//       <Circle
-//         center={center}
-//         radius={searchRadius}
-//         options={{
-//           strokeColor: "#FF0000",
-//           strokeOpacity: 0.8,
-//           strokeWeight: 2,
-//           fillColor: "#FF0000",
-//           fillOpacity: 0.25,
-//           clickable: false,
-//         }}
-//       />
-//     </GoogleMap>
-//   ) : (
-//     <div>Loading...</div>
-//   );
-// }
-
-// export default NearbyPlacesComponent;
+      {selectedPlace && (
+        <InfoWindow
+          position={selectedPlace.geometry.location}
+          onCloseClick={() => setSelectedPlace(null)}
+        >
+          <div>
+            <h3>{selectedPlace.name}</h3>
+            <p>{selectedPlace.vicinity}</p>
+            {/* You can include more details here */}
+          </div>
+        </InfoWindow>
+      )}
+      <Circle
+        center={center}
+        radius={searchRadius}
+        options={{
+          strokeColor: "#FF0000",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#FF0000",
+          fillOpacity: 0.25,
+          clickable: false,
+        }}
+      />
+    </GoogleMap>
+  ) : (
+    <div>Loading...</div>
+  );
+}
 
 function GeocodeArea({ area, district, onAreaSelect }) {
   const areaName = area + ", " + district;
@@ -250,4 +246,5 @@ function GeocodeArea({ area, district, onAreaSelect }) {
     })
     .catch((error) => console.error("Error:", error));
 }
-export { MapClickHandler, ShowApartments };
+
+export { MapClickHandler, ShowApartments, NearbyPlacesComponent };
