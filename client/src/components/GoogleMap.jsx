@@ -4,6 +4,7 @@ import {
   useJsApiLoader,
   Marker,
   LoadScript,
+  InfoWindow
 } from "@react-google-maps/api";
 
 const API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g";
@@ -53,8 +54,12 @@ function MapClickHandler({ latitude, longitude, zoom, onLocationSelect }) {
         if (status === "OK" && results[0]) {
           const address = results[0].formatted_address;
           const addressComponents = results[0].address_components;
-          const postalCodeComponent = addressComponents.find(component => component.types.includes("postal_code"));
-          const postalCode = postalCodeComponent ? postalCodeComponent.long_name : 'Postal code not available';
+          const postalCodeComponent = addressComponents.find((component) =>
+            component.types.includes("postal_code")
+          );
+          const postalCode = postalCodeComponent
+            ? postalCodeComponent.long_name
+            : "Postal code not available";
           console.log("Address:", results[0].formatted_address);
           console.log(postalCode);
           onLocationSelect(lat, lng, address, postalCode);
@@ -84,7 +89,6 @@ function MapClickHandler({ latitude, longitude, zoom, onLocationSelect }) {
   );
 }
 
-
 /*
 Functionality 2: 
                   a) Upon searching for results, the map will show all the search result apartments on the map with markers.
@@ -93,11 +97,17 @@ Functionality 2:
 Status: Working, but need to implement AdvancedMarker because Marker is deprecated, if we have time
 */
 
-function ShowApartments({apartments}) {
-  const center = {lat : apartments[0].latitude, lng : apartments[0].longitude}
+function ShowApartments({ apartments }) {
+  const center = { lat: apartments[0].latitude, lng: apartments[0].longitude };
 
   console.log(center);
-  
+
+  const [activeMarker, setActiveMarker] = useState(null);
+
+  const handleMarkerClick = (index) => {
+    setActiveMarker(index); // Set the index of the clicked marker
+  };
+
   return (
     <LoadScript googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g">
       <GoogleMap
@@ -106,15 +116,121 @@ function ShowApartments({apartments}) {
         zoom={13}
       >
         {apartments.map((apartment, index) => (
-          <Marker key={index} position={{ lat: apartment.latitude, lng: apartment.longitude }} />
+          <Marker
+            key={index}
+            position={{ lat: apartment.latitude, lng: apartment.longitude }}
+            onClick={() => handleMarkerClick(index)}
+          >
+            {activeMarker === index && ( // Check if this marker is the active one
+              <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+                <div>
+                  <h3>{apartment.title}</h3>
+                  <h3> {apartment.location} </h3>
+                  <p>Price: {apartment.price}</p>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
         ))}
       </GoogleMap>
     </LoadScript>
   );
 }
 
-function GeocodeArea({ area, district, onAreaSelect }) {
+/*
+Functionality 3: 
+                  a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
+*/
 
+// function NearbyPlacesComponent({ center, type }) {
+//   const center = { lat: apartments[0].latitude, lng: apartments[0].longitude };
+
+//   const libraries = ["places"];
+
+//   const { isLoaded } = useJsApiLoader({
+//     googleMapsApiKey: API_KEY, // Replace with your actual API key
+//     libraries,
+//   });
+
+//   const searchRadius = 1500;
+//   // State to hold nearby places and the selected place
+//   const [places, setPlaces] = useState([]);
+//   const [selectedPlace, setSelectedPlace] = useState(null);
+
+//   useEffect(() => {
+//     if (isLoaded) {
+//       const service = new window.google.maps.places.PlacesService(
+//         document.createElement("div")
+//       );
+//       const request = {
+//         location: center,
+//         radius: "1500",
+//         type: type,
+//       };
+
+//       service.nearbySearch(request, (results, status) => {
+//         if (
+//           status === window.google.maps.places.PlacesServiceStatus.OK &&
+//           results
+//         ) {
+//           setPlaces(results);
+//           console.log(results);
+//         }
+//       });
+//     }
+//   }, [isLoaded]);
+
+//   const handleMarkerClick = (place) => {
+//     setSelectedPlace(place);
+//   };
+
+//   return isLoaded ? (
+//     <GoogleMap
+//       mapContainerClassName="w-full h-[100vh]"
+//       center={center}
+//       zoom={15}
+//     >
+//       {places.map((place, index) => (
+//         <Marker
+//           key={index}
+//           position={place.geometry.location}
+//           onClick={() => handleMarkerClick(place)}
+//         />
+//       ))}
+
+//       {selectedPlace && (
+//         <InfoWindow
+//           position={selectedPlace.geometry.location}
+//           onCloseClick={() => setSelectedPlace(null)}
+//         >
+//           <div>
+//             <h3>{selectedPlace.name}</h3>
+//             <p>{selectedPlace.vicinity}</p>
+//             {/* You can include more details here */}
+//           </div>
+//         </InfoWindow>
+//       )}
+//       <Circle
+//         center={center}
+//         radius={searchRadius}
+//         options={{
+//           strokeColor: "#FF0000",
+//           strokeOpacity: 0.8,
+//           strokeWeight: 2,
+//           fillColor: "#FF0000",
+//           fillOpacity: 0.25,
+//           clickable: false,
+//         }}
+//       />
+//     </GoogleMap>
+//   ) : (
+//     <div>Loading...</div>
+//   );
+// }
+
+// export default NearbyPlacesComponent;
+
+function GeocodeArea({ area, district, onAreaSelect }) {
   const areaName = area + ", " + district;
 
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(

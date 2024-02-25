@@ -411,6 +411,7 @@ const ListingMapViewPage = () => {
 
     landingPageCardPropList.push({
       image: allListings[i].images[0].url,
+      images: allListings[i].images,
       location: allListings[i].location.address,
       beds: allListings[i].rooms.bedrooms + " " + bed_string,
       baths: allListings[i].rooms.bathrooms + " " + bath_string,
@@ -418,9 +419,17 @@ const ListingMapViewPage = () => {
       type: allListings[i].apartmentType,
       area: allListings[i].location.area,
       district: allListings[i].location.district,
+      zipcode: allListings[i].location.zipCode,
       price: allListings[i].price.amount + " " + allListings[i].price.currency,
       latitude: allListings[i].location.coordinates.coordinates[1],
       longitude: allListings[i].location.coordinates.coordinates[0],
+      title: allListings[i].title,
+      description: allListings[i].description,
+      condition: allListings[i].condition,
+      apartmentType: allListings[i].apartmentType,
+      propertyStatus: allListings[i].propertyStatus,
+      id: allListings[i]._id,
+      owner: allListings[i].owner,
     });
   }
 
@@ -428,7 +437,7 @@ const ListingMapViewPage = () => {
     console.log(landingPageCardPropList[i]);
   }
   const [currentPage, setCurrentPage] = useState(1);
-  const listingsPerPage = 6;
+  const listingsPerPage = 8;
   const totalPages = Math.ceil(allListings?.length / listingsPerPage);
 
   // Calculate the currently displayed listings
@@ -454,6 +463,7 @@ const ListingMapViewPage = () => {
     }
     currentPropList.push({
       image: currentListings[i].images[0].url,
+      images: allListings[i].images,
       location: currentListings[i].location.address,
       beds: currentListings[i].rooms.bedrooms + " " + bed_string,
       baths: currentListings[i].rooms.bathrooms + " " + bath_string,
@@ -461,10 +471,17 @@ const ListingMapViewPage = () => {
       type: currentListings[i].apartmentType,
       area: currentListings[i].location.area,
       district: currentListings[i].location.district,
-      price:
-        currentListings[i].price.amount + " " + allListings[i].price.currency,
+      zipcode: allListings[i].location.zipCode,
+      price: currentListings[i].price.amount + " " + allListings[i].price.currency,
       latitude: currentListings[i].location.coordinates.coordinates[1],
       longitude: currentListings[i].location.coordinates.coordinates[0],
+      title: allListings[i].title,
+      description: allListings[i].description,
+      condition: allListings[i].condition,
+      apartmentType: allListings[i].apartmentType,
+      propertyStatus: allListings[i].propertyStatus,
+      id: allListings[i]._id,
+      owner: allListings[i].owner,
     });
   }
 
