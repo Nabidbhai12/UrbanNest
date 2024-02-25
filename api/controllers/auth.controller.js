@@ -1,10 +1,50 @@
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import {v2 as cloudinary} from 'cloudinary';
+import multer from "multer";
+
+cloudinary.config({ 
+    cloud_name: 'dtzwdn1jf', 
+    api_key: '741567594763319', 
+    api_secret: 'zQUzLn_BFPqVNcmbWG-WCsoNv0k' 
+  });
+
+  const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+      folder: 'profilePicture',
+      format: async (req, file) => 'png', // or other formats
+      public_id: (req, file) => `property-${Date.now()}`, // Example to generate a unique ID    },
+    },
+  });
+  
+  const parser = multer({ storage: storage });
+
+export  const uploadImage = parser.single('image');
+  
+ export  const handleImageUpload = (req, res) => {
+    console.log(req.body);
+    console.log(req.file);
+   
+
+    if (!req.file) {
+      return res.status(400).send({ message: 'Please upload an image.' });
+    }
+  
+    // The image URL will be in req.file.path
+    const imageUrl = req.file.path;
+    console.log(imageUrl);
+  
+    res.send({ url: imageUrl });
+  };
+
 
 export const signup = async (req, res, next) => {
-  const { username, email, password, contactNumber, role, bio } = req.body;
-console.log("signup hello ");
+  const { username, email, password, contactNumber, role, bio, profilePicture } = req.body;
+console.log(req.body);
+console.log("hello from signup");
   try {
       // Check if the user already exists
       const existingUser = await User.findOne({ email });
@@ -16,33 +56,36 @@ console.log("signup hello ");
       const hashedPassword = await bcryptjs.hash(password, 10);
 
       // Handle profile picture upload
-      let profilePictureUrl = '';
-      if (req.file) {
-          profilePictureUrl = req.file.path;  // Path from Cloudinary
-      }
-
+      
+      // If there's a file uploaded and req.file.path exists, use that URL
+    
+console.log(profilePicture);
       // Create a new user with optional fields
       const newUser = new User({
           username,
           email,
           password: hashedPassword,
-          ...(profilePictureUrl && { profilePicture: profilePictureUrl }),
+          ...(profilePicture && { profilePicture}),
           ...(contactNumber && { contactNumber }),
           ...(role && { role }),
           ...(bio && { bio })
       });
-      console.log(newUser);
-
+console.log(newUser);
+console.log("prev");
       // Save the user to the database
       await newUser.save();
+      console.log("after");
 
       // Sending success response
       res.status(201).json({ message: 'User created successfully!' });
   } catch (error) {
+    //print error
+      console.log(error);
       // Handle errors
       next(error);
   }
 };
+
 
 //create a function signin
 export const signin = async (req, res, next) => {

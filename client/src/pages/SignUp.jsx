@@ -11,7 +11,7 @@ export default function SignUp() {
     role: '',
     bio: ''
   });
-  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [warning, setWarning] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -23,12 +23,35 @@ export default function SignUp() {
     if (warning) setWarning('');
   };
 
-  const handleFileChange = (event) => {
-    setProfilePicture(event.target.files[0]);
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      setWarning('No file selected.');
+      return;
+    }
 
-    console.log("Test: " + event.target.files[0]);
-    console.log("Profile picture: " + profilePicture);
-    if (warning) setWarning('');
+    const formData = new FormData();
+    formData.append('image', file);
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/auth/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image.');
+      }
+
+      const data = await response.json();
+      setProfilePictureUrl(data.url); // Assuming the response contains the URL in a property named 'url'
+      setLoading(false);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      setLoading(false);
+      setError(error.message);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -39,43 +62,33 @@ export default function SignUp() {
       return;
     }
 
-    // Prepare FormData for sending file and text fields
-    const formDataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
-      // Exclude confirmPassword from being sent to the backend
-      if (key !== 'confirmPassword') {
-        formDataToSend.append(key, value);
-      }
-    });
-    if (profilePicture) {
-      formDataToSend.append('profilePicture', profilePicture);
-    }
+    // Exclude confirmPassword from being sent to the backend
+    const { confirmPassword: _, ...dataToSend } = formData;
+    dataToSend.profilePicture = profilePictureUrl; // Add the profile picture URL to the form data
 
     setLoading(true);
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
-        body: formDataToSend, // send the FormData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
       });
 
-      console.log(res);
-      console.log(formDataToSend);
-
-      const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Something went wrong!');
+        throw new Error('Something went wrong during signup.');
       }
 
       setLoading(false);
       setError(null);
-      navigate('/sign-in');
-      console.log(data);
+      navigate('/sign-in'); // Redirect to sign-in page upon successful signup
     } catch (error) {
       setLoading(false);
       setError(error.message);
-      console.log(error.message);
     }
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-yellow-50">
@@ -127,8 +140,9 @@ export default function SignUp() {
   
           {/* Profile Picture */}
           <div>
-            <label htmlFor="profilePicture" className="sr-only">Profile Picture</label>
-            <input id="profilePicture" name="profilePicture" type="file" className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" onChange={handleFileChange} />
+            <label htmlFor="profilePicture" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Profile Picture</label>
+            <input id="profilePicture" name="profilePicture" type="file" onChange={handleFileChange} className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" />
+            {profilePictureUrl && <img src={profilePictureUrl} alt="Profile Preview" className="mt-4 w-20 h-20 object-cover rounded-full" />}
           </div>
   
           {/* Sign Up Button */}

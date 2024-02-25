@@ -33,31 +33,37 @@ const userSchema = new mongoose.Schema({
   upvotedBlogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog'
+      ref: 'Blog',
+      required : false
     }
   ],
   downvotedBlogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Blog'
+      ref: 'Blog',
+      required : false
     }
   ],
   mycomments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment'
+      ref: 'Comment',
+      required : false
+      
     }
   ],
   upvotedComments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment'
+      ref: 'Comment',
+      required : false
     }
   ],
   downvotedComments: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Comment'
+      ref: 'Comment',
+      required : false
     }
   ],
   createdAt: {
