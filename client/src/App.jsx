@@ -19,6 +19,9 @@ const BlogHome = React.lazy(() => import("./pages/blogHomepage"));
 const BlogDetail = React.lazy(() => import("./pages/BlogDetail"));
 const MyBlogs = React.lazy(() => import("./pages/myBlogs"));
 const PropertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
+const Message =React.lazy(()=>import ("./pages/message"));
+const Inbox =React.lazy(()=>import ("./pages/inbox"));
+
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
 
@@ -50,6 +53,9 @@ export default function App() {
       <BrowserRouter>
         <LandingPageHeader />
         <Routes>
+          <Route path="/message" element={<Message/>} />
+          <Route path="/inbox" element={<Inbox/>} />
+
           <Route path="/blogHome/:id" element={<BlogDetail />} />
           <Route path="/blogHome" element={<BlogHome />} />
           <Route path="/createblog" element={<CreateAblog />} />
