@@ -1,7 +1,7 @@
 import Listing from '../models/listing.model.js';
 import { ObjectId } from 'mongodb';
  // Adjust the path as necessary
- const searchProperties = async (req, res, next) => {
+ export const searchProperties = async (req, res, next) => {
     console.log("from search");
     console.log(req.body);
 
