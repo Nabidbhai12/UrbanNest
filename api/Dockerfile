@@ -19,7 +19,7 @@ RUN npm install --only=production
 COPY . .
 
 # Expose the port your app runs on
-EXPOSE 5000
+EXPOSE 3000
 
 # Define the command to run your app. This uses the "start" script from your package.json.
 CMD ["npm", "start"]

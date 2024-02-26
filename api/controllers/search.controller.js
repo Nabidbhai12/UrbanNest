@@ -2,122 +2,89 @@ import Listing from '../models/listing.model.js';
 import { ObjectId } from 'mongodb';
  // Adjust the path as necessary
  export const searchProperties = async (req, res, next) => {
-  console.log("from search");
-  console.log(req.body);
+    console.log("from search");
+    console.log(req.body);
 
-  try {
-      const {
-          saleType,
-          propertyType,
-          condition,
-          district,
-          area,
-          areaRange_min,
-          areaRange_max,
-          priceRange_min,
-          priceRange_max,
-          beds,
-          baths,
-          apartmentType,
-      } = req.body;
+    try {
+        const {
+            saleType,
+            propertyType,
+            condition,
+            district,
+            area,
+            areaRange_min,
+            areaRange_max,
+            priceRange_min,
+            priceRange_max,
+            beds,
+            baths,
+            apartmentType,
+        } = req.body;
 
-      // Print all the read values
-      console.log(areaRange_min, areaRange_max, priceRange_min, priceRange_max);
+        // Base query with exact matches for saleType, propertyType, condition, district, and area
+        let baseQuery = {
+            ...(saleType && { propertyStatus: saleType === "sell" ? 'For Sale' : 'For Rent' }),
+            ...(propertyType && { propertyType }),
+            ...(condition && { condition }),
+            ...(district && { 'location.district': district }),
+            ...(area && { 'location.area': area }),
+        };
 
-      // Initialize an array to hold the individual queries
-      let queries = [];
+        // Additional criteria for $or logic
+        let orConditions = [];
 
-      // Price Range
-      if (priceRange_min || priceRange_max) {
-          const priceQuery = {};
-          if (priceRange_min) {
-              priceQuery['price.amount'] = { '$gte': parseInt(priceRange_min) };
-          }
-          if (priceRange_max) {
-              priceQuery['price.amount'] = priceQuery['price.amount'] || {};
-              priceQuery['price.amount']['$lte'] = parseInt(priceRange_max);
-          }
-          queries.push(Listing.find(priceQuery));
-      }
+        // Price Range
+        if (priceRange_min || priceRange_max) {
+            const priceCondition = {};
+            if (priceRange_min) priceCondition['price.amount'] = { '$gte': parseInt(priceRange_min) };
+            if (priceRange_max) {
+                priceCondition['price.amount'] = priceCondition['price.amount'] || {};
+                priceCondition['price.amount']['$lte'] = parseInt(priceRange_max);
+            }
+            orConditions.push(priceCondition);
+        }
 
-      // Area Range
-      if (areaRange_min || areaRange_max) {
-          const areaQuery = {};
-          if (areaRange_min) {
-              areaQuery['size'] = { '$gte': parseInt(areaRange_min) };
-          }
-          if (areaRange_max) {
-              areaQuery['size'] = areaQuery['size'] || {};
-              areaQuery['size']['$lte'] = parseInt(areaRange_max);
-          }
-          queries.push(Listing.find(areaQuery));
-      }
+        // Area Range
+        if (areaRange_min || areaRange_max) {
+            const areaCondition = {};
+            if (areaRange_min) areaCondition['size'] = { '$gte': parseInt(areaRange_min) };
+            if (areaRange_max) {
+                areaCondition['size'] = areaCondition['size'] || {};
+                areaCondition['size']['$lte'] = parseInt(areaRange_max);
+            }
+            orConditions.push(areaCondition);
+        }
 
-      // Bedrooms and Bathrooms
-      if (beds) {
-          const bedsQuery = { 'rooms.bedrooms': { '$gte': parseInt(beds) } };
-          queries.push(Listing.find(bedsQuery));
-      }
-      if (baths) {
-          const bathsQuery = { 'rooms.bathrooms': { '$gte': parseInt(baths) } };
-          queries.push(Listing.find(bathsQuery));
-      }
+        // Bedrooms and Bathrooms
+        if (beds) {
+            orConditions.push({ 'rooms.bedrooms': { '$gte': parseInt(beds) } });
+        }
+        if (baths) {
+            orConditions.push({ 'rooms.bathrooms': { '$gte': parseInt(baths) } });
+        }
 
-      // Location (City, Address, Zip)
-      if (district || area) {
-          const locationQuery = {};
-          if (district) locationQuery['location.district'] = new RegExp(district, 'i');
-          if (area) locationQuery['location.area'] = new RegExp(area, 'i');
-          queries.push(Listing.find(locationQuery));
+        // Apartment Type
+        if (apartmentType) {
+            orConditions.push({ apartmentType: apartmentType });
+        }
 
-      }
+        // Combine baseQuery with orConditions if there are any
+        const finalQuery = orConditions.length ? [{ $match: baseQuery }, { $match: { $or: orConditions } }] : [{ $match: baseQuery }];
 
-      // Property Type, Condition, and Apartment Type
-      if (propertyType) {
-          const propertyTypeQuery = { propertyType: propertyType };
-          queries.push(Listing.find(propertyTypeQuery));
-      }
-      if (condition) {
-          const conditionQuery = { condition: condition };
-          queries.push(Listing.find(conditionQuery));
-      }
-      if (apartmentType) {
-          const apartmentTypeQuery = { apartmentType: apartmentType };
-          queries.push(Listing.find(apartmentTypeQuery));
-      }
+        const properties = await Listing.aggregate(finalQuery);
 
-      // Property Status
-      if (saleType) {
-          const saleTypeQuery = { propertyStatus: saleType === "sell" ? 'For Sale' : 'For Rent' };
-          queries.push(Listing.find(saleTypeQuery));
-      }
+        console.log("searching...");
 
-      // Aggregate results from all queries
-      const queryResults = await Promise.all(queries);
+        // Assuming the aggregation correctly filters the documents, no need for further processing
+        console.log("done searching...");
 
-      // Combine results and filter out duplicates
-      const combinedProperties = [].concat(...queryResults); // Flatten the array of arrays
-     // console.log(combinedProperties);
-      console.log("searching...");
-      const uniqueProperties = Object.values(
-        combinedProperties.reduce((uniqueMap, property) => {
-          const id = property._id; // Don't convert to string
-          if (!uniqueMap[id]) {
-            uniqueMap[id] = property;
-          }
-          return uniqueMap;
-        }, {})
-      );
-      
-      
-      console.log("done sorting...")
-
-      //console.log(uniqueProperties);
-      res.status(200).json(uniqueProperties);
-  } catch (error) {
-      next(error);
-  }
+        res.status(200).json(properties);
+    } catch (error) {
+        console.error("Error in property search:", error);
+        next(error);
+    }
 };
+
 //check whether the search works properly or not
 
 export const getListingById = async (req, res, next) => {
