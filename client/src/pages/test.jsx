@@ -135,151 +135,115 @@ Functionality 3:
                   a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
 */
 
-import React, { useEffect, useState } from "react";
-import {
-  useJsApiLoader,
-  GoogleMap,
-  Marker,
-  InfoWindow,
-  Circle,
-} from "@react-google-maps/api";
+// import React, { useEffect, useState } from "react";
+// import {
+//   useJsApiLoader,
+//   GoogleMap,
+//   Marker,
+//   InfoWindow,
+//   Circle,
+// } from "@react-google-maps/api";
 
-const center = { lat: 23.732583, lng: 90.387045 }; // Example coordinate
-const libraries = ["places"];
+// const center = { lat: 23.732583, lng: 90.387045 }; // Example coordinate
+// const libraries = ["places"];
 
-function NearbyPlacesComponent() {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
-    libraries,
-  });
+// function NearbyPlacesComponent() {
+//   const { isLoaded } = useJsApiLoader({
+//     googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
+//     libraries,
+//   });
 
-  const searchRadius = 1500;
-  // State to hold nearby places and the selected place
-  const [places, setPlaces] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
+//   console.log(isLoaded);
 
-  useEffect(() => {
-    if (isLoaded) {
-      const service = new window.google.maps.places.PlacesService(
-        document.createElement("div")
-      );
-      const request = {
-        location: center,
-        radius: "1500",
-        type: ["university"],
-      };
+//   const searchRadius = 1500;
+//   // State to hold nearby places and the selected place
+//   const [places, setPlaces] = useState([]);
+//   const [selectedPlace, setSelectedPlace] = useState(null);
 
-      service.nearbySearch(request, (results, status) => {
-        if (
-          status === window.google.maps.places.PlacesServiceStatus.OK &&
-          results
-        ) {
-          setPlaces(results);
-          console.log(results);
-        }
-      });
-    }
-  }, [isLoaded]);
+//   useEffect(() => {
+//     if (isLoaded) {
+//       const service = new window.google.maps.places.PlacesService(
+//         document.createElement("div")
+//       );
+//       const request = {
+//         location: center,
+//         radius: "1500",
+//         type: ["museum"],
+//       };
 
-  const handleMarkerClick = (place) => {
-    setSelectedPlace(place);
-  };
-
-  return isLoaded ? (
-    <GoogleMap
-      mapContainerClassName="w-full h-[100vh]"
-      center={center}
-      zoom={15}
-    >
-      {places.map((place, index) => (
-        <Marker
-          key={index}
-          position={place.geometry.location}
-          onClick={() => handleMarkerClick(place)}
-        />
-      ))}
-
-      {selectedPlace && (
-        <InfoWindow
-          position={selectedPlace.geometry.location}
-          onCloseClick={() => setSelectedPlace(null)}
-        >
-          <div>
-            <h3>{selectedPlace.name}</h3>
-            <p>{selectedPlace.vicinity}</p>
-            {/* You can include more details here */}
-          </div>
-        </InfoWindow>
-      )}
-      <Circle
-        center={center}
-        radius={searchRadius}
-        options={{
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.25,
-          clickable: false,
-        }}
-      />
-    </GoogleMap>
-  ) : (
-    <div>Loading...</div>
-  );
-}
-
-export default NearbyPlacesComponent;
-
-
-// import React, { useState } from 'react';
-// import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
-
-// // Example center, you can use state to change this based on geocoding result
-// const center = {
-//   lat: 23.6850,
-//   lng: 90.3563
-// };
-
-// const API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g"; // Replace with your actual Google API Key
-
-// function MyMapComponent() {
-//   const [location, setLocation] = useState(center);
-
-//   const geocodeLocation = (areaName) => {
-//     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(areaName)}&key=${API_KEY}`;
-
-//     fetch(url)
-//       .then(response => response.json())
-//       .then(data => {
-//         if (data.status === 'OK') {
-//           const { lat, lng } = data.results[0].geometry.location;
-//           setLocation({ lat, lng });
-//           console.log("Geocoding success:", lat, lng);
-//         } else {
-//           console.error("Geocoding failed:", data.status);
+//       service.nearbySearch(request, (results, status) => {
+//         if (
+//           status === window.google.maps.places.PlacesServiceStatus.OK &&
+//           results
+//         ) {
+//           setPlaces(results);
+//           console.log(results);
 //         }
-//       })
-//       .catch(error => console.error("Error:", error));
+//       });
+//     }
+//   }, [isLoaded]);
+
+//   const handleMarkerClick = (place) => {
+//     setSelectedPlace(place);
 //   };
 
-//   return (
-//     <LoadScript
-//       googleMapsApiKey={API_KEY}
+//   return isLoaded ? (
+//     <GoogleMap
+//       mapContainerClassName="w-full h-[100vh]"
+//       center={center}
+//       zoom={15}
 //     >
-//       <GoogleMap
-//         mapContainerClassName='w-full h-[100vh]'
-//         center={location}
-//         zoom={9}
-//       >
-//         <Marker position={location} />
-//         {/* Your map components */}
-//       </GoogleMap>
-//       <input type="text" placeholder="Enter location" onBlur={(e) => geocodeLocation(e.target.value)} className="border p-2 m-2" />
-//       <button onClick={() => geocodeLocation('Banasree, Dhaka')}>Geocode Gulshan</button>
-//     </LoadScript>
-//   )
+//       {places.map((place, index) => (
+//         <Marker
+//           key={index}
+//           position={place.geometry.location}
+//           onClick={() => handleMarkerClick(place)}
+//         />
+//       ))}
+
+//       {selectedPlace && (
+//         <InfoWindow
+//           position={selectedPlace.geometry.location}
+//           onCloseClick={() => setSelectedPlace(null)}
+//         >
+//           <div>
+//             <h3>{selectedPlace.name}</h3>
+//             <p>{selectedPlace.vicinity}</p>
+//             {/* You can include more details here */}
+//           </div>
+//         </InfoWindow>
+//       )}
+//       <Circle
+//         center={center}
+//         radius={searchRadius}
+//         options={{
+//           strokeColor: "#FF0000",
+//           strokeOpacity: 0.8,
+//           strokeWeight: 2,
+//           fillColor: "#FF0000",
+//           fillOpacity: 0.25,
+//           clickable: false,
+//         }}
+//       />
+//     </GoogleMap>
+//   ) : (
+//     <div>Loading...</div>
+//   );
 // }
 
-// export default React.memo(MyMapComponent);
+// export default NearbyPlacesComponent;
+
+
+import { NearbyPlacesComponent } from "../components/GoogleMap";
+
+export default function test(){
+  const center = { lat: 23.732583, lng: 90.387045 };
+
+  const type = ['school'];
+  return(
+    <div>
+      <NearbyPlacesComponent center={center} type={type} />
+    </div>
+  )
+}
+
