@@ -1,249 +1,138 @@
-// import React from "react";
-// import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import React from "react";
 
-// const containerStyle = {
-//   width: "100%",
-//   height: "100%",
-// };
+import { Button, Img, Input, List, SelectBox, Text } from "components";
+import BlogPageColumnactive from "components/BlogPageColumnactive";
+import LandingPageFooter from "components/LandingPageFooter";
+import LandingPageHeader from "components/LandingPageHeader";
 
-// const center = {
-//   lat: 23.8041,
-//   lng: 90.4152,
-// };
+const dropdownlargeOptionsList = [
+  { label: "Option1", value: "option1" },
+  { label: "Option2", value: "option2" },
+  { label: "Option3", value: "option3" },
+];
+const dropdownlargeOneOptionsList = [
+  { label: "Option1", value: "option1" },
+  { label: "Option2", value: "option2" },
+  { label: "Option3", value: "option3" },
+];
 
-// function MyMapComponent() {
-//   return (
-//     <LoadScript googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g">
-//       <div className="w-full h-[100vh]">
-//         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-//           {/* Child components, such as markers, info windows, etc. */}
-//         </GoogleMap>
-//       </div>
-//     </LoadScript>
-//   );
-// }
+const BlogPagePage = () => {
+  return (
+    <>
+      <div className="bg-gray-51 flex flex-col font-markoone items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+        <div className="flex flex-col md:gap-10 gap-[68px] items-center justify-start w-full">
+          <LandingPageHeader className="bg-white-A700 flex gap-2 h-20 md:h-auto items-center justify-between md:px-5 px-[120px] py-[19px] w-full" />
+          <div className="flex flex-col font-manrope items-center justify-start md:px-10 sm:px-5 px-[120px] w-full">
+            <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
+              <div className="flex flex-col gap-6 items-start justify-start w-full">
+                <Text
+                  className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
+                  size="txtManropeExtraBold36"
+                >
+                  Real Estate News & Blogs
+                </Text>
+                <div className="gap-4 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 items-start justify-start w-full">
+                  <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-1 flex-col items-center justify-start px-4 py-3.5 rounded-[10px] w-full">
+                    <Input
+                      name="frame1000001653"
+                      placeholder="Enter your address"
+                      className="font-semibold p-0 placeholder:text-gray-600 text-gray-600 text-left text-lg w-full"
+                      wrapClassName="flex pt-1 w-full"
+                      suffix={
+                        <Img
+                          className="mt-auto mb-[3px] h-6 ml-3"
+                          src="images/img_search_gray_600.svg"
+                          alt="search"
+                        />
+                      }
+                    ></Input>
+                  </div>
+                  <SelectBox
+                    className="bg-white-A700 border border-bluegray-100 border-solid flex-1 font-bold pb-3.5 pt-[18px] px-[15px] rounded-[10px] text-gray-600 text-left text-lg w-full"
+                    placeholderClassName="text-gray-600"
+                    indicator={
+                      <Img
+                        className="h-6 w-6"
+                        src="images/img_arrowdown_gray_600_24x24.svg"
+                        alt="arrow_down"
+                      />
+                    }
+                    isMulti={false}
+                    name="dropdownlarge"
+                    options={dropdownlargeOptionsList}
+                    isSearchable={false}
+                    placeholder="Category"
+                  />
+                  <SelectBox
+                    className="bg-white-A700 border border-bluegray-100 border-solid flex-1 font-bold pb-3.5 pt-[18px] px-4 rounded-[10px] text-gray-600 text-left text-lg w-full"
+                    placeholderClassName="text-gray-600"
+                    indicator={
+                      <Img
+                        className="h-6 w-6"
+                        src="images/img_arrowdown_gray_600_24x24.svg"
+                        alt="arrow_down"
+                      />
+                    }
+                    isMulti={false}
+                    name="dropdownlarge_One"
+                    options={dropdownlargeOneOptionsList}
+                    isSearchable={false}
+                    placeholder="Popular"
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col items-center justify-center w-full">
+                <div className="md:gap-5 gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-center min-h-[auto] w-full">
+                  {new Array(9).fill({}).map((props, index) => (
+                    <React.Fragment key={`BlogPageColumnactive${index}`}>
+                      <BlogPageColumnactive
+                        className="flex flex-1 flex-col gap-6 items-start justify-start w-full"
+                        {...props}
+                      />
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
+                <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
+                  <Button className="border border-gray-700 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    1
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    2
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    3
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    4
+                  </Button>
+                  <Button className="border border-bluegray-102 border-solid cursor-pointer font-semibold h-12 py-[13px] rounded-[10px] text-base text-center text-gray-900 w-12">
+                    5
+                  </Button>
+                </div>
+                <Button
+                  className="border border-bluegray-102 border-solid cursor-pointer flex items-center justify-center min-w-[134px] px-[17px] py-[13px] rounded-[10px]"
+                  rightIcon={
+                    <Img
+                      className="h-4 mt-px mb-[5px] ml-1"
+                      src="images/img_arrowright_gray_900.svg"
+                      alt="arrow_right"
+                    />
+                  }
+                >
+                  <div className="font-semibold text-base text-gray-900 text-left">
+                    Next Page
+                  </div>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+      </div>
+    </>
+  );
+};
 
-// export default React.memo(MyMapComponent);
-
-/*Functionality 1: 
-                    a) Upon click, get the latitude and longitude of that location
-                    b) After receiving that latitude and longitude, get the address of that location
-
-Status: Working
-*/
-// import React, { useCallback, useState, useRef } from 'react';
-// import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-
-// const center = { lat: 23.764424, lng: 90.429645 };
-
-// function MapComponent() {
-//   const { isLoaded } = useJsApiLoader({
-//     googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
-//     libraries: ["places"],
-//   });
-
-//   const [map, setMap] = useState(null);
-//   const mapRef = useRef(null);
-
-//   const onLoad = useCallback((map) => {
-//     mapRef.current = map;
-//   }, []);
-
-//   const onUnmount = useCallback(() => {
-//     mapRef.current = null;
-//   }, []);
-
-//   const mapClickHandler = useCallback((e) => {
-//     const lat = e.latLng.lat();
-//     const lng = e.latLng.lng();
-//     console.log(`Latitude: ${lat}, Longitude: ${lng}`);
-
-//     // Assuming google.maps.Geocoder is available
-//     const geocoder = new window.google.maps.Geocoder();
-//     geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-//       if (status === "OK" && results[0]) {
-//         console.log("Address:", results[0].formatted_address);
-//       } else {
-//         console.error("Geocoder failed due to: " + status);
-//       }
-//     });
-//   }, []);
-
-//   if (!isLoaded) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//       <GoogleMap
-//         mapContainerClassName="w-full h-[100vh]"
-//         center={center}
-//         zoom={17}
-//         onLoad={onLoad}
-//         onUnmount={onUnmount}
-//         onClick={mapClickHandler}
-//       >
-//         {/* Additional map content like markers can go here */}
-//       </GoogleMap>
-//   );
-// }
-
-// export default MapComponent;
-
-/*
-Functionality 2: 
-                  a) Upon searching for results, the map will show all the search result apartments on the map with markers.
-                  b) Upon clicking on a marker, a brief description of the apartment will be shown, preferably using cards
-
-Status: Working, but need to implement AdvancedMarker because Marker is deprecated, if we have time
-*/
-
-// import React from 'react';
-// import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
-
-// const center = {
-//   lat: 23.764424,
-//   lng: 90.429645
-// };
-
-// const apartments = [
-//   { lat: 23.764424, lng: 90.429645 },
-//   { lat: 23.818840, lng: 90.378494},
-//   { lat: 23.819576, lng: 90.434752}
-//   // Add more apartments here
-// ];
-
-// function MyMapComponent() {
-//   return (
-//     <LoadScript googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g">
-//       <GoogleMap
-//         mapContainerClassName="w-full h-[100vh]"
-//         center={center}
-//         zoom={13}
-//       >
-//         {apartments.map((apartment, index) => (
-//           <Marker key={index} position={{ lat: apartment.lat, lng: apartment.lng }} />
-//         ))}
-//       </GoogleMap>
-//     </LoadScript>
-//   );
-// }
-
-// export default React.memo(MyMapComponent);
-
-/*
-Functionality 3: 
-                  a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
-*/
-
-// import React, { useEffect, useState } from "react";
-// import {
-//   useJsApiLoader,
-//   GoogleMap,
-//   Marker,
-//   InfoWindow,
-//   Circle,
-// } from "@react-google-maps/api";
-
-// const center = { lat: 23.732583, lng: 90.387045 }; // Example coordinate
-// const libraries = ["places"];
-
-// function NearbyPlacesComponent() {
-//   const { isLoaded } = useJsApiLoader({
-//     googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
-//     libraries,
-//   });
-
-//   console.log(isLoaded);
-
-//   const searchRadius = 1500;
-//   // State to hold nearby places and the selected place
-//   const [places, setPlaces] = useState([]);
-//   const [selectedPlace, setSelectedPlace] = useState(null);
-
-//   useEffect(() => {
-//     if (isLoaded) {
-//       const service = new window.google.maps.places.PlacesService(
-//         document.createElement("div")
-//       );
-//       const request = {
-//         location: center,
-//         radius: "1500",
-//         type: ["museum"],
-//       };
-
-//       service.nearbySearch(request, (results, status) => {
-//         if (
-//           status === window.google.maps.places.PlacesServiceStatus.OK &&
-//           results
-//         ) {
-//           setPlaces(results);
-//           console.log(results);
-//         }
-//       });
-//     }
-//   }, [isLoaded]);
-
-//   const handleMarkerClick = (place) => {
-//     setSelectedPlace(place);
-//   };
-
-//   return isLoaded ? (
-//     <GoogleMap
-//       mapContainerClassName="w-full h-[100vh]"
-//       center={center}
-//       zoom={15}
-//     >
-//       {places.map((place, index) => (
-//         <Marker
-//           key={index}
-//           position={place.geometry.location}
-//           onClick={() => handleMarkerClick(place)}
-//         />
-//       ))}
-
-//       {selectedPlace && (
-//         <InfoWindow
-//           position={selectedPlace.geometry.location}
-//           onCloseClick={() => setSelectedPlace(null)}
-//         >
-//           <div>
-//             <h3>{selectedPlace.name}</h3>
-//             <p>{selectedPlace.vicinity}</p>
-//             {/* You can include more details here */}
-//           </div>
-//         </InfoWindow>
-//       )}
-//       <Circle
-//         center={center}
-//         radius={searchRadius}
-//         options={{
-//           strokeColor: "#FF0000",
-//           strokeOpacity: 0.8,
-//           strokeWeight: 2,
-//           fillColor: "#FF0000",
-//           fillOpacity: 0.25,
-//           clickable: false,
-//         }}
-//       />
-//     </GoogleMap>
-//   ) : (
-//     <div>Loading...</div>
-//   );
-// }
-
-// export default NearbyPlacesComponent;
-
-
-import { NearbyPlacesComponent } from "../components/GoogleMap";
-
-export default function test(){
-  const center = { lat: 23.732583, lng: 90.387045 };
-
-  const type = ['school'];
-  return(
-    <div>
-      <NearbyPlacesComponent center={center} type={type} />
-    </div>
-  )
-}
-
+export default BlogPagePage;
