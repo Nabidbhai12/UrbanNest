@@ -18,6 +18,23 @@ const BlogPageColumnactive = (props) => {
     return { text, image };
   };
 
+  const extractTags = (tag) => {
+    let tags;
+
+    try {
+      tags = JSON.parse(tag);
+    } catch (err) {
+      console.error("Error parsing tags:", err);
+      tags = [];
+    }
+    console.log(tags);
+    return { tags };
+  };
+
+  // useEffect(()=>{
+  //   extractTags(props.tags[0]);
+  // }, [props])
+
   const convertDate = (date) => {
     // Example date string
     const dateString = date;
@@ -49,9 +66,13 @@ const BlogPageColumnactive = (props) => {
             alt="rectangle5617"
           />
           <div className="flex flex-col pt-[6px] pl-[6px] gap-2 items-start justify-start w-full cursor-pointer rounded-[10px]">
-            <Button className="border border-bluegray-100 border-solid cursor-pointer font-manrope font-semibold min-w-[89px] py-[9px] rounded-[10px] text-center text-gray-900 text-sm">
-              {props?.business}
-            </Button>
+            <div className="flex flex-row gap-[5px]">
+              {extractTags(props.tags[0]).tags.map((item, index) => (
+                <Button className="border border-bluegray-100 border-solid cursor-pointer font-manrope min-w-[89px] py-[9px] rounded-[10px] text-center font-bold text-gray-900 text-sm hover:text-orange-800">
+                  {item}
+                </Button>
+              ))}
+            </div>
             <div className="flex flex-col gap-4 items-start justify-start w-full">
               <Text
                 className="leading-[135.00%] md:max-w-full max-w-sm text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px]"
