@@ -117,7 +117,7 @@ const blogHomepage = () => {
 
   return (
     <>
-      <div className="bg-gray-51 flex flex-col font-markoone items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+      <div className="bg-gray-51 flex flex-col font-markoone items-start justify-start mx-auto w-auto sm:w-full md:w-full pt-[50px]">
         <div className="flex flex-col md:gap-10 gap-[68px] items-center justify-start w-full">
           <div className="flex flex-col font-manrope items-center justify-start md:px-10 sm:px-5 px-[120px] w-full">
             <div className="flex flex-col md:gap-10 gap-[60px] items-center justify-start max-w-[1200px] mx-auto w-full">
@@ -176,7 +176,7 @@ const blogHomepage = () => {
                 </div>
               </div>
               <div className="flex sm:flex-col flex-row gap-5 items-center justify-between w-full">
-                <div className="flex flex-row gap-[5px] items-start justify-start w-auto">
+                <div className="flex flex-row gap-[5px] items-start justify-start w-auto pb-[10px]">
                   {pageNumbers.map((number) => (
                     <Button
                       key={number}
@@ -189,20 +189,6 @@ const blogHomepage = () => {
                     </Button>
                   ))}
                 </div>
-                <Button
-                  className="border border-bluegray-102 border-solid cursor-pointer flex items-center justify-center min-w-[134px] px-[17px] py-[13px] rounded-[10px]"
-                  rightIcon={
-                    <Img
-                      className="h-4 mt-px mb-[5px] ml-1"
-                      src="images/img_arrowright_gray_900.svg"
-                      alt="arrow_right"
-                    />
-                  }
-                >
-                  <div className="font-semibold text-base text-gray-900 text-left">
-                    Next Page
-                  </div>
-                </Button>
               </div>
             </div>
           </div>
