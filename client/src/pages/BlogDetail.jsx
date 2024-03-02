@@ -209,24 +209,6 @@ const BlogDetail = () => {
     return <div className="text-center mt-20">Loading...</div>;
   }
 
-  // const extractContent = (content) => {
-  //   const div = document.createElement('div');
-  //   div.innerHTML = content;
-  //   const text = div.textContent || div.innerText || '';
-  //   const image = div.querySelector('img') ? div.querySelector('img').src : 'default-image.jpg';
-  //   let tags;
-  //   try {
-  //       // Assuming `blog.tags` is something like ['["ab","bc","cd"]']
-  //       // and you want to parse it to get the actual array of tags
-  //       tags = JSON.parse(blog.tags[0]);
-  //   } catch (error) {
-  //       console.error('Error parsing tags:', error);
-  //       tags = []; // Default to an empty array in case of parsing failure
-  //   }
-
-  //   console.log('in extractContent tags:', tags);
-  //   return { text, image, tags };
-  // };
   const extractContent = (content, tagsData) => {
     const div = document.createElement('div');
     div.innerHTML = content;
