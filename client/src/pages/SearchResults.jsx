@@ -382,7 +382,7 @@ const ListingMapViewPage = () => {
 
   for (var i = 0; i < districts.length; i++) {
     //console.log(districts);
-    if (districts[i].name == allListings[2].location.district) {
+    if (districts[i].name == allListings[0].location.district) {
       center.lat = districts[i].latitude;
       center.lng = districts[i].longitude;
       break;
@@ -397,7 +397,7 @@ const ListingMapViewPage = () => {
     console.log(allListings[i]);
   }
 
-  for (var i = 2; i < allListings.length; i++) {
+  for (var i = 0; i < allListings.length; i++) {
     let bed_string = "bed",
       bath_string = "bath";
     if (allListings[i].beds > 1) {
@@ -407,7 +407,7 @@ const ListingMapViewPage = () => {
       bath_string = "baths";
     }
 
-    console.log(allListings[2].location);
+    console.log(allListings[0].location);
 
     landingPageCardPropList.push({
       image: allListings[i].images[0].url,
@@ -452,7 +452,7 @@ const ListingMapViewPage = () => {
 
   const currentPropList = [];
 
-  for (var i = 2; i < currentListings.length; i++) {
+  for (var i = 0; i < currentListings.length; i++) {
     let bed_string = "bed",
       bath_string = "bath";
     if (currentListings[i].rooms.bedrooms > 1) {

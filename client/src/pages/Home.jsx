@@ -49,8 +49,7 @@ export default function Home() {
                     className="leading-[180.00%] max-w-[610px] md:max-w-full text-gray-700 text-xl"
                     size="txtManropeRegular20"
                   >
-                    We helps businesses customize, automate and scale up their
-                    ad production and delivery.
+                    We Provide users with a handy and efficient way to search, buy and sell homes and business spaces.
                   </Text>
                 </div>
                 <div className="bg-yellow-50 flex flex-col items-start justify-start p-6 sm:px-5 rounded-[16px] w-full">
