@@ -49,6 +49,10 @@ const blogSchema = new mongoose.Schema({
         type: String, //url to image
         default: ''
     },
+    readTime:{
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now

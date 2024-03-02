@@ -40,14 +40,37 @@ io.on('connection', (socket) => {
     console.log('A user connected', socket.id);
 
     // Handle sending and receiving messages
-    socket.on('sendMessage', ({ senderId, receiverId, text }) => {
-        // Emit the message to the receiver
-        io.to(receiverId).emit('receiveMessage', { senderId, text });
+    socket.on('sendMessage', async ({ senderId, receiverId, text }) => {
+        try {
+            // Save message to database using existing controller logic or directly using Mongoose models
+            const conversation = await ConversationModel.findOneAndUpdate(
+                {
+                    $or: [
+                        { sender: senderId, receiver: receiverId },
+                        { sender: receiverId, receiver: senderId }
+                    ]
+                },
+                {},
+                { upsert: true, new: true }
+            );
 
-        // Save the message to the database 
-        
+            const message = new MessageModel({
+                conversationId: conversation._id,
+                sender: senderId,
+                receiver: receiverId,
+                content: text
+            });
+
+            await message.save();
+
+            // Emit the message to the receiver
+            io.to(receiverId).emit('receiveMessage', { senderId, text });
+            console.log("Message saved and sent to receiver:", message);
+        } catch (error) {
+            console.error("Error sending/saving message:", error);
+        }
     });
-
+    
     socket.on('joinRoom', ({ userId }) => {
         socket.join(userId); // Uses user ID as room name
         console.log(`User joined room: ${userId}`);

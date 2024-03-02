@@ -55,7 +55,7 @@ export const createBlog = async (req, res) => {
         const name = user.username;
 
 
-        const { title, content, image } = req.body;
+        const { title, content, image, readTime } = req.body;
         let {tags} = req.body;
 
         if (tags) {
@@ -71,6 +71,7 @@ export const createBlog = async (req, res) => {
             content,
             ...(tags && { tags }),
             ...(image && { image }),
+            readTime
         });
         await newBlog.save();
         res.status(201).json(newBlog);
@@ -119,7 +120,7 @@ export const updateBlog = async (req, res) => {
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
-        const { title, content} = req.body;
+        const { title, content, readTime} = req.body;
         let {tags} = req.body;
 
         if (tags) {
@@ -129,6 +130,7 @@ export const updateBlog = async (req, res) => {
         blog.title = title;
         blog.content = content;
         blog.tags = tags;
+        blog.readTime = readTime;
         await blog.save();
         res.status(200).json(blog);
     } catch (error) {
