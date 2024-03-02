@@ -55,7 +55,13 @@ export const createBlog = async (req, res) => {
         const name = user.username;
 
 
-        const { title, content, tags, image } = req.body;
+        const { title, content, image } = req.body;
+        let {tags} = req.body;
+
+        if (tags) {
+            tags = JSON.parse(tags);
+        }
+
         
 
         const newBlog = new Blog({
@@ -113,7 +119,13 @@ export const updateBlog = async (req, res) => {
         if (!blog) {
             return res.status(404).json({ message: "Blog not found" });
         }
-        const { title, content, tags} = req.body;
+        const { title, content} = req.body;
+        let {tags} = req.body;
+
+        if (tags) {
+            tags = JSON.parse(tags);
+        }
+
         blog.title = title;
         blog.content = content;
         blog.tags = tags;
@@ -310,13 +322,30 @@ export const showAllBlogsByDownvotes = async (req, res) => {
 
 //Show blogs by tag
 export const showBlogsByTag = async (req, res) => {
+    // try {
+    //     const tag = req.params.tag;
+    //     const blogs = await Blog.find({ "tags": tag });
+    //     //const blogs = await Blog.find();
+    //     res.status(200).json(blogs);
+    // } catch (error) {
+    //     res.status(404).json({ message: error.message });
+    // }
+    const tag = req.params.tag; // or req.params.tag if you're using route parameters
+  
+    if (!tag) {
+        return res.status(400).json({ message: 'Tag parameter is required' });
+    }
+    
     try {
-        const tag = req.params.tag;
-        const blogs = await Blog.find({ "tags": tag });
-        //const blogs = await Blog.find();
-        res.status(200).json(blogs);
+        const blogs = await Blog.find({ tags: tag });
+        
+        if (!blogs.length) {
+        return res.status(404).json({ message: 'No blogs found with the specified tag' });
+        }
+
+        res.json(blogs);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 

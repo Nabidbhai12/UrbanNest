@@ -14,7 +14,7 @@ import { set } from 'mongoose';
 const myBlogs = () => {
     const [blogs, setBlogs] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const blogsPerPage = 6;
+    const blogsPerPage = 8;
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const navigate = useNavigate();

@@ -1,5 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {useState} from "react";
+
+import * as Ably from 'ably';
+import { AblyProvider, useChannel, useConnectionStateListener } from 'ably/react';
 
 //Pages
 const Home = React.lazy(() => import("./pages/Home"));
@@ -22,6 +26,10 @@ const PropertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
 const Message =React.lazy(()=>import ("./pages/message"));
 const Inbox =React.lazy(()=>import ("./pages/inbox"));
 const Error_404 = React.lazy(() => import("./pages/Error_404"));
+
+const chat1 = React.lazy(() => import("./pages/chatengine"));
+
+//const AblyPubSub = React.lazy(() => import("./pages/Conversation"));
 
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
@@ -48,14 +56,18 @@ export default function App() {
     return false;
   };
 
+  
   return (
     //isLoggedIn={isLoggedIn}
     <React.Suspense fallback={<>Loading...</>}>
       <BrowserRouter>
         <LandingPageHeader />
+        
         <Routes>
           <Route path="/message" element={<Message/>} />
           <Route path="/inbox" element={<Inbox/>} />
+
+          <Route path="/chatengine" element={<chat1 />} />
 
           <Route path="/blogHome/:id" element={<BlogDetail />} />
           <Route path="/blogHome" element={<BlogHome />} />
@@ -76,8 +88,11 @@ export default function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/sell_rent" element={<Sell_rent />} />
           </Route>
+          
         </Routes>
       </BrowserRouter>
     </React.Suspense>
   );
 } // Merge test
+
+
