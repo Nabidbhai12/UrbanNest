@@ -127,7 +127,7 @@ const BlogDetailsPage = () => {
     <>
       <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[111px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
         <div className="flex flex-col font-manrope items-start justify-start pl-[120px] pr-[324px] md:px-10 sm:px-5 w-full">
-          <div className="flex flex-col gap-10 items-start justify-start w-full">
+          <div className="flex flex-col gap-10 py-[100px] items-start justify-start w-full">
             <Text
               className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
               size="txtManropeExtraBold36"
@@ -528,34 +528,6 @@ const BlogDetailsPage = () => {
                     Portfolio sites - Websites that contain basic information
                   </>
                 </Text>
-              </div>
-              <div className="flex flex-col gap-10 items-start justify-start w-full">
-                <div className="flex flex-col gap-4 items-start justify-start w-full">
-                  <Text
-                    className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
-                    size="txtManropeExtraBold28"
-                  >
-                    Tables
-                  </Text>
-                  <Text
-                    className="leading-[180.00%] max-w-[996px] md:max-w-full text-gray-600 text-lg"
-                    size="txtManropeRegular18Gray600"
-                  >
-                    The followings are the common applications where using the
-                    static website is the best choice. - Blog sites- - Small
-                    business websites.
-                  </Text>
-                </div>
-                <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start px-10 sm:px-5 py-[50px] rounded-[10px] w-full">
-                  <div className="overflow-auto w-full">
-                    <ReactTable
-                      columns={tableColumns}
-                      data={tableData.current}
-                      rowClass={""}
-                      headerClass=""
-                    />
-                  </div>
-                </div>
               </div>
               <div className="flex flex-col gap-6 items-start justify-start w-full">
                 <Text
