@@ -112,64 +112,11 @@ const NewBlogPost = () => {
 
   return (
     // <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
-<<<<<<< HEAD
     <div className="flex flex-col bg-[url('images/img_create_blog_bg.jpeg')] min-h-screen pt-16 align-center justify-center">
       <div className="flex flex-col items-center justify-center pb-[50px]">
         <form
           onSubmit={handleSubmit}
           className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded-[40px] shadow-lg w-[70%] items-center justify-center"
-=======
-    <div className="flex bg-yellow-50-custom min-h-screen pt-16 align-center justify-center">
-      <form onSubmit={handleSubmit} className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded shadow-lg max-w-2xl">
-        <div>
-          <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            required
-            className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 p-2.5"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-        </div>
-  
-        <div>
-          <label htmlFor="tags" className="block mb-2 text-sm font-medium text-gray-900">Tags (comma-separated)</label>
-          <input
-            type="text"
-            id="tags"
-            name="tags"
-            className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 p-2.5"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-          />
-        </div>
-  
-        <div>
-          <label htmlFor="content" className="block mb-2 text-sm font-medium text-gray-900">Content</label>
-          <ReactQuill
-            ref={quillRef}
-            theme="snow"
-            value={content}
-            onChange={setContent}
-            modules={modules}
-            className="bg-gray-50 border border-gray-300 text-gray-900 py-2.5 px-4 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          />
-        </div>
-  
-        <button
-          type="button"
-          onClick={() => setPreview(!preview)}
-          className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
-        >
-          {preview ? 'Edit' : 'Preview'}
-        </button>
-  
-        <button
-          type="submit"
-          className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center shadow-lg transform transition-transform duration-150 ease-in-out hover:-translate-y-1"
->>>>>>> 5df21a8240806a997cd041daf798e0bc9b69105e
         >
           <div>
             <label

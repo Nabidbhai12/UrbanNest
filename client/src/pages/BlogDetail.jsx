@@ -263,11 +263,7 @@ const BlogDetail = () => {
           </div>
           {/* Post Content */}
           <div className="px-4 py-5 sm:p-6 ">
-<<<<<<< HEAD
             <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: (blog.content) }} />
-=======
-            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: text }} />
->>>>>>> 5df21a8240806a997cd041daf798e0bc9b69105e
             {/* get the image */}
             <div className='object-center'>
               <img
