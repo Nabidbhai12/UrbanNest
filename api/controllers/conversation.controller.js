@@ -9,7 +9,8 @@ import User   from "../models/user.model.js";
 export const getAllusers=async(req,res)=>
 {
   try {
-    const users = await User.find({}, 'username');
+    //get users by id, exclude current user
+    const users = await User.find({ _id: { $ne: req.user.id } });
     console.log(users);
     res.json(users);
   } catch (error) {
