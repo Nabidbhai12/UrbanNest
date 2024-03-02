@@ -41,6 +41,7 @@ const NewBlogPost = () => {
         const response = await fetch("/api/blogs/upload", {
           method: "POST",
           body: formData,
+          credentials: "include",
         });
         const data = await response.json(); // Parse the JSON from the response
         console.log(data);
@@ -71,7 +72,9 @@ const NewBlogPost = () => {
       const response = await axios.post("/api/blogs/createBlog", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+    
         },
+        withCredentials: true,
       });
 
       console.log(response.data);
