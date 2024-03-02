@@ -14,6 +14,7 @@
     "@material-tailwind/react": "^2.1.9",
     "@react-google-maps/api": "^2.19.3",
     "@reduxjs/toolkit": "^2.0.1",
+    "@tanstack/react-table": "^8.13.2",
     "@vis.gl/react-google-maps": "^0.7.0",
     "ably": "^1.2.49",
     "bkoi-gl": "^1.1.1",

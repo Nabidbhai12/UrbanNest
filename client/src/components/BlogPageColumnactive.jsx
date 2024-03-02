@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "./button";
 import { Img } from "./image";
@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 //import { Button, Img, Text } from "components";
 
 const BlogPageColumnactive = (props) => {
+  const [images, setImages] = useState([]);
   const extractContent = (content) => {
     const div = document.createElement("div");
     div.innerHTML = content;
@@ -15,6 +16,7 @@ const BlogPageColumnactive = (props) => {
       ? div.querySelector("img").src
       : "default-image.jpg";
 
+    //setImages(image);
     return { text, image };
   };
 
@@ -61,17 +63,17 @@ const BlogPageColumnactive = (props) => {
       <div className={props.className}>
         <div className="flex flex-col gap-3 items-start justify-start w-full">
           <Img
-            className="h-[350px] sm:h-auto object-cover rounded-bl-lg rounded-br-lg w-full rounded-[10px]"
+            className="h-[350px] sm:h-auto object-cover rounded-bl-lg rounded-br-lg w-full rounded-[10px] cursor-pointer"
             src={extractContent(props.content).image}
             alt="rectangle5617"
           />
           <div className="flex flex-col pt-[6px] pl-[6px] gap-2 items-start justify-start w-full cursor-pointer rounded-[10px]">
             <div className="flex flex-row gap-[5px]">
-              {extractTags(props.tags[0]).tags.map((item, index) => (
+              {/*extractTags(props.tags[0]).tags.map((item, index) => (
                 <Button className="border border-bluegray-100 border-solid cursor-pointer font-manrope min-w-[89px] py-[9px] rounded-[10px] text-center font-bold text-gray-900 text-sm hover:text-orange-800">
                   {item}
                 </Button>
-              ))}
+              ))*/}
             </div>
             <div className="flex flex-col gap-4 items-start justify-start w-full">
               <Text
@@ -107,7 +109,7 @@ const BlogPageColumnactive = (props) => {
           <Link to={`/blogHome/${props._id}`}>
             <div className="flex flex-row gap-[6px]">
               <Button
-                className="cursor-pointer text-black hover:text-orange-900 font-bold text-lg w-auto pl-[6px]"
+                className="cursor-pointer text-black hover:text-orange-800 font-bold text-lg w-auto pl-[6px]"
                 size="txtManropeBold18Gray600"
               >
                 Continue Reading

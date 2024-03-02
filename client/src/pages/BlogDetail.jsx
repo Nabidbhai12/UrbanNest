@@ -32,6 +32,8 @@ const BlogDetail = () => {
   
         if (blogResponse.ok && userUpvoteStatusResponse.ok && userDownvoteStatusResponse.ok) {
           const blogData = await blogResponse.json();
+
+          console.log(blogData.content);
           const hasUpvoted = await userUpvoteStatusResponse.json().hasUpvoted;
           const hasDownvoted = await userDownvoteStatusResponse.json().hasDownvoted;
   
@@ -261,7 +263,7 @@ const BlogDetail = () => {
           </div>
           {/* Post Content */}
           <div className="px-4 py-5 sm:p-6 ">
-            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: text }} />
+            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: (blog.content) }} />
             {/* get the image */}
             <div className='object-center'>
               <img
