@@ -2,8 +2,6 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {useState} from "react";
 
-import * as Ably from 'ably';
-import { AblyProvider, useChannel, useConnectionStateListener } from 'ably/react';
 
 //Pages
 const Home = React.lazy(() => import("./pages/Home"));
