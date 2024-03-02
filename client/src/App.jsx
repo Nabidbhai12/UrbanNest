@@ -25,6 +25,9 @@ const Message =React.lazy(()=>import ("./pages/message"));
 const Inbox =React.lazy(()=>import ("./pages/inbox"));
 const Error_404 = React.lazy(() => import("./pages/Error_404"));
 
+const Users = React.lazy(() => import("./pages/ShowUsers"));
+const Chatroom = React.lazy(() => import("./pages/ChatRoom"));
+
 const chat1 = React.lazy(() => import("./pages/chatengine"));
 
 //const AblyPubSub = React.lazy(() => import("./pages/Conversation"));
@@ -82,6 +85,10 @@ export default function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/search" element={<Search />} />
           <Route path="/404" element={<Error_404 />} />
+
+          <Route path="/users" element={<Users />} />
+          <Route path="/chat/:id" element={<Chatroom />} />
+
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/sell_rent" element={<Sell_rent />} />

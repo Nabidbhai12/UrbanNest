@@ -8,6 +8,8 @@ import searchRouter from './routes/search.route.js';
 import blogRouter from './routes/blog.route.js';
 import conversationRouter from './routes/conversation.route.js';
 import cookieParser from 'cookie-parser';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{  
@@ -19,11 +21,44 @@ mongoose.connect(process.env.MONGO).then(()=>{
 );
 
 const app=express()
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:5173", // Your frontend origin
+        methods: ["GET", "POST"],
+        //allowedHeaders: ["my-custom-header"],
+        credentials: true
+    }
+});
 
-app.listen(3000,()=>{
+httpServer.listen(3000,()=>{
     console.log('server is running on port 3000');
 }
 );
+
+io.on('connection', (socket) => {
+    console.log('A user connected', socket.id);
+
+    // Handle sending and receiving messages
+    socket.on('sendMessage', ({ senderId, receiverId, text }) => {
+        // Emit the message to the receiver
+        io.to(receiverId).emit('receiveMessage', { senderId, text });
+
+        // Save the message to the database 
+        
+    });
+
+    socket.on('joinRoom', ({ userId }) => {
+        socket.join(userId); // Uses user ID as room name
+        console.log(`User joined room: ${userId}`);
+    });
+
+    socket.on('disconnect', () => {
+        console.log('User disconnected', socket.id);
+    });
+
+});
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/users",userRouter);
