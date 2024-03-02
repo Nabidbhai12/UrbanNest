@@ -24,7 +24,9 @@ const blogHomepage = () => {
   useEffect(() => {
     const verifyLoginStatus = async () => {
       try {
-        const response = await axios.get("/api/users/verify");
+        const response = await axios.get("/api/users/verify", {
+          withCredentials: true,
+        });
         setIsLoggedIn(response.data.isLoggedIn);
         console.log("Login status:", response.data.isLoggedIn);
       } catch (error) {
@@ -39,6 +41,7 @@ const blogHomepage = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          credentials: "include",
         });
         const data = await response.json();
         console.log("data received by client side : ", data);

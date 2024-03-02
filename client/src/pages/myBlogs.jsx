@@ -22,7 +22,9 @@ const myBlogs = () => {
     useEffect(() => {
         const verifyLoginStatus = async () => {
             try {
-                const response = await axios.get('/api/users/verify');
+                const response = await axios.get('/api/users/verify', {
+                    withCredentials: true,
+                });
                 setIsLoggedIn(response.data.isLoggedIn);
                 console.log('Login status:', response.data.isLoggedIn);
             } catch (error) {
@@ -38,6 +40,7 @@ const myBlogs = () => {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+                    credentials: 'include',
                 });
                 const data=await response.json();
                 console.log('data received by client side : ', data);
@@ -73,7 +76,10 @@ const myBlogs = () => {
     const handleDelete = async (blogid) => {
         if(window.confirm('Are you sure you want to delete this blog?')){
             try {
-                const response = await axios.delete(`/api/blogs/deleteBlog/${blogid}`);
+                const response = await axios.delete(`/api/blogs/deleteBlog/${blogid}`, {
+                    withCredentials: true,
+                
+                });
 
                 if(response.status === 200){
                     setBlogs(blogs.filter(blog => blog._id !== blogid));
