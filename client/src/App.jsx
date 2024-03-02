@@ -21,6 +21,7 @@ const MyBlogs = React.lazy(() => import("./pages/myBlogs"));
 const PropertyDetails = React.lazy(() => import("./pages/PropertyDetails"));
 const Message =React.lazy(()=>import ("./pages/message"));
 const Inbox =React.lazy(()=>import ("./pages/inbox"));
+const Error_404 = React.lazy(() => import("./pages/Error_404"));
 
 
 //const BlogPage = React.lazy(() => import("./pages/BlogPage"));
@@ -70,6 +71,7 @@ export default function App() {
           <Route path="/sign-in" element={<SignIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/404" element={<Error_404 />} />
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/sell_rent" element={<Sell_rent />} />
