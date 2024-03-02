@@ -207,25 +207,43 @@ const BlogDetail = () => {
     return <div className="text-center mt-20">Loading...</div>;
   }
 
-  const extractContent = (content) => {
+  // const extractContent = (content) => {
+  //   const div = document.createElement('div');
+  //   div.innerHTML = content;
+  //   const text = div.textContent || div.innerText || '';
+  //   const image = div.querySelector('img') ? div.querySelector('img').src : 'default-image.jpg';
+  //   let tags;
+  //   try {
+  //       // Assuming `blog.tags` is something like ['["ab","bc","cd"]']
+  //       // and you want to parse it to get the actual array of tags
+  //       tags = JSON.parse(blog.tags[0]);
+  //   } catch (error) {
+  //       console.error('Error parsing tags:', error);
+  //       tags = []; // Default to an empty array in case of parsing failure
+  //   }
+
+  //   console.log('in extractContent tags:', tags);
+  //   return { text, image, tags };
+  // };
+  const extractContent = (content, tagsData) => {
     const div = document.createElement('div');
     div.innerHTML = content;
     const text = div.textContent || div.innerText || '';
     const image = div.querySelector('img') ? div.querySelector('img').src : 'default-image.jpg';
     let tags;
     try {
-        // Assuming `blog.tags` is something like ['["ab","bc","cd"]']
-        // and you want to parse it to get the actual array of tags
-        tags = JSON.parse(blog.tags[0]);
+      tags = tagsData;
     } catch (error) {
-        console.error('Error parsing tags:', error);
-        tags = []; // Default to an empty array in case of parsing failure
+      console.error('Error parsing tags:', error);
+      tags = []; // Default to an empty array in case of parsing failure
     }
-
+  
     console.log('in extractContent tags:', tags);
     return { text, image, tags };
   };
   //const sanitizedComments = DOMPurify.sanitize(blog.commentList);
+
+  const { text, image, tags } = extractContent(blog.content, blog.tags);
 
   return (
     <div className="bg-yellow-50-custom min-h-screen pt-16">
@@ -243,18 +261,18 @@ const BlogDetail = () => {
           </div>
           {/* Post Content */}
           <div className="px-4 py-5 sm:p-6 ">
-            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: extractContent(blog.content).text }} />
+            <div className="prose max-w-none text-[25px]" dangerouslySetInnerHTML={{ __html: text }} />
             {/* get the image */}
             <div className='object-center'>
               <img
-                src={extractContent(blog.content).image}
+                src={image}
                 className="h-2/3 w-2/3 object-center object-cover"
                 alt={blog.title}
               />
             </div>
             {/* get the tags*/}
             <div className="flex justify-left space-x-4 mt-5">
-              {extractContent(blog).tags.map((tag) => (
+              {tags.map((tag) => (
                 <Link to={`/blogHome/${tag}`} key={tag}>
                   <span key={tag} className="py-1 px-3 text-sm font-semibold bg-gray-401 rounded-full text-gray-700 mb-2">{tag}</span>
                 </Link>
