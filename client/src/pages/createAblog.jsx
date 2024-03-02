@@ -106,7 +106,7 @@ const NewBlogPost = () => {
 
   return (
     // <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
-    <div className="bg-yellow-50-custom min-h-screen pt-16 align-center justify-center">
+    <div className="flex bg-yellow-50-custom min-h-screen pt-16 align-center justify-center">
       <form onSubmit={handleSubmit} className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded shadow-lg max-w-2xl">
         <div>
           <label htmlFor="title" className="block mb-2 text-sm font-medium text-gray-900">Title</label>
