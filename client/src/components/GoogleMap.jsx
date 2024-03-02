@@ -1,10 +1,11 @@
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import {
   GoogleMap,
   useJsApiLoader,
   Marker,
   LoadScript,
-  InfoWindow
+  InfoWindow,
+  Circle,
 } from "@react-google-maps/api";
 
 const API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g";
@@ -138,7 +139,63 @@ function ShowApartments({ apartments }) {
 }
 
 /*
-Functionality 3: 
+Functionality 3: Show the location of an apartment on the map using a marker
+
+*/
+
+function ShowApartment({ apartments }) {
+  const center = {
+    lat: apartments[0].location.coordinates.coordinates[1],
+    lng: apartments[0].location.coordinates.coordinates[0],
+  };
+
+  console.log(center);
+
+  const [activeMarker, setActiveMarker] = useState("map");
+
+  const handleMarkerClick = (index) => {
+    setActiveMarker(index); // Set the index of the clicked marker
+  };
+
+  return (
+    <LoadScript
+      googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g"
+      libraries={["places"]}
+    >
+      <GoogleMap
+        mapContainerClassName="w-full h-[600px]"
+        center={center}
+        zoom={16}
+      >
+        {apartments.map((apartment, index) => (
+          <Marker
+            key={index}
+            position={{
+              lat: apartment.location.coordinates.coordinates[1],
+              lng: apartment.location.coordinates.coordinates[0],
+            }}
+            onClick={() => handleMarkerClick(index)}
+          >
+            {activeMarker === index && ( // Check if this marker is the active one
+              <InfoWindow onCloseClick={() => setActiveMarker(null)}>
+                <div>
+                  <h3>{apartment.title}</h3>
+                  <h3> {apartment.location.address} </h3>
+                  <p>
+                    Price:{" "}
+                    {apartment.price.amount + " " + apartment.price.currency}
+                  </p>
+                </div>
+              </InfoWindow>
+            )}
+          </Marker>
+        ))}
+      </GoogleMap>
+    </LoadScript>
+  );
+}
+/*
+Functionality 4: 
                   a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
 */
 
@@ -155,18 +212,32 @@ function NearbyPlacesComponent({ center, type }) {
   const [places, setPlaces] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
 
+  const [PlacesService, setPlacesService] = useState(null);
+  const [customIcon, setCustomIcon] = useState(null);
+
   useEffect(() => {
     if (isLoaded) {
       const service = new window.google.maps.places.PlacesService(
         document.createElement("div")
       );
+      setPlacesService(service);
+      const customIcon = {
+        url: "http://maps.google.com/mapfiles/ms/icons/orange-dot.png", // Purple marker
+        scaledSize: new google.maps.Size(40, 40), // scaled size
+      };
+      setCustomIcon(customIcon);
+    }
+  }, [isLoaded]);
+
+  useEffect(() => {
+    if (PlacesService) {
       const request = {
         location: center,
         radius: "1500",
         type: type,
       };
 
-      service.nearbySearch(request, (results, status) => {
+      PlacesService.nearbySearch(request, (results, status) => {
         if (
           status === window.google.maps.places.PlacesServiceStatus.OK &&
           results
@@ -176,18 +247,20 @@ function NearbyPlacesComponent({ center, type }) {
         }
       });
     }
-  }, [isLoaded]);
+  }, [PlacesService]);
 
   const handleMarkerClick = (place) => {
     setSelectedPlace(place);
   };
 
-  return isLoaded ? (
+  return places && PlacesService && isLoaded ? (
     <GoogleMap
-      mapContainerClassName="w-full h-[100vh]"
+      mapContainerClassName="w-full h-[600px]"
       center={center}
       zoom={15}
     >
+      <Marker position={center} icon={customIcon}/>
+
       {places.map((place, index) => (
         <Marker
           key={index}
@@ -247,4 +320,9 @@ function GeocodeArea({ area, district, onAreaSelect }) {
     .catch((error) => console.error("Error:", error));
 }
 
-export { MapClickHandler, ShowApartments, NearbyPlacesComponent };
+export {
+  MapClickHandler,
+  ShowApartments,
+  ShowApartment,
+  NearbyPlacesComponent,
+};

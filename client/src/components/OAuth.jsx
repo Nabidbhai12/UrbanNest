@@ -4,6 +4,7 @@ import {app} from '../firebase.js';
 import { useDispatch } from 'react-redux';
 import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 export default function OAuth() {
     const dispatch = useDispatch(); // Move useDispatch to the top level of the component
@@ -42,8 +43,17 @@ export default function OAuth() {
     };
 
     return (
-        <button onClick={handleGoogleClick} type='button' className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg focus:outline-none focus:shadow-outline">
-            Continue with Google
-        </button>
+        <Button
+              type="button"
+              onClick={handleGoogleClick}
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, backgroundColor:"#ff8b46" }}
+        >
+              Continue with Google
+        </Button>
+        // <button onClick={handleGoogleClick} type='button' className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded shadow-lg focus:outline-none focus:shadow-outline">
+        //     Continue with Google
+        // </button>
     );
 }

@@ -1,15 +1,16 @@
-// NewBlogPost.js
 import React, { useState, useEffect } from "react";
+import { default as ModalProvider } from "react-modal";
+
 import { useNavigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import axios from "axios"; // Make sure to install axios if not already
 import ImageResize from "quill-image-resize-module-react";
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import LandingPageFooter from "../components/LandingPageFooter";
+import { Button } from "../components/button";
 
 Quill.register("modules/imageResize", ImageResize);
 
-const NewBlogPost = () => {
+const BlogCreationModal = ({ ...props }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
@@ -41,7 +42,6 @@ const NewBlogPost = () => {
         const response = await fetch("/api/blogs/upload", {
           method: "POST",
           body: formData,
-          credentials: "include",
         });
         const data = await response.json(); // Parse the JSON from the response
         console.log(data);
@@ -72,9 +72,7 @@ const NewBlogPost = () => {
       const response = await axios.post("/api/blogs/createBlog", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-    
         },
-        withCredentials: true,
       });
 
       console.log(response.data);
@@ -114,17 +112,21 @@ const NewBlogPost = () => {
   };
 
   return (
-    // <div className="container mx-auto p-8" style={{ backgroundImage: "url('/path-to-real-estate-background.jpg')" }}>
-    <div className="flex flex-col bg-[url('images/img_create_blog_bg.jpeg')] min-h-screen pt-16 align-center justify-center">
-      <div className="flex flex-col items-center justify-center pb-[50px]">
+    <ModalProvider
+      appElement={document.getElementById("root")}
+      className="m-auto w-[1600px] items-center justify-center"
+      overlayClassName="fixed inset-0 bg-gray-900_cc flex items-center justify-center"
+      {...props}
+    >
+      <div className="flex bg-white-A700 min-h-screen pt-16 align-center justify-center w-full">
         <form
           onSubmit={handleSubmit}
-          className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded-[40px] shadow-lg w-[70%] items-center justify-center"
+          className="content-center px-4 py-5 sm:px-6 border-b space-y-6 bg-white-A700 p-8 rounded shadow-lg w-full max-h-[512px]"
         >
           <div>
             <label
               htmlFor="title"
-              className="bg-black text-white-A700 px-4 py-2 mb-[10px] w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope"
+              className="block mb-2 text-sm font-medium text-gray-900"
             >
               Title
             </label>
@@ -133,7 +135,7 @@ const NewBlogPost = () => {
               id="title"
               name="title"
               required
-              className="block w-full text-lg text-gray-900 bg-gray-50 rounded-lg border font-extrabold font-manrope font-la border-black p-2.5"
+              className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 p-2.5"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
@@ -142,7 +144,7 @@ const NewBlogPost = () => {
           <div>
             <label
               htmlFor="tags"
-              className="bg-black text-white-A700 px-4 py-2 mb-[10px] w-[250px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope"
+              className="block mb-2 text-sm font-medium text-gray-900"
             >
               Tags (comma-separated)
             </label>
@@ -150,7 +152,7 @@ const NewBlogPost = () => {
               type="text"
               id="tags"
               name="tags"
-              className="block w-full text-lg text-gray-900 bg-gray-50 rounded-lg border font-extrabold font-manrope font-la border-black p-2.5"
+              className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 p-2.5"
               value={tags}
               onChange={(e) => setTags(e.target.value)}
             />
@@ -159,7 +161,7 @@ const NewBlogPost = () => {
           <div>
             <label
               htmlFor="content"
-              className="bg-black text-white-A700 px-4 py-2 mb-[10px] w-[150px] h-[50px] flex items-center justify-center rounded-[25px] font-extrabold font-manrope"
+              className="block mb-2 text-sm font-medium text-gray-900"
             >
               Content
             </label>
@@ -169,21 +171,21 @@ const NewBlogPost = () => {
               value={content}
               onChange={setContent}
               modules={modules}
-              className="bg-gray-50 border text-xl border-black border-opacity-50 h-[400px] text-gray-900 font-extrabold font-manrope py-2.5 px-4 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="bg-gray-50 border border-gray-300 text-gray-900 py-2.5 px-4 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
           <button
             type="button"
             onClick={() => setPreview(!preview)}
-            className="text-black bg-gray-51 border border-black border-opacity-50 font-bold font-manrope hover:bg-black hover:text-white-A700 ml-[520px] focus:ring-1 rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 shadow-lg transform transition-transform duration-150 ease-in-out hover:-translate-y-1"
+            className="text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
           >
             {preview ? "Edit" : "Preview"}
           </button>
 
           <button
             type="submit"
-            className="text-black bg-gray-51 border border-black border-opacity-50 font-bold font-manrope hover:bg-black hover:text-white-A700 focus:ring-4 focus:ring-purple-300 rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 shadow-lg transform transition-transform duration-150 ease-in-out hover:-translate-y-1"
+            className="text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center shadow-lg transform transition-transform duration-150 ease-in-out hover:-translate-y-1"
           >
             Create Blog Post
           </button>
@@ -205,10 +207,22 @@ const NewBlogPost = () => {
             </div>
           )}
         </form>
+        {/*
+        <div className="flex flex-row gap-2 items-center justify-start w-full">
+          <div className="flex flex-row gap-2 items-center pl-[700px] justify-start w-full">
+            <button
+              type="submit"
+              onClick={props.onRequestClose}
+              className="flex font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[30px] hover:bg-black hover:text-white-A700"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+        */}
       </div>
-      <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
-    </div>
+    </ModalProvider>
   );
 };
 
-export default NewBlogPost;
+export default BlogCreationModal;

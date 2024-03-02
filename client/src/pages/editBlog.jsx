@@ -26,7 +26,13 @@ const EditBlog = () => {
         const fetchBlog = async () => {
             try{
                 console.log("blogid in usereffect: ", id);
-                const response = await fetch(`/api/blogs/showBlog/${id}`);
+                const response = await fetch(`/api/blogs/showBlog/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                });
                 const data = await response.json();
 
                 setTitle(data.title);
@@ -65,7 +71,8 @@ const EditBlog = () => {
             // Assuming '/api/images/upload' is your image upload endpoint
             const response = await fetch ('/api/blogs/upload', {
               method: 'POST',
-              body: formData
+              body: formData,
+              credentials: 'include',
             });
             const data = await response.json(); // Parse the JSON from the response
             console.log(data);
@@ -96,6 +103,7 @@ const EditBlog = () => {
                 headers: {
                   'Content-Type': 'multipart/form-data',
                 },
+                withCredentials: true,
             });
             console.log('Blog submitted:', response.data);
             alert('Blog updated successfully!');

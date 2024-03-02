@@ -1,285 +1,632 @@
-// import React from "react";
-// import { GoogleMap, LoadScript } from "@react-google-maps/api";
+import React from "react";
 
-// const containerStyle = {
-//   width: "100%",
-//   height: "100%",
-// };
+import { createColumnHelper } from "@tanstack/react-table";
 
-// const center = {
-//   lat: 23.8041,
-//   lng: 90.4152,
-// };
+import { Button } from "../components/button";
+import { Img } from "../components/image";
+import { List } from "../components/list";
+import { Text } from "../components/text";
+import { ReactTable } from "../components/ReactTable";
 
-// function MyMapComponent() {
-//   return (
-//     <LoadScript googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g">
-//       <div className="w-full h-[100vh]">
-//         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={10}>
-//           {/* Child components, such as markers, info windows, etc. */}
-//         </GoogleMap>
-//       </div>
-//     </LoadScript>
-//   );
-// }
+//import { Button, Img, List, ReactTable, Text } from "components";
+import BlogPageColumnactive from "../components/BlogPageColumnactive";
+import LandingPageFooter from "../components/LandingPageFooter";
 
-// export default React.memo(MyMapComponent);
+const BlogDetailsPage = () => {
+  const tableData = React.useRef([
+    {
+      fullname: "Zakir Hossen",
+      title: "UI, UX Designer",
+      emailaddress: "uxdesigner@gmail.com",
+      phonenumber: "+88 222 5554 444",
+    },
+    {
+      fullname: "Zakir Hossen",
+      title: "UI, UX Designer",
+      emailaddress: "uxdesigner@gmail.com",
+      phonenumber: "+88 222 5554 444",
+    },
+    {
+      fullname: "Zakir Hossen",
+      title: "UI, UX Designer",
+      emailaddress: "uxdesigner@gmail.com",
+      phonenumber: "+88 222 5554 444",
+    },
+    {
+      fullname: "Zakir Hossen",
+      title: "UI, UX Designer",
+      emailaddress: "uxdesigner@gmail.com",
+      phonenumber: "+88 222 5554 444",
+    },
+    {
+      fullname: "Zakir Hossen",
+      title: "UI, UX Designer",
+      emailaddress: "uxdesigner@gmail.com",
+      phonenumber: "+88 222 5554 444",
+    },
+  ]);
+  const tableColumns = React.useMemo(() => {
+    const tableColumnHelper = createColumnHelper();
+    return [
+      tableColumnHelper.accessor("fullname", {
+        cell: (info) => (
+          <Text
+            className="flex-1 pb-[9px] pt-[17px] text-base text-gray-600"
+            size="txtManropeSemiBold16Gray600"
+          >
+            {info?.getValue()}
+          </Text>
+        ),
+        header: (info) => (
+          <Text
+            className="flex-1 min-w-[234px] py-2.5 text-gray-900 text-xs"
+            size="txtManropeSemiBold12Gray900"
+          >
+            Full Name
+          </Text>
+        ),
+      }),
+      tableColumnHelper.accessor("title", {
+        cell: (info) => (
+          <Text
+            className="flex-1 pb-[7px] pt-[19px] text-base text-gray-600"
+            size="txtManropeSemiBold16Gray600"
+          >
+            {info?.getValue()}
+          </Text>
+        ),
+        header: (info) => (
+          <Text
+            className="flex-1 min-w-[234px] py-2.5 text-gray-900 text-xs"
+            size="txtManropeSemiBold12Gray900"
+          >
+            Title
+          </Text>
+        ),
+      }),
+      tableColumnHelper.accessor("emailaddress", {
+        cell: (info) => (
+          <Text
+            className="flex-1 pb-[7px] pt-[19px] text-base text-gray-600"
+            size="txtManropeSemiBold16Gray600"
+          >
+            {info?.getValue()}
+          </Text>
+        ),
+        header: (info) => (
+          <Text
+            className="flex-1 min-w-[234px] py-2.5 text-gray-900 text-xs"
+            size="txtManropeSemiBold12Gray900"
+          >
+            Email Address
+          </Text>
+        ),
+      }),
+      tableColumnHelper.accessor("phonenumber", {
+        cell: (info) => (
+          <Text
+            className="flex-1 pb-[9px] pt-[17px] text-base text-gray-600"
+            size="txtManropeSemiBold16Gray600"
+          >
+            {info?.getValue()}
+          </Text>
+        ),
+        header: (info) => (
+          <Text
+            className="flex-1 min-w-[214px] py-2.5 text-gray-900 text-xs"
+            size="txtManropeSemiBold12Gray900"
+          >
+            Phone Number
+          </Text>
+        ),
+      }),
+    ];
+  }, []);
 
-/*Functionality 1: 
-                    a) Upon click, get the latitude and longitude of that location
-                    b) After receiving that latitude and longitude, get the address of that location
-
-Status: Working
-*/
-// import React, { useCallback, useState, useRef } from 'react';
-// import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-
-// const center = { lat: 23.764424, lng: 90.429645 };
-
-// function MapComponent() {
-//   const { isLoaded } = useJsApiLoader({
-//     googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
-//     libraries: ["places"],
-//   });
-
-//   const [map, setMap] = useState(null);
-//   const mapRef = useRef(null);
-
-//   const onLoad = useCallback((map) => {
-//     mapRef.current = map;
-//   }, []);
-
-//   const onUnmount = useCallback(() => {
-//     mapRef.current = null;
-//   }, []);
-
-//   const mapClickHandler = useCallback((e) => {
-//     const lat = e.latLng.lat();
-//     const lng = e.latLng.lng();
-//     console.log(`Latitude: ${lat}, Longitude: ${lng}`);
-
-//     // Assuming google.maps.Geocoder is available
-//     const geocoder = new window.google.maps.Geocoder();
-//     geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-//       if (status === "OK" && results[0]) {
-//         console.log("Address:", results[0].formatted_address);
-//       } else {
-//         console.error("Geocoder failed due to: " + status);
-//       }
-//     });
-//   }, []);
-
-//   if (!isLoaded) {
-//     return <div>Loading...</div>;
-//   }
-
-//   return (
-//       <GoogleMap
-//         mapContainerClassName="w-full h-[100vh]"
-//         center={center}
-//         zoom={17}
-//         onLoad={onLoad}
-//         onUnmount={onUnmount}
-//         onClick={mapClickHandler}
-//       >
-//         {/* Additional map content like markers can go here */}
-//       </GoogleMap>
-//   );
-// }
-
-// export default MapComponent;
-
-/*
-Functionality 2: 
-                  a) Upon searching for results, the map will show all the search result apartments on the map with markers.
-                  b) Upon clicking on a marker, a brief description of the apartment will be shown, preferably using cards
-
-Status: Working, but need to implement AdvancedMarker because Marker is deprecated, if we have time
-*/
-
-// import React from 'react';
-// import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
-
-// const center = {
-//   lat: 23.764424,
-//   lng: 90.429645
-// };
-
-// const apartments = [
-//   { lat: 23.764424, lng: 90.429645 },
-//   { lat: 23.818840, lng: 90.378494},
-//   { lat: 23.819576, lng: 90.434752}
-//   // Add more apartments here
-// ];
-
-// function MyMapComponent() {
-//   return (
-//     <LoadScript googleMapsApiKey="AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g">
-//       <GoogleMap
-//         mapContainerClassName="w-full h-[100vh]"
-//         center={center}
-//         zoom={13}
-//       >
-//         {apartments.map((apartment, index) => (
-//           <Marker key={index} position={{ lat: apartment.lat, lng: apartment.lng }} />
-//         ))}
-//       </GoogleMap>
-//     </LoadScript>
-//   );
-// }
-
-// export default React.memo(MyMapComponent);
-
-/*
-Functionality 3: 
-                  a) Show nearby schools, colleges, cafes, restaurants, parks etc nearby an apartment ie a co-ordinate.
-*/
-
-import React, { useEffect, useState } from "react";
-import {
-  useJsApiLoader,
-  GoogleMap,
-  Marker,
-  InfoWindow,
-  Circle,
-} from "@react-google-maps/api";
-
-const center = { lat: 23.732583, lng: 90.387045 }; // Example coordinate
-const libraries = ["places"];
-
-function NearbyPlacesComponent() {
-  const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g", // Replace with your actual API key
-    libraries,
-  });
-
-  const searchRadius = 1500;
-  // State to hold nearby places and the selected place
-  const [places, setPlaces] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
-
-  useEffect(() => {
-    if (isLoaded) {
-      const service = new window.google.maps.places.PlacesService(
-        document.createElement("div")
-      );
-      const request = {
-        location: center,
-        radius: "1500",
-        type: ["university"],
-      };
-
-      service.nearbySearch(request, (results, status) => {
-        if (
-          status === window.google.maps.places.PlacesServiceStatus.OK &&
-          results
-        ) {
-          setPlaces(results);
-          console.log(results);
-        }
-      });
-    }
-  }, [isLoaded]);
-
-  const handleMarkerClick = (place) => {
-    setSelectedPlace(place);
-  };
-
-  return isLoaded ? (
-    <GoogleMap
-      mapContainerClassName="w-full h-[100vh]"
-      center={center}
-      zoom={15}
-    >
-      {places.map((place, index) => (
-        <Marker
-          key={index}
-          position={place.geometry.location}
-          onClick={() => handleMarkerClick(place)}
-        />
-      ))}
-
-      {selectedPlace && (
-        <InfoWindow
-          position={selectedPlace.geometry.location}
-          onCloseClick={() => setSelectedPlace(null)}
-        >
-          <div>
-            <h3>{selectedPlace.name}</h3>
-            <p>{selectedPlace.vicinity}</p>
-            {/* You can include more details here */}
+  return (
+    <>
+      <div className="bg-gray-51 flex flex-col font-markoone sm:gap-10 md:gap-10 gap-[111px] items-start justify-start mx-auto w-auto sm:w-full md:w-full">
+        <div className="flex flex-col font-manrope items-start justify-start pl-[120px] pr-[324px] md:px-10 sm:px-5 w-full">
+          <div className="flex flex-col gap-10 items-start justify-start w-full">
+            <Text
+              className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
+              size="txtManropeExtraBold36"
+            >
+              10 Delightful Dining Room Decor Trends for Spring
+            </Text>
+            <div className="flex flex-col md:gap-10 gap-[84px] items-start justify-start w-full">
+              <div className="flex md:flex-col flex-row gap-4 items-end justify-between w-full">
+                <div className="flex flex-1 flex-col gap-6 items-start justify-start w-full">
+                  <Img
+                    className="h-[550px] sm:h-auto object-cover rounded-bl-[10px] rounded-br-[10px] w-full"
+                    src="images/img_rectangle5618_550x996.png"
+                    alt="rectangle5618"
+                  />
+                  <Text
+                    className="leading-[180.00%] text-gray-600 text-lg"
+                    size="txtManropeRegular18Gray600"
+                  >
+                    <>
+                      What a time we are living in! A lot of things are coming
+                      back, bringing back nostalgia. Wondering why I am talking
+                      about nostalgia and all? Especially when it is supposed to
+                      be an article on websites! Well, because some old famous
+                      website technology is coming back too. Yes, I am talking
+                      about static websites.
+                      <br />
+                      Long ago, almost all websites were used to be static sites
+                      during the early days of the internet. Then dynamic sites
+                      came and blew the space. A lot of websites shifted to it.
+                      Obviously dynamic sites have their advantages. But static
+                      sites are making a comeback. And it’s coming stronger than
+                      before. In this article, you will cover the basics of
+                      static websites like what is a static website, what are
+                      the advantages, and when you should use a static website.
+                      Let’s kick things off.
+                    </>
+                  </Text>
+                </div>
+                <div className="flex md:flex-1 flex-col items-center justify-start w-[11%] md:w-full">
+                  <div className="flex flex-col gap-4 items-start justify-start w-auto">
+                    <Img
+                      className="h-8 w-8"
+                      src="images/img_facebook.svg"
+                      alt="facebook"
+                    />
+                    <div className="flex flex-row gap-1 items-center justify-start w-auto">
+                      <Img
+                        className="h-8 w-8"
+                        src="images/img_volume.svg"
+                        alt="volume"
+                      />
+                      <div className="flex flex-col items-center justify-start w-[71%]">
+                        <div
+                          className="bg-cover bg-no-repeat flex flex-col h-[25px] items-center justify-start w-auto"
+                          style={{
+                            backgroundImage:
+                              "url('images/img_frame1000001658.svg')",
+                          }}
+                        >
+                          <Text
+                            className="text-gray-900 text-xs w-auto"
+                            size="txtManropeSemiBold12Gray900"
+                          >
+                            Share this
+                          </Text>
+                        </div>
+                      </div>
+                    </div>
+                    <Img
+                      className="h-8 w-8"
+                      src="images/img_twitter_bluegray_100.svg"
+                      alt="twitter"
+                    />
+                    <Img
+                      className="h-8 w-8"
+                      src="images/img_reddit.svg"
+                      alt="reddit"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-12 items-start justify-start w-full">
+                <div className="flex flex-col gap-4 items-start justify-start w-full">
+                  <Text
+                    className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                    size="txtManropeExtraBold28"
+                  >
+                    Blockquotes
+                  </Text>
+                  <Text
+                    className="text-gray-600 text-lg w-full"
+                    size="txtManropeRegular18Gray600"
+                  >
+                    <>
+                      Blockquotes can be nested. Add a &gt;&gt; in front of the
+                      paragraph you want to nest.
+                    </>
+                  </Text>
+                </div>
+                <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-[30px] sm:px-5 rounded-[10px] w-full">
+                  <div className="flex flex-col gap-5 items-start justify-start w-full">
+                    <Text
+                      className="text-gray-900 text-xl tracking-[-0.40px] w-full"
+                      size="txtManropeSemiBold20Gray900"
+                    >
+                      Performance: Faster Loading Speed
+                    </Text>
+                    <div className="flex flex-col gap-5 items-start justify-start w-full">
+                      <Text
+                        className="leading-[180.00%] max-w-[936px] md:max-w-full text-gray-600 text-lg"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        Static websites are way faster than dynamic ones. As
+                        they don’t have a back-end system, there is no time loss
+                        due to database connection. Instead, the lightweight,
+                        pre-rendered HTML files load incredibly fast.
+                      </Text>
+                      <Text
+                        className="leading-[180.00%] max-w-[936px] md:max-w-full text-gray-600 text-lg"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        But why fast loading is important? According to Neil
+                        Patel, 47% of people on the internet expect a web page
+                        to load in less than 2 seconds.
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+                <List
+                  className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col gap-10 items-start md:px-10 sm:px-5 px-[51px] py-[39px] rounded-[10px] w-full"
+                  orientation="vertical"
+                >
+                  <div className="flex flex-1 flex-col gap-5 items-start justify-start my-0 w-full">
+                    <Text
+                      className="text-gray-900 text-xl tracking-[-0.40px] w-full"
+                      size="txtManropeSemiBold20Gray900"
+                    >
+                      Performance: Faster Loading Speed
+                    </Text>
+                    <div className="flex flex-col gap-5 items-start justify-start w-full">
+                      <Text
+                        className="leading-[180.00%] max-w-[894px] md:max-w-full text-gray-600 text-lg"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        Static websites are way faster than dynamic ones. As
+                        they don’t have a back-end system, there is no time loss
+                        due to database connection. Instead, the lightweight,
+                        pre-rendered HTML files load incredibly fast.
+                      </Text>
+                      <Text
+                        className="leading-[180.00%] max-w-[894px] md:max-w-full text-gray-600 text-lg"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        But why fast loading is important? According to Neil
+                        Patel, 47% of people on the internet expect a web page
+                        to load in less than 2 seconds.
+                      </Text>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col gap-5 items-start justify-start my-0 w-full">
+                    <Text
+                      className="text-gray-900 text-xl tracking-[-0.40px] w-full"
+                      size="txtManropeSemiBold20Gray900"
+                    >
+                      Performance: Faster Loading Speed
+                    </Text>
+                    <div className="flex flex-col gap-5 items-start justify-start w-full">
+                      <Text
+                        className="text-gray-600 text-lg w-full"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        Dynamic site CMS like WordPress has a greater
+                        dependency. They require an operating system like Linux
+                      </Text>
+                      <Text
+                        className="leading-[180.00%] max-w-[894px] md:max-w-full text-gray-600 text-lg"
+                        size="txtManropeRegular18Gray600"
+                      >
+                        Unlike dynamic websites, you don’t have to depend on
+                        plugins to add functionalities to your static site.
+                        Instead, you can create or include features directly
+                        into files. Or, you can insert widgets using a snippet.
+                      </Text>
+                    </div>
+                  </div>
+                </List>
+              </div>
+              <div className="flex flex-col gap-6 items-start justify-start w-full">
+                <div className="flex flex-col gap-4 items-start justify-start w-full">
+                  <Text
+                    className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                    size="txtManropeExtraBold28"
+                  >
+                    Images
+                  </Text>
+                  <Text
+                    className="leading-[180.00%] max-w-[996px] md:max-w-full text-gray-600 text-lg"
+                    size="txtManropeRegular18Gray600"
+                  >
+                    Being a fast loading and more secure website, you can choose
+                    a static website for beginner to medium level workload.
+                    Hopefully, you have got the answer to what is a static
+                    website and why should you use it. Decide carefully does
+                    static sites are enough for your need.
+                  </Text>
+                </div>
+                <Img
+                  className="h-[532px] md:h-auto object-cover rounded-tl-[10px] rounded-tr-[10px] w-full"
+                  src="images/img_rectangle5619_532x996.png"
+                  alt="rectangle5619"
+                />
+              </div>
+              <div className="flex flex-col md:gap-10 gap-[60px] items-start justify-start w-full">
+                <div className="flex flex-col gap-6 items-start justify-start w-full">
+                  <div className="flex flex-col gap-4 items-start justify-start w-full">
+                    <Text
+                      className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                      size="txtManropeExtraBold28"
+                    >
+                      Lists
+                    </Text>
+                    <Text
+                      className="leading-[180.00%] max-w-[996px] md:max-w-full text-gray-600 text-lg"
+                      size="txtManropeRegular18Gray600"
+                    >
+                      Being a fast loading and more secure website, you can
+                      choose a static website for beginner to medium level
+                      workload. Hopefully, you have got the answer to what is a
+                      static website and why should you use it. Decide carefully
+                      does static sites are enough for your need.
+                    </Text>
+                  </div>
+                  <div className="flex flex-col gap-4 items-start justify-start w-full">
+                    <div className="flex flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Performance: Faster Loading Speed
+                      </Text>
+                    </div>
+                    <div className="flex flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Less Server-side Dependencies
+                      </Text>
+                    </div>
+                    <div className="flex sm:flex-col flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Flexibility: More Freedom to Develop Websites
+                      </Text>
+                    </div>
+                    <div className="flex flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Security: A More Secure Website
+                      </Text>
+                    </div>
+                    <div className="flex sm:flex-col flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Scalability: Capability to Handle Massive Traffic
+                      </Text>
+                    </div>
+                    <div className="flex sm:flex-col flex-row gap-3 items-center justify-start w-full">
+                      <div className="bg-gray-600 h-2.5 rounded-[50%] w-2.5"></div>
+                      <Text
+                        className="text-gray-600 text-lg w-auto"
+                        size="txtManropeSemiBold18Gray600"
+                      >
+                        Hosting and Pricing: Saves Your Budget For Good
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4 items-start justify-start w-full">
+                  <div className="flex flex-row gap-[15px] items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg"
+                      size="txtManropeBold18Gray600"
+                    >
+                      01.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Performance: Faster Loading Speed
+                    </Text>
+                  </div>
+                  <div className="flex flex-row gap-[11px] items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeBold18Gray600"
+                    >
+                      02.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Less Server-side Dependencies
+                    </Text>
+                  </div>
+                  <div className="flex sm:flex-col flex-row gap-3 items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeBold18Gray600"
+                    >
+                      03.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Flexibility: More Freedom to Develop Websites
+                    </Text>
+                  </div>
+                  <div className="flex flex-row gap-3 items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeBold18Gray600"
+                    >
+                      04.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Security: A More Secure Website
+                    </Text>
+                  </div>
+                  <div className="flex sm:flex-col flex-row gap-3 items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeBold18Gray600"
+                    >
+                      05.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Scalability: Capability to Handle Massive Traffic
+                    </Text>
+                  </div>
+                  <div className="flex sm:flex-col flex-row gap-[11px] items-center justify-start w-full">
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeBold18Gray600"
+                    >
+                      06.
+                    </Text>
+                    <Text
+                      className="text-gray-600 text-lg w-auto"
+                      size="txtManropeSemiBold18Gray600"
+                    >
+                      Hosting and Pricing: Saves Your Budget For Good
+                    </Text>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-4 items-start justify-start w-full">
+                <Text
+                  className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                  size="txtManropeExtraBold28"
+                >
+                  Link
+                </Text>
+                <Text
+                  className="leading-[180.00%] text-gray-600 text-lg"
+                  size="txtManropeRegular18Gray600"
+                >
+                  <>
+                    Yes, a static website may have all its benefits, but is it
+                    suitable for you? That’s a big question. It depends on why
+                    you are going to build a website, what purpose it will
+                    serve. That’s why you must when you should use a static
+                    website.
+                    <br />
+                    The followings are the common applications where using the
+                    static website is the best choice. - Blog sites- - Small
+                    business websites - Websites Under-Development - Personal
+                    Portfolio sites - Websites that contain basic information
+                  </>
+                </Text>
+              </div>
+              <div className="flex flex-col gap-10 items-start justify-start w-full">
+                <div className="flex flex-col gap-4 items-start justify-start w-full">
+                  <Text
+                    className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
+                    size="txtManropeExtraBold28"
+                  >
+                    Tables
+                  </Text>
+                  <Text
+                    className="leading-[180.00%] max-w-[996px] md:max-w-full text-gray-600 text-lg"
+                    size="txtManropeRegular18Gray600"
+                  >
+                    The followings are the common applications where using the
+                    static website is the best choice. - Blog sites- - Small
+                    business websites.
+                  </Text>
+                </div>
+                <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start px-10 sm:px-5 py-[50px] rounded-[10px] w-full">
+                  <div className="overflow-auto w-full">
+                    <ReactTable
+                      columns={tableColumns}
+                      data={tableData.current}
+                      rowClass={""}
+                      headerClass=""
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-6 items-start justify-start w-full">
+                <Text
+                  className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-full"
+                  size="txtManropeBold24Gray900"
+                >
+                  Writen by
+                </Text>
+                <div className="flex flex-col items-center justify-between md:pr-10 sm:pr-5 pr-[568px] w-full">
+                  <div className="flex sm:flex-col flex-row gap-6 items-center justify-start max-w-[836px] w-full">
+                    <Img
+                      className="h-[100px] md:h-auto rounded-[50%] w-[100px]"
+                      src="images/img_profilepicture.png"
+                      alt="profilepicture"
+                    />
+                    <div className="flex flex-col gap-2 items-start justify-start w-[165px]">
+                      <Text
+                        className="text-2xl md:text-[22px] text-gray-900 sm:text-xl tracking-[-0.48px] w-auto"
+                        size="txtManropeBold24Gray900"
+                      >
+                        Kristin Watson
+                      </Text>
+                      <Text
+                        className="text-base text-gray-600 w-full"
+                        size="txtManropeSemiBold16Gray600"
+                      >
+                        Co-founder and CDO
+                      </Text>
+                    </div>
+                    <div className="flex flex-row gap-1.5 items-center justify-start w-auto">
+                      <div className="bg-bluegray-100 h-2 rounded-[50%] w-2"></div>
+                      <Text
+                        className="text-base text-gray-600 w-auto"
+                        size="txtManropeSemiBold16Gray600"
+                      >
+                        July 20, 2022
+                      </Text>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </InfoWindow>
-      )}
-      <Circle
-        center={center}
-        radius={searchRadius}
-        options={{
-          strokeColor: "#FF0000",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#FF0000",
-          fillOpacity: 0.25,
-          clickable: false,
-        }}
-      />
-    </GoogleMap>
-  ) : (
-    <div>Loading...</div>
+        </div>
+        <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
+          <div className="flex flex-col gap-10 items-start justify-start max-w-[1200px] mx-auto w-full">
+            <Text
+              className="text-4xl sm:text-[32px] md:text-[34px] text-gray-900 tracking-[-0.72px] w-full"
+              size="txtManropeExtraBold36"
+            >
+              Recent News
+            </Text>
+            <List
+              className="sm:flex-col flex-row gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-start w-full"
+              orientation="horizontal"
+            >
+              {new Array(3).fill({}).map((props, index) => (
+                <React.Fragment key={`BlogPageColumnactive${index}`}>
+                  <BlogPageColumnactive
+                    className="flex flex-1 flex-col gap-6 items-start justify-start w-full"
+                    {...props}
+                  />
+                </React.Fragment>
+              ))}
+            </List>
+          </div>
+        </div>
+        <LandingPageFooter className="bg-white-A700 flex gap-2 items-center justify-center md:px-5 px-[120px] py-20 w-full" />
+      </div>
+    </>
   );
-}
+};
 
-export default NearbyPlacesComponent;
-
-
-// import React, { useState } from 'react';
-// import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-
-
-// // Example center, you can use state to change this based on geocoding result
-// const center = {
-//   lat: 23.6850,
-//   lng: 90.3563
-// };
-
-// const API_KEY = "AIzaSyC2qBiJzOitO345ed0T-BAVgnM0XRnOH8g"; // Replace with your actual Google API Key
-
-// function MyMapComponent() {
-//   const [location, setLocation] = useState(center);
-
-//   const geocodeLocation = (areaName) => {
-//     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(areaName)}&key=${API_KEY}`;
-
-//     fetch(url)
-//       .then(response => response.json())
-//       .then(data => {
-//         if (data.status === 'OK') {
-//           const { lat, lng } = data.results[0].geometry.location;
-//           setLocation({ lat, lng });
-//           console.log("Geocoding success:", lat, lng);
-//         } else {
-//           console.error("Geocoding failed:", data.status);
-//         }
-//       })
-//       .catch(error => console.error("Error:", error));
-//   };
-
-//   return (
-//     <LoadScript
-//       googleMapsApiKey={API_KEY}
-//     >
-//       <GoogleMap
-//         mapContainerClassName='w-full h-[100vh]'
-//         center={location}
-//         zoom={9}
-//       >
-//         <Marker position={location} />
-//         {/* Your map components */}
-//       </GoogleMap>
-//       <input type="text" placeholder="Enter location" onBlur={(e) => geocodeLocation(e.target.value)} className="border p-2 m-2" />
-//       <button onClick={() => geocodeLocation('Banasree, Dhaka')}>Geocode Gulshan</button>
-//     </LoadScript>
-//   )
-// }
-
-// export default React.memo(MyMapComponent);
+export default BlogDetailsPage;
