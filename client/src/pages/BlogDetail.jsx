@@ -23,10 +23,28 @@ const BlogDetail = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const blogResponse = await fetch(`/api/blogs/showBlog/${id}`);
-        const userUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvote/${id}`, {});
+        const blogResponse = await fetch(`/api/blogs/showBlog/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+        const userUpvoteStatusResponse = await fetch(`/api/blogs/checkUpvote/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
 
-        const userDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvote/${id}`, {});
+        const userDownvoteStatusResponse = await fetch(`/api/blogs/checkDownvote/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
 
         console.log('in fetchBlog id:', id);
   
@@ -54,14 +72,25 @@ const BlogDetail = () => {
 
     const fetchComments = async () => {
       try{
-        const response = await axios.get(`/api/blogs/showAllComments/${id}`);
+        const response = await axios.get(`/api/blogs/showAllComments/${id}`, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        });
 
         console.log('in fetchComments response:', response);
         setComments(response.data);
 
         console.log('in fetchComments id:', id);
 
-        const voteStatusResponse = await fetch(`/api/blogs/checkVoteComment/${id}`, {});
+        const voteStatusResponse = await fetch(`/api/blogs/checkVoteComment/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
         console.log('in fetchComments voteStatusResponse:', voteStatusResponse);
         if(voteStatusResponse.ok){
           const voteStatusData = await voteStatusResponse.json();
@@ -102,7 +131,13 @@ const BlogDetail = () => {
   // Refactored vote handling logic to reduce duplication
   const handleVoteChange = async (endpoint, setState, countKey, delta) => {
     try {
-      const response = await axios.put(endpoint);
+      const response = await axios.put(endpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      
+      });
       if (response.status === 200) {
         setState(prevState => !prevState);
         setBlog(prevBlog => ({
@@ -124,6 +159,7 @@ const BlogDetail = () => {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ blogId: id, content: comment }),
       });
   
@@ -143,7 +179,12 @@ const BlogDetail = () => {
     try {
       console.log('in handleCommentVoteChange endpoint:', endpoint);
       console.log('in handleCommentVoteChange newStatus:', newStatus);
-      const response = await axios.put(endpoint);
+      const response = await axios.put(endpoint, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      });
       if (response.status === 200) {
         // Directly update the specific index in the commentVoteStatuses array
         setCommentVoteStatuses(prevStatuses =>
