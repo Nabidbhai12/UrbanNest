@@ -13,31 +13,23 @@ const userListSchema = new mongoose.Schema({
       ref: 'Listing'
     }
   ],
-  boughtList: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Listing'
-    }
-  ],
+
   soldList: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Listing'
     }
   ],
-  //another list which keeps the property he wants to sell
+
   sellingList: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Listing'
     }
   ],
-  rentedList: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Listing'
-    }
-  ],
+  
+  //another list which keeps the property he wants to sell
+ 
   createdAt: {
     type: Date,
     default: Date.now
