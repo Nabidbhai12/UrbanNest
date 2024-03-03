@@ -12,6 +12,7 @@ import { Text } from "../components/text";
 import { List } from "../components/list";
 import { Slider } from "../components/slider";
 import { ReactTable } from "../components/ReactTable";
+import { useSelector } from "react-redux";
 
 import BlogPageColumnactive from "../components/BlogPageColumnactive";
 import LandingPageFooter from "../components/LandingPageFooter";
@@ -134,6 +135,12 @@ const BlogDetail = () => {
   const [hasDownvoted, setHasDownvoted] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentVoteStatuses, setCommentVoteStatuses] = useState([]);
+  const [blogs, setBlogs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+
+  console.log(currentUser);
   //const [owner, setOwner] = useState(null);
   const { id } = useParams();
   const { commentId } = useParams();
@@ -242,9 +249,69 @@ const BlogDetail = () => {
       }
     };
 
+    const verifyLoginStatus = async () => {
+      try {
+        const response = await axios.get("/api/users/verify", {
+          withCredentials: true,
+        });
+        setIsLoggedIn(response.data.isLoggedIn);
+        console.log("Login status:", response.data.isLoggedIn);
+      } catch (error) {
+        console.error("Error verifying login status:", error);
+      }
+    };
+
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch("/api/blogs/showAllBlogsByDateDesc", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+        const data = await response.json();
+        console.log("data received by client side : ", data);
+        for (var i = 0; i < data.length; i++) {
+          if ((data[i]._id = id)) {
+            data.splice(i, 1);
+            break;
+          }
+        }
+        console.log(data);
+        setBlogs(data);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      }
+    };
+
     fetchBlog();
     fetchComments();
+    verifyLoginStatus();
+    fetchBlogs();
   }, [id, navigate]);
+
+  const blogsPerPage = 3;
+  const indexOfLastBlog = currentPage * blogsPerPage;
+  const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
+  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
+
+  function getRandomElements(arr, numElements = 3) {
+    const shuffledArray = [...arr]; // Clone the array to avoid mutating the original
+    let count = Math.min(numElements, arr.length);
+    const selectedElements = [];
+
+    while (count) {
+      const randomIndex = Math.floor(Math.random() * shuffledArray.length);
+      selectedElements.push(shuffledArray[randomIndex]);
+      shuffledArray.splice(randomIndex, 1); // Remove the selected element
+      count -= 1;
+    }
+
+    return selectedElements;
+  }
+
+  const selectedBlogs = getRandomElements(currentBlogs);
 
   const handleUpVote = async () => {
     // If already downvoted, first reverse the downvote
@@ -490,6 +557,23 @@ const BlogDetail = () => {
     blog.tags
   );
 
+  const handleDelete = async (blogid) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      try {
+        const response = await axios.delete(`/api/blogs/deleteBlog/${blogid}`, {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          setBlogs(blogs.filter((blog) => blog._id !== blogid));
+          navigate(-1);
+        }
+      } catch {
+        console.error("Error deleting blog:", error);
+      }
+    }
+  };
+
   console.log(urls);
 
   return (
@@ -537,6 +621,37 @@ const BlogDetail = () => {
                 </div>
               </div>
             </div>
+            <div className="flex justify-left space-x-4 mt-5">
+              {tags.map((tag) => (
+                <Link to={`/blogHome/${tag}`} key={tag}>
+                  <span
+                    key={tag}
+                    className="py-1 px-3 text-sm font-semibold bg-gray-401 rounded-full text-gray-700 mb-2"
+                  >
+                    {tag}
+                  </span>
+                </Link>
+              ))}
+            </div>
+            {currentUser._id == blog.author? (
+              <div className="flex justify-center gap-[20px]">
+              <Link to={`/myblogs/editBlog/${blog._id}`}>
+                {console.log("In link: ", blog._id)}
+                <button className="bg-gray-51 border border-black border-opacity-40 hover:bg-black hover:text-white-A700 text-black font-bold py-2 px-4 rounded">
+                  Edit
+                </button>
+              </Link>
+              <button
+                onClick={() => handleDelete(blog._id)}
+                className="bg-gray-51 border border-black border-opacity-40 hover:bg-black hover:text-white-A700 text-black font-bold py-2 px-4 rounded"
+              >
+                Delete
+              </button>
+            </div>
+            ) : (
+              <div></div>
+            )}
+            
             <div className="flex flex-col md:gap-10 gap-[84px] items-start justify-start w-full">
               <div className="flex md:flex-col flex-row gap-4 items-end justify-between w-full">
                 <div className="flex flex-1 flex-col gap-6 items-start justify-start w-full">
@@ -594,155 +709,164 @@ const BlogDetail = () => {
               </div>
             </div>
           </div>
-
-          {/* Upvote/Downvote */}
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={handleUpVote}
-              className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
-                hasUpvoted ? "bg-green-600" : "bg-gray-100"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                {/* Use an arrow-up icon for upvoted */}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 15l7-7 7 7"
-                />
-              </svg>
-            </button>
-            <span className="text-xl font-bold">{blog.numOfUpvotes || 0}</span>
-            <button
-              onClick={handleDownVote}
-              className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
-                hasDownvoted ? "bg-red-600" : "bg-gray-100"
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                {/* Use an arrow-down icon for downvoted */}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
-            <span className="text-xl font-bold">
-              {blog.numOfDownvotes || 0}
-            </span>
-          </div>
-
-          {/* Comment section */}
-
-          <div className="px-4 py-4 sm:px-6 border-t">
-            <form onSubmit={handleCommentSubmit} className="flex items-start justify-start">
-              <input
-                type="text"
-                className="form-input flex-1"
-                placeholder="Post your comment now~"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-              />
+          <div className="flex flex-col gap-10 items-start justify-start w-full">
+            <div className="flex items-center space-x-4">
               <button
-                type="submit"
-                className="ml-4 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-md"
+                onClick={handleUpVote}
+                className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
+                  hasUpvoted ? "bg-green-600" : "bg-gray-100"
+                }`}
               >
-                Send
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  {/* Use an arrow-up icon for upvoted */}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 15l7-7 7 7"
+                  />
+                </svg>
               </button>
-            </form>
+              <span className="text-xl font-bold">
+                {blog.numOfUpvotes || 0}
+              </span>
+              <button
+                onClick={handleDownVote}
+                className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
+                  hasDownvoted ? "bg-red-600" : "bg-gray-100"
+                }`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  {/* Use an arrow-down icon for downvoted */}
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              <span className="text-xl font-bold">
+                {blog.numOfDownvotes || 0}
+              </span>
+            </div>
           </div>
 
-          {/* Some random shit */}
-
-          <div className="items-start justify-start container max-w-2xl mx-auto">
-            <h1 className="text-3xl font-semibold pt-5 pb-2">Comments</h1>
-            {comments.length > 0 ? (
-              comments.map((comment, index) => (
-                <div
-                  key={comment._id}
-                  className="bg-yellow-50-custom p-3 my-2 rounded-2xl shadow"
+          <div className="flex flex-col gap-10 items-start justify-start w-full">
+            <div className="px-4 py-4 sm:px-6 border-t">
+              <form
+                onSubmit={handleCommentSubmit}
+                className="flex items-center justify-center gap-[20px]"
+              >
+                <input
+                  type="text"
+                  className="form-input flex-l block w-[500px] mt-1 h-auto rounded-[10px] font-extrabold font-manrope"
+                  placeholder="Post your comment here"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="font-extrabold font-manrope shadow-xl transition duration-300 ease-in-out cursor-pointer  items-center justify-center px-[50px] py-[10px] bg-gray-200 text-black rounded-[10px] hover:bg-black hover:text-white-A700"
                 >
-                  <p className="break-words text-xl">{comment.content}</p>
+                  Post Comment
+                </button>
+              </form>
+            </div>
+          </div>
 
-                  <div className="text-xs text-gray-500">
-                    {comment.authorName} -{" "}
-                    {new Date(comment.createdAt).toLocaleString()}
-                  </div>
+          <div className="flex flex-col gap-10 items-start justify-start w-full">
+            <div className="items-start justify-start container max-w-2xl mx-auto">
+              <h1 className="text-3xl font-extrabold font-manrope pt-5 pb-2">
+                Comments
+              </h1>
+              {comments.length > 0 ? (
+                comments.map((comment, index) => (
+                  <div
+                    key={comment._id}
+                    className="bg-white-A700 p-3 my-2 rounded-2xl shadow hover:shadow-xl"
+                  >
+                    <p className="break-words text-xl">{comment.content}</p>
 
-                  <div className="flex items-center space-x-4 mt-2">
-                    <button
-                      onClick={() => handleCommentUpvote(comment._id, index)}
-                      className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
-                        commentVoteStatuses[index] === 1
-                          ? "bg-green-600"
-                          : "bg-gray-100"
-                      }`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                    <div className="text-xs text-gray-500">
+                      {comment.authorName} -{" "}
+                      {new Date(comment.createdAt).toLocaleString()}
+                    </div>
+
+                    <div className="flex items-center space-x-4 mt-2">
+                      <button
+                        onClick={() => handleCommentUpvote(comment._id, index)}
+                        className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
+                          commentVoteStatuses[index] === 1
+                            ? "bg-green-600"
+                            : "bg-gray-100"
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M5 15l7-7 7 7"
-                        />
-                      </svg>
-                    </button>
-                    <span className="text-xl font-bold">
-                      {comment.numOfUpvotes || 0}
-                    </span>
-                    <button
-                      onClick={() => handleCommentDownvote(comment._id, index)}
-                      className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
-                        commentVoteStatuses[index] === -1
-                          ? "bg-red-600"
-                          : "bg-gray-100"
-                      }`}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 15l7-7 7 7"
+                          />
+                        </svg>
+                      </button>
+                      <span className="text-xl font-bold">
+                        {comment.numOfUpvotes || 0}
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleCommentDownvote(comment._id, index)
+                        }
+                        className={`p-2 border rounded-full hover:bg-gray-100 text-black ${
+                          commentVoteStatuses[index] === -1
+                            ? "bg-red-600"
+                            : "bg-gray-100"
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
-                    </button>
-                    <span className="text-xl font-bold">
-                      {comment.numOfDownvotes || 0}
-                    </span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </button>
+                      <span className="text-xl font-bold">
+                        {comment.numOfDownvotes || 0}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <p>No comments yet.</p>
-            )}
+                ))
+              ) : (
+                <p>No comments yet.</p>
+              )}
+            </div>
           </div>
         </div>
         <div className="flex flex-col font-manrope items-start justify-start md:px-10 sm:px-5 px-[120px] w-full">
@@ -757,7 +881,7 @@ const BlogDetail = () => {
               className="sm:flex-col flex-row gap-6 grid sm:grid-cols-1 md:grid-cols-2 grid-cols-3 justify-start w-full"
               orientation="horizontal"
             >
-              {new Array(3).fill({}).map((props, index) => (
+              {selectedBlogs.map((props, index) => (
                 <React.Fragment key={`BlogPageColumnactive${index}`}>
                   <BlogPageColumnactive
                     className="flex flex-1 flex-col gap-6 items-start justify-start w-full"

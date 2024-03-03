@@ -15,6 +15,7 @@ import LocationShowModal from "../modals/LocationShowModal.jsx";
 import LandingPageCard from "../components/LandingPageCard.jsx";
 import LandingPageFooter from "../components/LandingPageFooter.jsx";
 import NearbyPlacesModal from "../modals/NearbyPlacesModal.jsx";
+import { useSelector } from "react-redux";
 
 const PropertyDetailsPage = () => {
   const API_KEY =
@@ -28,6 +29,9 @@ const PropertyDetailsPage = () => {
   const [images, setImages] = useState([]);
   const [center, setCenter] = useState(null);
 
+  const { currentUser } = useSelector((state) => state.user);
+
+  console.log(currentUser);
   //const [apartment, setApartment] = useState([]);
 
   console.log(id);
@@ -107,7 +111,7 @@ const PropertyDetailsPage = () => {
     setActiveButton(buttonName);
     setNearbyPlacesModal(true);
     console.log(activeButton);
-  }
+  };
 
   useEffect(() => {
     setMapProps([activeButton]);
@@ -117,7 +121,13 @@ const PropertyDetailsPage = () => {
   console.log(center);
 
   const fetchNeaby_Barikoi = async () => {
-    const request_link = "https://barikoi.xyz/v2/api/search/nearby/0.5/10?api_key= + " + API_KEY + "&longitude=" + center.lng+ "&latitude=" + center.lat;
+    const request_link =
+      "https://barikoi.xyz/v2/api/search/nearby/0.5/10?api_key= + " +
+      API_KEY +
+      "&longitude=" +
+      center.lng +
+      "&latitude=" +
+      center.lat;
 
     try {
       console.log("Inside fnction");
@@ -137,11 +147,11 @@ const PropertyDetailsPage = () => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchNeaby_Barikoi();
-  },[center])
+    //fetchNeaby_Barikoi();
+  }, [center]);
 
   const [isOpenLocationShowModal, setLocationShowModal] = React.useState(false);
   const [isOpenNearbyPlacesModal, setNearbyPlacesModal] = React.useState(false);
@@ -153,10 +163,10 @@ const PropertyDetailsPage = () => {
     setLocationShowModal(false);
   }
 
-  function handleOpenNearbyPlacesModal(){
+  function handleOpenNearbyPlacesModal() {
     setNearbyPlacesModal(true);
   }
-  function handleCloseNearbyPlacesModal(){
+  function handleCloseNearbyPlacesModal() {
     setNearbyPlacesModal(false);
   }
 
@@ -275,7 +285,9 @@ const PropertyDetailsPage = () => {
                                   Elementary Education
                                 </Button>
                                 <Button
-                                  onClick={() => handleClickNearby("university")}
+                                  onClick={() =>
+                                    handleClickNearby("university")
+                                  }
                                   className={`border border-bluegray-100 border-solid cursor-pointer flex-1 font-semibold py-[11px] rounded-[10px] text-base text-center w-full ${
                                     activeButton === "university"
                                       ? "bg-black text-white-A700"
@@ -295,7 +307,9 @@ const PropertyDetailsPage = () => {
                                   Hospital
                                 </Button>
                                 <Button
-                                  onClick={() => handleClickNearby("restaurant")}
+                                  onClick={() =>
+                                    handleClickNearby("restaurant")
+                                  }
                                   className={`border border-bluegray-100 border-solid cursor-pointer flex-1 font-semibold py-[11px] rounded-[10px] text-base text-center w-full ${
                                     activeButton === "restaurant"
                                       ? "bg-black text-white-A700"
@@ -533,7 +547,7 @@ const PropertyDetailsPage = () => {
                           </List>
                         </div>
                       </div>
-                      <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-col items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
+                      <div className="bg-white-A700 border border-bluegray-100 border-solid flex flex-row items-start justify-start p-10 sm:px-5 rounded-[10px] w-full">
                         <div className="flex flex-col gap-[26px] items-start justify-start w-full">
                           <Text
                             className="sm:text-2xl md:text-[26px] text-[28px] text-gray-900 tracking-[-0.56px] w-full"
@@ -544,7 +558,7 @@ const PropertyDetailsPage = () => {
                           <div className="flex flex-row gap-6 items-center justify-start w-full">
                             <Img
                               className="h-[150px] md:h-auto object-cover rounded-[10px] w-[150px]"
-                              src="images/img_rectangle5599.png"
+                              src="../../public/images/img_ellipse2695.png"
                               alt="rectangle5599"
                             />
                             <div className="flex flex-col gap-[3px] items-start justify-start w-auto">
@@ -558,27 +572,27 @@ const PropertyDetailsPage = () => {
                                 <div className="flex flex-row gap-1 items-start justify-start w-auto">
                                   <Img
                                     className="h-4 w-4"
-                                    src="images/img_star.svg"
+                                    src="../../public/images/img_star.svg"
                                     alt="star"
                                   />
                                   <Img
                                     className="h-4 w-4"
-                                    src="images/img_star.svg"
+                                    src="../../public/images/img_star.svg"
                                     alt="star_One"
                                   />
                                   <Img
                                     className="h-4 w-4"
-                                    src="images/img_star.svg"
+                                    src="../../public/images/img_star.svg"
                                     alt="star_Two"
                                   />
                                   <Img
                                     className="h-4 w-4"
-                                    src="images/img_star.svg"
+                                    src="../../public/images/img_star.svg"
                                     alt="star_Three"
                                   />
                                   <Img
                                     className="h-4 w-4"
-                                    src="images/img_star_gray_600.svg"
+                                    src="../../public/images/img_star_gray_600.svg"
                                     alt="star_Four"
                                   />
                                 </div>
@@ -592,7 +606,7 @@ const PropertyDetailsPage = () => {
                               <div className="flex flex-row gap-2.5 items-center justify-start w-full">
                                 <Img
                                   className="h-5 w-5"
-                                  src="images/img_mail_gray_600.svg"
+                                  src="../../public/images/img_mail_gray_600.svg"
                                   alt="mail"
                                 />
                                 <Text
@@ -605,7 +619,7 @@ const PropertyDetailsPage = () => {
                               <div className="flex flex-row gap-2.5 items-center justify-start w-full">
                                 <Img
                                   className="h-5 w-5"
-                                  src="images/img_call.svg"
+                                  src="../../public/images/img_call.svg"
                                   alt="call"
                                 />
                                 <Text
@@ -618,6 +632,15 @@ const PropertyDetailsPage = () => {
                             </div>
                           </div>
                         </div>
+                        {currentUser._id !== property.owner ? (
+                          <div className="flex flex-col">
+                          <Button className="border-[5px] mt-[70px] border-black border-opacity-40 font-semibold font-manrope text-black rounded-[10px] hover:text-orange-800 hover:border-orange-800">
+                            Interested? Communicate with the seller.
+                          </Button>
+                        </div>
+                        ) : (
+                          <div></div>
+                        )}
                       </div>
                     </div>
                     {/*
@@ -640,7 +663,7 @@ const PropertyDetailsPage = () => {
                               prefix={
                                 <Img
                                   className="mt-auto mb-px h-6 mr-3.5"
-                                  src="images/img_user.svg"
+                                  src="../../public/images/img_user.svg"
                                   alt="user"
                                 />
                               }
@@ -654,7 +677,7 @@ const PropertyDetailsPage = () => {
                               prefix={
                                 <Img
                                   className="mt-auto mb-px h-6 mr-3.5"
-                                  src="images/img_mail_gray_600_24x24.svg"
+                                  src="../../public/images/img_mail_gray_600_24x24.svg"
                                   alt="mail"
                                 />
                               }
@@ -668,7 +691,7 @@ const PropertyDetailsPage = () => {
                               prefix={
                                 <Img
                                   className="mt-auto mb-px h-6 mr-3.5"
-                                  src="images/img_call.svg"
+                                  src="../../public/images/img_call.svg"
                                   alt="call"
                                 />
                               }
@@ -681,7 +704,7 @@ const PropertyDetailsPage = () => {
                               prefix={
                                 <Img
                                   className="mt-auto mb-px h-6 mr-3.5"
-                                  src="images/img_calendar.svg"
+                                  src="../../public/images/img_calendar.svg"
                                   alt="calendar"
                                 />
                               }
@@ -699,7 +722,32 @@ const PropertyDetailsPage = () => {
                         </Button>
                       </div>
                     </div>
-                      */}
+                            */}
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
+                <div className="flex flex-col gap-10 items-center justify-center max-w-[1200px] mx-auto w-full">
+                  <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
+                    <Button
+                      className="common-pointer bg-transparent border border-black hover:border-orange-A700 px-[5px] py-[7px] rounded-[10px] cursor-pointer flex items-center justify-center min-w-[124px]"
+                      onClick={() => navigate("/listing")}
+                      rightIcon={
+                        <Img
+                          className="h-6 mb-[3px] ml-2"
+                          src="../../public/images/img_arrowright.svg"
+                          alt="arrow_right"
+                        />
+                      }
+                    >
+                      {currentUser._id !== property.owner ? (
+                        <div className="font-bold text-left text-lg text-orange-A700">
+                        Add to Wishlist
+                      </div>
+                      ) : (
+                        <div className="font-bold text-left text-lg text-orange-A700">Sold</div>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -718,7 +766,7 @@ const PropertyDetailsPage = () => {
                       rightIcon={
                         <Img
                           className="h-6 mb-[3px] ml-2"
-                          src="images/img_arrowright.svg"
+                          src="../../public/images/img_arrowright.svg"
                           alt="arrow_right"
                         />
                       }

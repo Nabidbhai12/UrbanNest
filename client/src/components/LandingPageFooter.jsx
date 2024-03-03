@@ -17,7 +17,7 @@ const LandingPageFooter = (props) => {
               <div className="flex flex-row gap-[11px] h-10 md:h-auto items-center justify-start w-[341px]">
                 <Img
                   className="h-10 w-10"
-                  src="images/img_home.svg"
+                  src="../../public/images/img_home.svg"
                   alt="home_One"
                 />
                 <Text
@@ -56,31 +56,31 @@ const LandingPageFooter = (props) => {
                   <div className="flex flex-col h-[30px] items-center justify-start w-[30px]">
                     <Img
                       className="h-[30px] w-[30px]"
-                      src="images/img_plus.svg"
+                      src="../../public/images/img_plus.svg"
                       alt="plus"
                     />
                   </div>
                   <div className="flex flex-col h-[30px] items-center justify-start w-[30px]">
                     <Img
                       className="h-[30px] w-[30px]"
-                      src="images/img_twitter.svg"
+                      src="../../public/images/img_twitter.svg"
                       alt="twitter"
                     />
                   </div>
                   <Img
                     className="h-[30px] w-[30px]"
-                    src="images/img_instagram_orange_a700_30x30.svg"
+                    src="../../public/images/img_instagram_orange_a700_30x30.svg"
                     alt="instagram"
                   />
                   <Img
                     className="h-[30px] w-[30px]"
-                    src="images/img_linkedin.svg"
+                    src="../../public/images/img_linkedin.svg"
                     alt="linkedin"
                   />
                   <div className="flex flex-col h-[30px] items-center justify-start w-[30px]">
                     <Img
                       className="h-[30px] w-[30px]"
-                      src="images/img_clock_orange_a700.svg"
+                      src="../../public/images/img_clock_orange_a700.svg"
                       alt="clock"
                     />
                   </div>

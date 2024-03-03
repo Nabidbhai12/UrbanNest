@@ -19,7 +19,7 @@ const LandingPageCard = (props) => {
         <div className="bg-gray-51 border border-red-101 border-solid flex flex-col items-start justify-start px-5 py-[30px] rounded-[10px] w-full">
           <div className="flex flex-col gap-[27px] items-start justify-start w-full">
             <div className="flex flex-row gap-3 items-center justify-start w-full">
-              <Img className="h-6 w-6" src="images/img_eye.svg" alt="eye" />
+              <Img className="h-6 w-6" src="../../public/images/img_eye.svg" alt="eye" />
               <Text
                 className="flex-1 text-base text-gray-900 w-auto"
                 size="txtManropeSemiBold16"
@@ -32,7 +32,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_bookmark.svg"
+                    src="../../public/images/img_bookmark.svg"
                     alt="bookmark"
                   />
                   <Text
@@ -45,7 +45,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_ticket.svg"
+                    src="../../public/images/img_ticket.svg"
                     alt="ticket"
                   />
                   <Text
@@ -60,7 +60,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_icon.svg"
+                    src="../../public/images/img_icon.svg"
                     alt="icon"
                   />
                   <Text
@@ -73,7 +73,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_apartment.svg"
+                    src="../../public/images/img_apartment.svg"
                     alt="settings"
                   />
                   <Text
@@ -88,7 +88,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_area.svg"
+                    src="../../public/images/img_area.svg"
                     alt="icon"
                   />
                   <Text
@@ -101,7 +101,7 @@ const LandingPageCard = (props) => {
                 <div className="flex flex-1 flex-row gap-3 items-center justify-start w-full">
                   <Img
                     className="h-5 w-5"
-                    src="images/img_location_city.svg"
+                    src="../../public/images/img_location_city.svg"
                     alt="settings"
                   />
                   <Text
