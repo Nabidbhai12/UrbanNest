@@ -95,5 +95,26 @@ export const getConversationById=async(req,res)=>
   }
 }
 
+export const getConversation = async (req, res) => {
+  console.log(req.body);
+  console.log(req.user.id);
+  const { senderId ,receiverId } = req.body;
+  try {
+    let conversation = await ConversationModel.findOne({
+      $or: [
+        { sender: req.user.id, receiver: receiverId },
+        { sender: receiverId, receiver: req.user.id }
+      ]
+    });
+
+    if (!conversation) {
+      console.log("no conversation found");
+      conversation = null;
+    }
+    res.status(201).json({ message: 'conversation created successfully', conversationId: conversation._id });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 

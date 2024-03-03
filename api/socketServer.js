@@ -2,11 +2,14 @@
 import { Server } from 'socket.io';
 import ConversationModel  from './models/conversation.model.js'; // Adjust imports based on your project structure
 import  MessageModel  from './models/message.model.js'; // Adjust imports based on your project structure
+import cors from 'cors';
 
 const initSocketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: "*", // Adjust this in production
+      origin: ['http://localhost:5173'], // Adjust according to your needs
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 
@@ -41,6 +44,17 @@ const initSocketServer = (httpServer) => {
         await message.save();
 
         io.to(conversation._id.toString()).emit('newMessage', message);
+        const messageForClient = {
+          _id: message._id, // the new MongoDB ObjectID
+          conversationId: conversation._id,
+          sender: senderId,
+          receiver: receiverId,
+          content: text,
+          createdAt: message.createdAt // or new Date() if not available
+        };
+
+        io.to(receiverId.toString()).emit('newMessage', messageForClient); // to the receiver
+        socket.emit('newMessage', messageForClient); // to the sender
       } catch (error) {
         console.error("Error sending/saving message:", error);
       }
