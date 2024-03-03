@@ -26,7 +26,7 @@ const chatRoom = () => {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              // Include authorization headers if necessary
+              // Include authorization headers if necessary   
             },
             credentials: 'include',
           });

@@ -1,5 +1,5 @@
 import express from 'express'
-import mongoose from 'mongoose';
+import mongoose, { set } from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route.js';
 import authRouter from './routes/auth.route.js';
@@ -10,6 +10,7 @@ import conversationRouter from './routes/conversation.route.js';
 import cookieParser from 'cookie-parser';
 import initSocketServer from './socketServer.js';
 import {createServer} from 'http';
+import cors from 'cors';
 
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{  
@@ -28,6 +29,12 @@ app.listen(3000,()=>{
 const httpServer = createServer(app);
 initSocketServer(httpServer);
 
+const corsOptions = {
+    origin: "*",
+    credentials: true,
+  };
+
+app.use(cors(corsOptions));
 
 
 app.use(express.json());

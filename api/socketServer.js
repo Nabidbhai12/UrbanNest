@@ -2,11 +2,14 @@
 import { Server } from 'socket.io';
 import ConversationModel  from './models/conversation.model.js'; // Adjust imports based on your project structure
 import  MessageModel  from './models/message.model.js'; // Adjust imports based on your project structure
+import cors from 'cors';
 
 const initSocketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
       origin: "*", // Adjust this in production
+      methods: ["GET", "POST"],
+      credentials: true,
     },
   });
 

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
+import cors from 'cors';
 
 // Assuming the server is running on the same host but different port
-const socket = io('http://localhost:4000', { withCredentials: true });
+const socket = io('http://localhost:3000', {
+    withCredentials: true,
+//   extraHeaders: {
+//     'my-custom-header': 'abcd',
+//   },
+});
 
 const Chatbox = ({ currentUser, receiverId, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -29,12 +35,13 @@ const Chatbox = ({ currentUser, receiverId, onClose }) => {
         receiverId,
         text: newMessage,
       });
+      //send message to backend
       setNewMessage('');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-100 overflow-y-auto h-full w-full flex justify-center items-center">
       <div className="relative bg-white p-4 rounded-lg shadow-lg space-y-4">
         <button className="absolute top-0 right-0 p-2" onClick={onClose}>X</button>
         <div className="h-64 overflow-auto">
@@ -51,7 +58,7 @@ const Chatbox = ({ currentUser, receiverId, onClose }) => {
           className="border p-2 w-full"
           placeholder="Type a message..."
         />
-        <button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handleSendMessage} className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">
           Send
         </button>
       </div>
