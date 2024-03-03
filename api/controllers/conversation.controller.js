@@ -82,7 +82,16 @@ console.log(conversations);
   }
 };
 
-//
+//get a conversation by id
+export const getConversationById=async(req,res)=>
+{
+  try {
+    const conversation = await ConversationModel.findById(req.params.id);
+    res.json(conversation);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 
 
