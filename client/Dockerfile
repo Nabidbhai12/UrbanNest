@@ -1,27 +1,35 @@
 # Build stage
 FROM node:16-alpine as build-stage
 
-# Set working directory
+# Set the working directory in the Docker container
 WORKDIR /app
 
-# Copy package.json and package-lock.json
+# Copy the package.json and package-lock.json (or yarn.lock) files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy project files and build
+# Copy the rest of your frontend application source code
 COPY . .
+
+# Build the application
 RUN npm run build
 
-# Production stage
+# Production stage: Use Nginx to serve the static files
 FROM nginx:alpine as production-stage
 
-# Copy built assets from build stage to nginx server
-COPY --from=build-stage /app/build /usr/share/nginx/html
+# Set working directory to nginx asset directory
+WORKDIR /usr/share/nginx/html
 
-# Expose port 80
+# Remove default nginx static assets
+RUN rm -rf ./*
+
+# Copy static assets from builder stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+
+# Containers run nginx with global directives and daemon off
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+
+# Expose port 80 to the outside once the container has launched
 EXPOSE 80
-
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"]
