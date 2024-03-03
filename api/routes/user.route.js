@@ -5,7 +5,7 @@ import { addPropertyForSale } from "../controllers/user.controller.js";
 import { getUserWishlist,isPropertyInWishlist } from "../controllers/user.controller.js";
 import { storage } from '../config/cloudinaryConfig.js';
 import { verifyLoginStatus } from '../controllers/user.controller.js';
-import { markPropertyAsSold ,addToWishList,getUserSellinglist,getUserSoldlist} from "../controllers/user.controller.js";
+import { markPropertyAsSold ,addToWishList,getUserSellinglist,getUserSoldlist,removeFromWishList} from "../controllers/user.controller.js";
 
 import multer from "multer";
 const upload = multer({ storage });
@@ -47,6 +47,8 @@ router.post(
   router.post('/addToWishList/:propertyID', authenticateToken, addToWishList);
   router.get('/getUserSellinglist', authenticateToken, getUserSellinglist);
   router.get('/getUserSoldlist', authenticateToken, getUserSoldlist);
+  router.get('/removeFromWishList',authenticateToken,removeFromWishList);
+
 
   
   
