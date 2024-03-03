@@ -10,6 +10,7 @@ import conversationRouter from './routes/conversation.route.js';
 import ConversationModel from   "./models/conversation.model.js";
 import cookieParser from 'cookie-parser';
 import initSocketServer from './socketServer.js';
+import { createServer } from 'http';
 
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{  

@@ -3,7 +3,6 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
-import UserList from "../models/userlist.model.js";
 
 export const verifyLoginStatus = (req, res) => {
   const token = req.cookies["access_token"];
