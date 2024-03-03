@@ -119,6 +119,8 @@ export const updateProfile = async (req, res) => {
       updates.password = hashedPassword;
     }
 
+    
+
     // Update user profile
     const updatedUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
