@@ -80,6 +80,7 @@ const ShowUsers = () => {
     const [users, setUsers] = useState([]);
     const [isChatroomOpen, setIsChatroomOpen] = useState(false);
     const [receiverId, setReceiverId] = useState(null);
+    const [conversationId, setConversationId] = useState(null);
     
     const currentUser = useSelector((state) => state.user);
     
@@ -117,9 +118,12 @@ const ShowUsers = () => {
         // For the purpose of this demonstration, we'll just log to the console.
     };
 
-    const handleUserClick = (id) => {
+    const handleUserClick = async(id) => {
         setReceiverId(id);
+
+        const conversation = await fetch(`api/conversation/getConversation`, currentUser._id, id);
         setIsChatroomOpen(true);
+        setConversationId(conversation._id);
     };
 
     return (

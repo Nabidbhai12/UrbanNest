@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-import cors from 'cors';
+//import { useSelector } from "react-redux";
 
 // Assuming the server is running on the same host but different port
 const socket = io('http://localhost:3000', {
     withCredentials: true,
 });
 
-const Chatbox = ({ currentUser, receiverId, onClose }) => {
+const Chatbox = ({ currentUser, receiverId, conversationId, onClose }) => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
 
@@ -17,7 +17,9 @@ const Chatbox = ({ currentUser, receiverId, onClose }) => {
 
     // Listening for new messages
     socket.on('newMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+        if (message.conversationId === conversationId) { // currentConversationId should be passed as a prop
+            setMessages((prevMessages) => [...prevMessages, message]);
+        }
     });
 
     return () => {
@@ -27,14 +29,21 @@ const Chatbox = ({ currentUser, receiverId, onClose }) => {
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
-      socket.emit('sendMessage', {
-        senderId: currentUser._id,
-        receiverId,
-        text: newMessage,
-      });
-      //send message to backend
-      setNewMessage('');
-    }
+        const messageToSend = {
+          senderId: currentUser._id,
+          receiverId,
+          text: newMessage,
+          // Add the conversationId if it exists
+          conversationId, // This should be passed as a prop to Chatbox
+        };
+    
+        socket.emit('sendMessage', messageToSend);
+        
+        // Optimistically update the message list
+        setMessages(messages => [...messages, messageToSend]);
+        
+        setNewMessage('');
+      }
   };
 
   return (

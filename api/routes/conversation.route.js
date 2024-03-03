@@ -12,6 +12,8 @@ import { getUserConversations }    from "../controllers/conversation.controller.
 
 import {getConversationById} from "../controllers/conversation.controller.js";
 
+import {getConversation} from "../controllers/conversation.controller.js";
+
 
 export default   router;
 
@@ -20,6 +22,8 @@ router.post('/sendMessage', authenticateToken,sendMessage);
 
 router.get('/getMessage', authenticateToken, getUserConversations);
 router.get('/getUsers', authenticateToken, getAllusers);
+
+router.get('/getConversation', authenticateToken, getConversation);
 
 router.put('/getOrCreateConversation/:userId', async (req, res) => {
     const { userId } = req.params; // The ID of the user selected for chatting
