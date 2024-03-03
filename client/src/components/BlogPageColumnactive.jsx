@@ -116,7 +116,7 @@ const BlogPageColumnactive = (props) => {
               </Button>
               <Img
                 className="cursor-pointer h-6 w-6 pt-[7px]"
-                src="images/img_arrowright_gray_600.svg"
+                src="../../public/images/img_arrowright_gray_600.svg"
                 alt="arrowright"
               />
             </div>
