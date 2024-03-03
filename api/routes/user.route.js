@@ -2,9 +2,10 @@
 import express from "express";
 import { authenticateToken,updateProfile,getUserDetails, getUserDetailsByID } from "../controllers/user.controller.js";
 import { addPropertyForSale } from "../controllers/user.controller.js";
-import { getUserWishlist,getUserBoughtlist,getUserSellinglist,getUserSoldlist } from "../controllers/user.controller.js";
+import { getUserWishlist,isPropertyInWishlist } from "../controllers/user.controller.js";
 import { storage } from '../config/cloudinaryConfig.js';
 import { verifyLoginStatus } from '../controllers/user.controller.js';
+import { markPropertyAsSold ,addToWishList,getUserSellinglist,getUserSoldlist} from "../controllers/user.controller.js";
 
 import multer from "multer";
 const upload = multer({ storage });
@@ -14,9 +15,7 @@ const router = express.Router();
 router.get('/verify',verifyLoginStatus);
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
-router.get('/getUserBoughtlist',authenticateToken,getUserBoughtlist);
-router.get('/getUserSellinglist',authenticateToken,getUserSellinglist);
-router.get('/getUserSoldlist',authenticateToken,getUserSoldlist);
+r
 router.get('/getUserDetails',authenticateToken,getUserDetails);
 router.get('/getUserDetailsByID/:userID', authenticateToken, getUserDetailsByID);
 router.post(
@@ -43,5 +42,14 @@ router.post(
     },
     addPropertyForSale
   );
+  router.post('/markPropertyAsSold/:propertyID', authenticateToken, markPropertyAsSold);
+  router.get('/isPropertyInWishlist/:propertyID', authenticateToken, isPropertyInWishlist);
+  router.post('/addToWishList/:propertyID', authenticateToken, addToWishList);
+  router.get('/getUserSellinglist', authenticateToken, getUserSellinglist);
+  router.get('/getUserSoldlist', authenticateToken, getUserSoldlist);
+
+  
+  
+
 
 export default router;
