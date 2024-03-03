@@ -160,7 +160,7 @@ export default function SignIn() {
     dispatch(signInStart());
 
     try {
-      const res = await fetch('/api/auth/signin', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/signin`, {
         method: 'POST',
         body: JSON.stringify(formData),
         headers: {
