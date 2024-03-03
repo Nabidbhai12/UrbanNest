@@ -73,9 +73,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Chatbox from '../components/Chatbox';
 
 const ShowUsers = () => {
     const [users, setUsers] = useState([]);
+    const [isChatroomOpen, setIsChatroomOpen] = useState(false);
+    const [receiverId, setReceiverId] = useState(null);
     
     useEffect(() => {
         const fetchUsers = async () => {
@@ -126,3 +129,5 @@ const ShowUsers = () => {
         </div>
     );
 };
+
+export default ShowUsers;
