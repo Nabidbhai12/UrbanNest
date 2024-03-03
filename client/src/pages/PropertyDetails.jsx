@@ -226,6 +226,12 @@ const PropertyDetailsPage = () => {
     }
   }
 
+  const renderButton = () => {
+    if(currentUser._id === property.owner){
+
+    }
+  }
+
   return (
     <div>
       {property && owner && images ? (
@@ -781,6 +787,7 @@ const PropertyDetailsPage = () => {
                             */}
                   </div>
                 </div>
+                
               </div>
               <div className="flex flex-col font-manrope items-center justify-center md:px-10 sm:px-5 px-[120px] w-full">
                 <div className="flex flex-col gap-10 items-center justify-center max-w-[1200px] mx-auto w-full">
