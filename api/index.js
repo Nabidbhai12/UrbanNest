@@ -29,9 +29,17 @@ app.listen(3000,()=>{
 const httpServer = createServer(app);
 initSocketServer(httpServer);
 
+const allowedOrigins = ['http://localhost:5173'];
+
 const corsOptions = {
-    origin: "*",
-    credentials: true,
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          callback(new Error('Not allowed by CORS'));
+        }
+      },
+      credentials: true, // Allowing cookies and authorization headers
   };
 
 app.use(cors(corsOptions));

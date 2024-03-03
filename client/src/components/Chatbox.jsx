@@ -5,9 +5,6 @@ import cors from 'cors';
 // Assuming the server is running on the same host but different port
 const socket = io('http://localhost:3000', {
     withCredentials: true,
-//   extraHeaders: {
-//     'my-custom-header': 'abcd',
-//   },
 });
 
 const Chatbox = ({ currentUser, receiverId, onClose }) => {

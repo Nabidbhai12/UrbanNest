@@ -7,7 +7,7 @@ import cors from 'cors';
 const initSocketServer = (httpServer) => {
   const io = new Server(httpServer, {
     cors: {
-      origin: "*", // Adjust this in production
+      origin: ['http://localhost:5173'], // Adjust according to your needs
       methods: ["GET", "POST"],
       credentials: true,
     },
