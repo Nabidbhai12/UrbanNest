@@ -7,10 +7,9 @@ import listingRouter from './routes/listing.route.js';
 import searchRouter from './routes/search.route.js';
 import blogRouter from './routes/blog.route.js';
 import conversationRouter from './routes/conversation.route.js';
-import ConversationModel from   "./models/conversation.model.js";
 import cookieParser from 'cookie-parser';
 import initSocketServer from './socketServer.js';
-import { createServer } from 'http';
+import {createServer} from 'http';
 
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{  
@@ -22,6 +21,10 @@ mongoose.connect(process.env.MONGO).then(()=>{
 );
 
 const app=express();
+app.listen(3000,()=>{
+    console.log('server is running on port 3000');
+}
+);
 const httpServer = createServer(app);
 initSocketServer(httpServer);
 
