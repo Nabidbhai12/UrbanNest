@@ -1,7 +1,7 @@
 // src/socketServer.js
 import { Server } from 'socket.io';
-import { ConversationModel } from './models/conversation.model'; // Adjust imports based on your project structure
-import { MessageModel } from './models/message.model'; // Adjust imports based on your project structure
+import ConversationModel  from './models/conversation.model'; // Adjust imports based on your project structure
+import  MessageModel  from './models/message.model'; // Adjust imports based on your project structure
 
 const initSocketServer = (httpServer) => {
   const io = new Server(httpServer, {

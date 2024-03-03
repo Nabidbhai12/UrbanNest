@@ -310,6 +310,24 @@ export const addToWishList = async (req, res, next) => {
     next(error);
   }
 };
+export const removeFromWishList = async (req, res, next) => {
+  const { propertyId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    await UserList.findOneAndUpdate(
+      { user: userId },
+      { $pull: { wishList: propertyId } }, // Use $pull to remove the property
+      { new: true }
+    );
+    res.json({ message: "Property removed from wishlist successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//now write removefromwishlist
+
 export const getUserSoldlist = async (req, res, next) => {
   const userId = req.user.id;
 
