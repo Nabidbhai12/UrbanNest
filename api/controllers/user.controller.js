@@ -296,6 +296,7 @@ export const getUserWishlist = async (req, res, next) => {
     next(error);
   }
 };
+
 export const addToWishList = async (req, res, next) => {
   const { propertyId } = req.params; // Assuming the property ID is sent in the request body
   const userId = req.user.id;
