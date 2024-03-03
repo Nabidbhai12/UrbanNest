@@ -15,7 +15,6 @@ const router = express.Router();
 router.get('/verify',verifyLoginStatus);
 router.post('/updateProfile', authenticateToken, upload1, updateProfile);
 router.get('/getUserWishist',authenticateToken,getUserWishlist);
-r
 router.get('/getUserDetails',authenticateToken,getUserDetails);
 router.get('/getUserDetailsByID/:userID', authenticateToken, getUserDetailsByID);
 router.post(

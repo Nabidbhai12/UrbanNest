@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
-import UserList from "../models/userlist.model.js";
+//import UserList from "../models/userlist.model.js";
 
 export const verifyLoginStatus = (req, res) => {
   const token = req.cookies["access_token"];
@@ -300,13 +300,18 @@ export const getUserWishlist = async (req, res, next) => {
 export const addToWishList = async (req, res, next) => {
   const { propertyId } = req.params; // Assuming the property ID is sent in the request body
   const userId = req.user.id;
+  console.log("Inside addToWishList");
+  console.log("Property ID: " + propertyId);
+  console.log("User ID" + userId);
 
   try {
-    await UserList.findOneAndUpdate(
+    const wishlist=await UserList.findOneAndUpdate(
       { user: userId },
       { $addToSet: { wishList: propertyId } }, // Use $addToSet to avoid duplicates
       { new: true, upsert: true }
     );
+    //print
+    console.log(wishlist);
     res.json({ message: "Property added to wishlist successfully" });
   } catch (error) {
     next(error);

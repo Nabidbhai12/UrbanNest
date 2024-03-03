@@ -29,6 +29,8 @@ const PropertyDetailsPage = () => {
   const [images, setImages] = useState([]);
   const [center, setCenter] = useState(null);
 
+  const [addedToWishList, setAddedToWishList] = useState(false);
+
   const { currentUser } = useSelector((state) => state.user);
 
   console.log(currentUser);
@@ -168,6 +170,60 @@ const PropertyDetailsPage = () => {
   }
   function handleCloseNearbyPlacesModal() {
     setNearbyPlacesModal(false);
+  }
+
+  const handleWishList = async (property_id) => {
+    if (addedToWishList) {
+      try {
+        const response = await fetch(
+          `/api/users/removeFromWishList/${property_id}`,
+          {
+            method: "POST",
+            credentials: "include",
+          }
+        );
+
+        if (response.status === 200) {
+          setAddedToWishList(false);
+          alert("This property has been removed from your wishlist!");
+        }
+      } catch (err) {
+        console.error("Error removing from wishlist: ", err);
+      }
+    } else {
+      try {
+        const response = await fetch(
+          `/api/users/addToWishList/${property_id}`,
+          {
+            method: "POST",
+            credentials: "include",
+          }
+        );
+
+        if (response.status === 200) {
+          setAddedToWishList(true);
+          alert("This property has been added to your wishlist!");
+        }
+      } catch (err) {
+        console.error("Error adding to wishlist:", err);
+      }
+    }
+  };
+
+  const handleSold = async (property_id) => {
+    try{
+      const response = await fetch (`/api/users/markPropertyAsSold/${property_id}`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if(response.status === 200){
+        alert("Your property has been sold!");
+        navigate("/");
+      }
+    } catch(err){
+      console.error("Error selling: ", err);
+    }
   }
 
   return (
@@ -634,10 +690,10 @@ const PropertyDetailsPage = () => {
                         </div>
                         {currentUser._id !== property.owner ? (
                           <div className="flex flex-col">
-                          <Button className="border-[5px] mt-[70px] border-black border-opacity-40 font-semibold font-manrope text-black rounded-[10px] hover:text-orange-800 hover:border-orange-800">
-                            Interested? Communicate with the seller.
-                          </Button>
-                        </div>
+                            <Button className="border-[3px] mt-[70px] border-black border-opacity-40 font-semibold font-manrope text-black rounded-[10px] hover:text-orange-800 hover:border-orange-800">
+                              Interested? Communicate with the seller.
+                            </Button>
+                          </div>
                         ) : (
                           <div></div>
                         )}
@@ -731,7 +787,7 @@ const PropertyDetailsPage = () => {
                   <div className="flex sm:flex-col flex-row gap-5 items-center justify-start w-full">
                     <Button
                       className="common-pointer bg-transparent border border-black hover:border-orange-A700 px-[5px] py-[7px] rounded-[10px] cursor-pointer flex items-center justify-center min-w-[124px]"
-                      onClick={() => navigate("/listing")}
+                      onClick={() => handleWishList(property._id)}
                       rightIcon={
                         <Img
                           className="h-6 mb-[3px] ml-2"
@@ -742,10 +798,12 @@ const PropertyDetailsPage = () => {
                     >
                       {currentUser._id !== property.owner ? (
                         <div className="font-bold text-left text-lg text-orange-A700">
-                        Add to Wishlist
-                      </div>
+                          Add to Wishlist
+                        </div>
                       ) : (
-                        <div className="font-bold text-left text-lg text-orange-A700">Sold</div>
+                        <div className="font-bold text-left text-lg text-orange-A700">
+                          Sold
+                        </div>
                       )}
                     </Button>
                   </div>
