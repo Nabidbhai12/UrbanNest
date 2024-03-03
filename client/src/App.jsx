@@ -85,7 +85,7 @@ export default function App() {
           <Route path="/404" element={<Error_404 />} />
 
           <Route path="/users" element={<Users />} />
-          <Route path="/chat/:id" element={<Chatroom />} />
+          <Route path="/chat/:conversationId" element={<Chatroom />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/profile" element={<Profile />} />

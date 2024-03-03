@@ -9,8 +9,7 @@ import blogRouter from './routes/blog.route.js';
 import conversationRouter from './routes/conversation.route.js';
 import ConversationModel from   "./models/conversation.model.js";
 import cookieParser from 'cookie-parser';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
+import initSocketServer from './socketServer.js';
 
 dotenv.config();
 mongoose.connect(process.env.MONGO).then(()=>{  
@@ -21,67 +20,11 @@ mongoose.connect(process.env.MONGO).then(()=>{
 }
 );
 
-const app=express()
+const app=express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    cors: {
-        origin: "http://localhost:5173", // Your frontend origin
-        methods: ["GET", "POST"],
-        //allowedHeaders: ["my-custom-header"],
-        credentials: true
-    }
-});
+initSocketServer(httpServer);
 
-httpServer.listen(3000,()=>{
-    console.log('server is running on port 3000');
-}
-);
 
-io.on('connection', (socket) => {
-    console.log('A user connected', socket.id);
-
-    // Handle sending and receiving messages
-    socket.on('sendMessage', async ({ senderId, receiverId, text }) => {
-        try {
-            // Save message to database using existing controller logic or directly using Mongoose models
-            const conversation = await ConversationModel.findOneAndUpdate(
-                {
-                    $or: [
-                        { sender: senderId, receiver: receiverId },
-                        { sender: receiverId, receiver: senderId }
-                    ]
-                },
-                {},
-                { upsert: true, new: true }
-            );
-
-            const message = new MessageModel({
-                conversationId: conversation._id,
-                sender: senderId,
-                receiver: receiverId,
-                content: text
-            });
-
-            await message.save();
-
-            // Emit the message to the receiver
-            io.to(receiverId).emit('receiveMessage', { senderId, text });
-            console.log("Message saved and sent to receiver:", message);
-        } catch (error) {
-            console.error("Error sending/saving message:", error);
-        }
-    });
-
-    socket.on('joinRoom', ({ userId }) => {
-        socket.join(userId); // Uses user ID as room name
-        console.log(`User joined room: ${userId}`);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected', socket.id);
-    });
-
-});
 
 app.use(express.json());
 app.use(cookieParser());
