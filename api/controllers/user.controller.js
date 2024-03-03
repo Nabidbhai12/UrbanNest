@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import UserList from "../models/userlist.model.js";
 import Listing from "../models/listing.model.js";
+import UserList from "../models/userlist.model.js";
 
 export const verifyLoginStatus = (req, res) => {
   const token = req.cookies["access_token"];
@@ -130,6 +131,7 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+
 export const addPropertyForSale = async (req, res, next) => {
   console.log("addPropertyForSale called");
   try {
@@ -209,6 +211,12 @@ export const addPropertyForSale = async (req, res, next) => {
     // Save the property listing
     const savedProperty = await newProperty.save();
 
+    await UserList.findOneAndUpdate(
+      { user: userId },
+      { $push: { sellingList: savedProperty._id } },
+      { new: true, upsert: true } // Create a new document if it doesn't exist
+    );
+
     console.log("Saved property: " + savedProperty);
 
     // Update user's list with the new property
@@ -221,52 +229,116 @@ export const addPropertyForSale = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+}; 
+export const markPropertyAsSold = async (req, res, next) => {
+  const { propertyId } = req.params; // Assuming the property ID is sent in the request body
+  const userId = req.user.id;
+
+  try {
+    // Remove from sellingList
+    const userListUpdate = await UserList.findOneAndUpdate(
+      { user: userId },
+      { $pull: { sellingList: propertyId } },
+      { new: true }
+    );
+
+    // Add to soldList
+    if (userListUpdate) {
+      await UserList.findOneAndUpdate(
+        { user: userId },
+        { $push: { soldList: propertyId } },
+        { new: true }
+      );
+    }
+
+    // Delete the property listing from Listing collection
+    const deletedProperty = await Listing.findByIdAndRemove(propertyId);
+
+    if (!deletedProperty) {
+      return res.status(404).json({ message: "Property not found or already removed" });
+    }
+
+    res.json({ message: "Property marked as sold and removed from listings successfully", deletedProperty });
+  } catch (error) {
+    next(error);
+  }
 };
 
 //deleteprofile
 //a function to send all the details(name,email,picture..all user details except password) to frontend
 //updatepassword()
+export const isPropertyInWishlist = async (req, res, next) => {
+  const { propertyId } = req.params; // Assuming the property ID is sent as a URL parameter
+  const userId = req.user.id;
+
+  try {
+    const userLists = await UserList.findOne({ user: userId }, 'wishList');
+    const isPropertyInList = userLists.wishList.some((id) => id.toString() === propertyId);
+
+    res.json({ isInWishlist: isPropertyInList });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUserWishlist = async (req, res, next) => {
+  const userId = req.user.id;
+
   try {
-    const userId = req.user.id;
-    const userLists = await UserList.findOne({ user: userId }).populate(
-      "wishList"
-    );
+    // Use populate to get detailed information about each property in the wishlist
+    const userLists = await UserList.findOne({ user: userId }).populate('wishList');
+    if (!userLists) {
+      return res.status(404).json({ message: "User wishlist not found." });
+    }
+
     res.json(userLists.wishList);
   } catch (error) {
     next(error);
   }
 };
-export const getUserBoughtlist = async (req, res, next) => {
+export const addToWishList = async (req, res, next) => {
+  const { propertyId } = req.params; // Assuming the property ID is sent in the request body
+  const userId = req.user.id;
+
   try {
-    const userId = req.user.id;
-    const userLists = await UserList.findOne({ user: userId }).populate(
-      "boughtList"
+    await UserList.findOneAndUpdate(
+      { user: userId },
+      { $addToSet: { wishList: propertyId } }, // Use $addToSet to avoid duplicates
+      { new: true, upsert: true }
     );
-    res.json(userLists.boughtList);
+    res.json({ message: "Property added to wishlist successfully" });
   } catch (error) {
     next(error);
   }
 };
 export const getUserSoldlist = async (req, res, next) => {
+  const userId = req.user.id;
+
   try {
-    const userId = req.user.id;
-    const userLists = await UserList.findOne({ user: userId }).populate(
-      "soldList"
-    );
-    res.json(userLists.soldList);
+    // Use populate to get detailed information about each property in the wishlist
+    const userLists = await UserList.findOne({ user: userId }).populate('soldList');
+    if (!userLists) {
+      return res.status(404).json({ message: "User wishlist not found." });
+    }
+
+    res.json(userLists.wishList);
   } catch (error) {
     next(error);
   }
 };
+
+
 export const getUserSellinglist = async (req, res, next) => {
+  const userId = req.user.id;
+
   try {
-    const userId = req.user.id;
-    const userLists = await UserList.findOne({ user: userId }).populate(
-      "sellingList"
-    );
-    res.json(userLists.sellingList);
+    // Use populate to get detailed information about each property in the wishlist
+    const userLists = await UserList.findOne({ user: userId }).populate('sellingList');
+    if (!userLists) {
+      return res.status(404).json({ message: "User wishlist not found." });
+    }
+
+    res.json(userLists.wishList);
   } catch (error) {
     next(error);
   }
