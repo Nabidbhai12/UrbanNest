@@ -3,7 +3,7 @@
 import MessageModel from   "../models/message.model.js";
 import ConversationModel from   "../models/conversation.model.js";
 import User   from "../models/user.model.js";
-
+import io from "../socketServer.js";
 
 //write a function to fetch all the users in usermodel
 export const getAllusers=async(req,res)=>
@@ -47,6 +47,7 @@ export const sendMessage=async(req,res)=>
     console.log("done");
 
     await message.save();
+    io.to(receiverId.toString()).emit('newMessage', message);
 
     res.status(201).json({ message: 'Message sent successfully', messageId: message._id });
   } catch (error) {
