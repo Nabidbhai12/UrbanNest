@@ -168,6 +168,7 @@ export const addPropertyForSale = async (req, res, next) => {
     let propertyStatus = saleType === "sell" ? "For Sale" : "For Rent";
 
     console.log("Property status: " + propertyStatus);
+    
 
     // Create a new property listing
     const newProperty = new Listing({
