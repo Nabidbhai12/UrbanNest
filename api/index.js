@@ -7,6 +7,7 @@ import listingRouter from './routes/listing.route.js';
 import searchRouter from './routes/search.route.js';
 import blogRouter from './routes/blog.route.js';
 import conversationRouter from './routes/conversation.route.js';
+import ConversationModel from   "../models/conversation.model.js";
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
@@ -70,7 +71,7 @@ io.on('connection', (socket) => {
             console.error("Error sending/saving message:", error);
         }
     });
-    
+
     socket.on('joinRoom', ({ userId }) => {
         socket.join(userId); // Uses user ID as room name
         console.log(`User joined room: ${userId}`);
