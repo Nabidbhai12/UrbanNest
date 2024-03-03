@@ -35,7 +35,7 @@ const UserList = () => {
   const handleUserClick = async (userId) => {
     try {
       const response = await fetch(`api/conversation/getOrCreateConversation/${userId}`, {
-        method: 'GET',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },

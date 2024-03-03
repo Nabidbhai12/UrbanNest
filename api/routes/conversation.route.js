@@ -10,6 +10,8 @@ import { sendMessage    } from  "../controllers/conversation.controller.js";
 
 import { getUserConversations }    from "../controllers/conversation.controller.js";
 
+import {getConversationById} from "../controllers/conversation.controller.js";
+
 
 export default   router;
 
@@ -19,7 +21,7 @@ router.post('/sendMessage', authenticateToken,sendMessage);
 router.get('/getMessage', authenticateToken, getUserConversations);
 router.get('/getUsers', authenticateToken, getAllusers);
 
-router.get('/getOrCreateConversation/:userId', async (req, res) => {
+router.put('/getOrCreateConversation/:userId', async (req, res) => {
     const { userId } = req.params; // The ID of the user selected for chatting
     const myUserId = req.user._id; // The logged-in user's ID, set by your authentication middleware
   
@@ -41,6 +43,8 @@ router.get('/getOrCreateConversation/:userId', async (req, res) => {
     } catch (error) {
       res.status(500).json({ message: "Error fetching or creating conversation", error: error.message });
     }
-  });
+});
+
+router.get('/:conversationId', authenticateToken, getConversationById);
 
 

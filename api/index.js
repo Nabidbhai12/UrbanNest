@@ -7,7 +7,7 @@ import listingRouter from './routes/listing.route.js';
 import searchRouter from './routes/search.route.js';
 import blogRouter from './routes/blog.route.js';
 import conversationRouter from './routes/conversation.route.js';
-import ConversationModel from   "../models/conversation.model.js";
+import ConversationModel from   "./models/conversation.model.js";
 import cookieParser from 'cookie-parser';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
